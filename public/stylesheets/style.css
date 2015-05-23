@@ -1,0 +1,145 @@
+/**
+ * 通用 css
+ * github: https://github.com/highsea/hi-blog
+ * @author Gao Hai <admin@highsea90.com>
+ * @link http://highsea90.com
+ */
+/* 
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote,
+dl, dt, dd, ul, ol, li, 
+pre, 
+fieldset, lengend, button, input, textarea,
+th, td { 
+    margin: 0;
+    padding: 0;
+}
+设置默认字体
+body,
+button, input, select, textarea { 
+    font: 12px/1 Tahoma, Helvetica, Arial, "宋体", sans-serif;
+    font: 12px/1 Tahoma, Helvetica, Arial, "\5b8b\4f53", sans-serif; 
+}
+h1 { font-size: 18px; 18px / 12px = 1.5 }
+h2 { font-size: 16px; }
+h3 { font-size: 14px; }
+h4, h5, h6 { font-size: 100%; }
+address, cite, dfn, em, var { font-style: normal; } 
+code, kbd, pre, samp, tt { font-family: "Courier New", Courier, monospace; } 
+small { font-size: 12px; } 
+ul, ol { list-style: none; }
+a { text-decoration: none; }
+a:hover { text-decoration: underline; }
+abbr[title], acronym[title] { 
+    注：1.ie6 不支持 abbr; 2.这里用了属性选择符，ie6 下无效果
+    border-bottom: 1px dotted;
+    cursor: help;
+} 
+
+q:before, q:after { content: ''; }
+
+重置表单元素
+legend { color: #000; } for ie6
+fieldset, img { border: none; } img 搭车：让链接里的 img 无边框
+注：optgroup 无法扶正
+button, input, select, textarea {
+    font-size: 100%; 使得表单元素在 ie 下能继承字体大小
+}
+
+重置表格元素
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+重置 hr
+hr {
+    border: none;
+    height: 1px;
+} */
+
+/* 让非ie浏览器默认也显示垂直滚动条，防止因滚动条引起的闪烁 */
+/* html { overflow-y: scroll; } */
+
+/*  */
+body{background: #fff;overflow-x: hidden}
+li,ul,p{list-style: none;padding: 0;margin: 0}
+.clear {clear: both;float: none;}
+
+body .none{display: none;}
+body .tab-body .block{display: block;}
+
+.highlight{border:1px solid #f00!important;color: #f00!important}
+.register label{text-align: right;}
+
+/* 主页菜单 */
+#mainNav{width: 100%;overflow: hidden;}
+#mainNav a{font: 1.5em/2em 'Microsoft YaHei' #3C94B7}
+
+#mainNav nav {width: 61.5%;background: #FFFFFF;border:1px solid #ACD2E7;height: 2em;margin: 0.5em auto;border-radius: 4px;float: none;clear: both;}
+#mainNav li {float: left;text-align: center;line-height: 2em;padding: 0 1em}
+/* #mainNav li a{display: block;} */
+.current-li{background: #3C94B7;color: #fff}
+#mainNav .current-li a{color: #fff}
+
+/*  */
+.sosoform {width: 76%;margin: 1em auto;display: block;}
+.sosoform input{text-align: center;}
+
+/* home */
+.banner{height: 135px;margin: 0 0 78px 0;position: relative;width: 100%;}
+/* .banner{background:#EFEFEF url(./../images/loading.gif) no-repeat; background-size:cover} */
+.userInfo{position: absolute;left: 50%;top:97px;width:76px;height: 76px;margin: 0 0 0 -38px}
+
+body .userCompany, body .userName{width:250px;text-align: center;margin: 0 0 0 -85px;font-size: 10px;color: #48474D;}
+body .userName a {color: #48474D}
+.homeNav {background: #3C94B7;overflow: auto;height: 36px;}
+.homeNav li{float: left;width: 33%;border-left: 1px solid #338AAE;margin: 0 0 0 -1px;text-align: center;}
+.homeNav a{color: #fff;font: 1.1em/36px 'Microsoft YaHei';}
+/*  */
+
+body .tablight{background: #16A185}
+.tab-grsz .tab-body ul {height:180px;}
+.tab-grsz .tab-heading li{float: left;background: -webkit-linear-gradient(#fff,#f2f2f2);margin: 0 1em 0 0;padding: 0.5em}
+.tab-grsz .tab-heading .tablight{color: #16A185;text-decoration: underline;font-weight: bold}
+.tab-body{padding: 1em 0 0 0}
+.tab-body > ul > li{display: none}
+.tab-inner img{height: 60px}
+
+
+/*  */
+
+body {
+padding-top: 20px;
+padding-bottom: 40px;
+}
+
+/* Custom container */
+.container-narrow {
+margin: 0 auto;
+max-width: 700px;
+}
+.container-narrow > hr {
+margin: 30px 0;
+}
+
+/* Main marketing message and sign up button */
+.jumbotron {
+margin: 60px 0;
+text-align: center;
+}
+.jumbotron h1 {
+font-size: 72px;
+line-height: 1;
+}
+.jumbotron .btn {
+font-size: 21px;
+padding: 14px 24px;
+}
+
+/* Supporting marketing content */
+.marketing {
+margin: 60px 0;
+}
+.marketing p + h4 {
+margin-top: 28px;
+}

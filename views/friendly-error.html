@@ -1,0 +1,30 @@
+<% include header.html %>
+
+<header class="container-fluid">
+    <section class="row-fluid">
+    	<%if(text){%>
+		<h1><%=text%></h1>
+		<%}else{%>
+		<h1>未知的错误！</h1>
+		<%}%>
+    </section>
+    <section>
+    	<nav>
+    		<ul>
+    			<li><a href="/">登陆</a></li>
+    			<li><a href="/home">个人主页</a></li>
+    			<li><a href="/financing">最新融资</a></li>
+				<li><a href="/soso">搜搜</a></li>
+				<li><a href="/activity">活动</a></li>
+				<li><a href="/collect">我的收藏</a></li>
+				<li><a href="/subject">我的项目</a></li>
+    		</ul>
+    	</nav>
+    </section>
+</header>
+<footer>
+	
+</footer>
+
+
+<% include footer.html %>

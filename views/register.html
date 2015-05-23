@@ -1,0 +1,279 @@
+<% include header.html %>
+
+
+<header class="container-fluid">
+
+
+<% if(resultREG!=1) {%>
+    <section class="row-fluid">
+        <form class="span12 register form" action="adduser" method="post">
+          <fieldset>
+              <legend>注册</legend>
+          </fieldset>
+          <div class="control-group">
+		    <label class="control-label span3">用户名</label>
+		    <div class="controls span9">
+		      <input type="text" id='user_user' class="user_user" name='user' placeholder="请输入用户名" autocomplete="off">
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span3">密码</label>
+		    <div class="controls span9">
+		      <input type="text" class="user_password" name="password" placeholder="请输入密码" autocomplete="off">
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span3">邮箱</label>
+		    <div class="controls span9">
+		      <input type="text" class="user_email" name="email" placeholder="请输入邮箱" autocomplete="off">
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span3">手机号</label>
+		    <div class="controls span9">
+		      <input type="text" class="user_phone" name="iphone" placeholder="请输入手机号" autocomplete="off">
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span3">性别</label>
+		    <div class="controls span9">
+		        <div class="control-group span12">
+					<label class="span3" for="radioA" data-radio='1'>
+						<input type="radio" name="sex" id="radioA" checked> 男 
+					</label>  
+					<label class="span3" for="radioB" data-radio='0'>
+						<input type="radio" name="sex" id="radioB" > 女 
+					</label>
+					<input type="hidden" name='sexval' value='1'>
+				</div>
+		    </div>
+		  </div>
+		    
+
+		  <div class="control-group">
+		    <div class="controls submitStatus">
+		    	<button type="submit" class="btn btn-primary submitREG"> 注 册 </button>
+		    </div>
+		  </div>
+        </form>
+    </section>
+    <%}else if(resultREG == 1){%>
+    <section class="row-fluid">
+        <nav class="span12">
+        	
+            
+            <ul>
+    			<li>后退</li>
+    			
+    			<li><a href="/">登陆</a></li>
+
+    		</ul>
+            
+        </nav>
+        <div>注册成功</div>
+    </section>
+    <%} else {%>
+    <section class="row-fluid">
+        <nav class="span12">
+            
+            <a href="/register">请检查填写的信息</a>
+        </nav>
+    </section>
+    <%}%>
+</header>
+
+
+<footer class="container-fluid">
+    <section class="row-fluid">
+        <nav class="span12">
+
+        </nav>
+    </section>
+</footer>
+
+
+
+<% include footer.html %>
+
+<script>
+var checkREG = {
+	'user':'0',
+	'password':'0',
+	'email':'0'
+}
+window.onload=function(){
+
+	seajs.config({
+	base: '/javascripts',
+	alias: {
+		//'jquery': 'jquery/jquery/1.10.1/jquery',
+        "zepto":  "jquery/zepto/1.1.6/zepto",
+        "all": "share/all/1.0.0/all",
+        'verify':'share/verify/1.0.0/verify',
+	  }
+	});
+
+    seajs.use(['zepto', 'verify', 'all'], function($, V, A){
+
+		var $ = Zepto;
+
+		var iphone = $('.user_phone'),
+			password = $('.user_password'),
+			email = $('.user_email'),
+			user = $('.user_user');
+
+
+		//提交时确认填写信息正确 手机 号码除外
+		$('.submitStatus').on('click', '.submitREG', function() {
+
+			if (checkREG.user=='1'&&checkREG.password=='1'&&checkREG.email=='1') {
+
+				var sex_v = $("input[name='sex']:checked").closest('label').data('radio');
+				$('input[name="sexval"]').val(sex_v);
+
+        		var dataRegister = {
+        				user:user.val(),
+        				password:password.val(),
+        				sex:sex_v,
+        				sexval:$('input[name="sexval"]').val(),
+        				email:email.val(),
+        				iphone:iphone.val()
+        			};
+
+        		console.log(dataRegister);
+        		return true;
+
+			}else{
+				A.alertHtml('.form', 'info', A.textTips['0'], '');
+
+				return false;
+			}
+		});
+
+
+
+        //监测 用户名
+        user.on('input', function(e){
+
+			e.preventDefault();
+			var resultHTML;
+			if (V.isRegisterUserName($(this).val())||V.isChinese($(this).val())) {
+				resultHTML = A.textTips['1'];//<a class="btn btn-primary">检查用户名是否被抢注了</a>
+			}else{
+				resultHTML = A.textTips['yonghuming0'];
+				checkREG.user = '0';
+			}
+			A.alertHtml('.form', 'info', resultHTML, '');
+
+        }, false)
+        .on('focus', function(e) {
+        	e.preventDefault();
+        	resultHTML = A.textTips['yonghuming0'];
+			checkREG.user = '0';
+			A.alertHtml('.form', 'info', resultHTML, '');
+        })
+        .on('blur', function(e) {
+        	e.preventDefault();
+        	var resultHTML;
+			if (V.isRegisterUserName($(this).val())||V.isChinese($(this).val())) {
+
+				A.ajax('userCount', {name:'user', value:$(this).val()}, $(this), function(dataList){
+					A.alertHtml('.form', 'info', A.textTips['yonghuming1'], '');
+					A.inputBg(user, 'ok.gif')
+					checkREG.user = '1';
+					//console.log(dataList);
+				})
+			}else{
+				A.alertFun($(this), A.textTips['yonghuming0'], 'close.gif');
+				checkREG.user = '0';
+			}
+        })
+
+         //监测 电话 手机
+		iphone.on('input', function(e) {
+			e.preventDefault();
+			var resultHTML;
+			if (V.isPhone($(this).val())) {
+				resultHTML = A.textTips['dianhua1'];
+			}else{
+				resultHTML = A.textTips['dianhua0'];
+			}
+			A.alertHtml('.form', 'info', resultHTML, '');
+		}, false)
+		.on('focus', function(e) {
+			e.preventDefault();
+			A.alertHtml('.form', 'info', A.textTips['dianhua0'], '');
+		});
+
+ 		//监测 密码
+		password.on('input', function(e) {
+			e.preventDefault();
+			var resultHTML;
+			if (V.isPassword($(this).val())) {
+				resultHTML = A.textTips['mima1'];
+				A.alertHtml('.form', 'info', '密码等级：', V.Password.StrengthLevel($(this).val()));
+				checkREG.password = '1';
+			}else{
+				resultHTML = A.textTips['mima0'];
+				checkREG.password = '0';
+				A.alertHtml('.form', 'info', resultHTML, '');
+			}
+			
+		}, false)
+		.on('focus', function(e) {
+        	e.preventDefault();
+        	resultHTML = A.textTips['mima0'];
+			checkREG.password = '0';
+			A.alertHtml('.form', 'info', resultHTML, '');
+        })
+        .on('blur', function(e) {
+        	e.preventDefault();
+        	if (V.isPassword($(this).val())) {
+				resultHTML = A.textTips['mima1'];
+				A.alertHtml('.form', 'info', '密码等级：', V.Password.StrengthLevel($(this).val()));
+				A.inputBg(password, 'ok.gif');
+				checkREG.password = '1';
+			}else{
+				A.alertFun($(this), A.textTips['mima0'], 'close.gif');
+				checkREG.password = '0';
+			}
+        });
+
+		 //监测 邮箱
+		email.on('input', function(e) {
+			e.preventDefault();
+			var resultHTML;
+			if (V.isEmail($(this).val())) {
+				resultHTML = A.textTips['1'];
+			}else{
+				resultHTML = A.textTips['youxiang0'];
+				checkREG.email = '0';
+			}
+			A.alertHtml('.form', 'info', resultHTML, '');
+		}, false)
+		.on('focus', function(e) {
+        	e.preventDefault();
+        	resultHTML = A.textTips['youxiang0'];
+			checkREG.email = '0';
+			A.alertHtml('.form', 'info', resultHTML, '');
+        })
+        .on('blur', function(e) {
+        	e.preventDefault();
+        	if (V.isEmail($(this).val())) {
+        		A.ajax('userCount', {name:'email', value:$(this).val()}, $(this), function(dataList){
+					A.alertHtml('.form', 'info', A.textTips['youxiang1'], '');
+					A.inputBg(email, 'ok.gif');
+					checkREG.email = '1';
+				})
+        	}else{
+				A.alertFun($(this), A.textTips['youxiang0'], 'close.gif');
+				checkREG.email = '0';
+			}
+        })
+
+
+    })
+
+}
+
+</script>

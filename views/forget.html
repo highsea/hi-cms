@@ -1,0 +1,70 @@
+<%=include header.html%>
+
+<header class="container-fluid">
+    <section class="row-fluid">
+		<div class="form">
+			<fieldset>
+                <legend>请输入 :<br>用户名 或 邮箱</legend>
+            </fieldset>
+            <div class="control-group">
+				<input type="text" name="sometext">
+			</div>
+			<div class="control-group">
+		    	<a class="btn btn-info submit">提交</a>
+			</div>
+			
+		</div>
+    </section>
+</header>
+<footer>
+	<section>
+		<div>
+			<ul>
+				<li><a href="/">登陆</a></li>
+				
+				<li><a href="/register">注册</a></li>
+
+			</ul>
+		</div>
+	</section>
+</footer>
+
+<% include footer.html %>
+
+<script>
+	
+window.onload=function(){
+
+	seajs.config({
+	base: '/javascripts',
+	alias: {
+		'jquery': 'jquery/jquery/1.10.1/jquery',
+        "zepto":  "jquery/zepto/1.1.6/zepto",
+        "all": "share/all/1.0.0/all",
+        'verify':'share/verify/1.0.0/verify',
+        'bootstrap':'bootstrap/2.3.2/bootstrap',
+	  }
+	});
+
+
+    seajs.use(['zepto', 'verify', 'all'], function($, V, A){
+    	var $ = Zepto;
+
+    	$('.submit').on('click', function(event) {
+    		event.preventDefault();
+    		var sometext = $('[name = "sometext"]').val();
+			if (V.isEmpty(sometext)) {
+				A.alertHtml('.form', 'danger', '注意：邮箱或用户名不能为空', '');
+			}else{
+				A.ajax('email', {sometext:sometext}, '.form', function(dataList){
+					$('.form').html('<h2>发送成功！</h2>');
+					//console.log(dataList);
+				})
+			}    		
+    		
+    	});
+	})
+
+}
+
+</script>

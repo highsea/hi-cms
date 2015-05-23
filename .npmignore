@@ -1,0 +1,10 @@
+docs/
+src/
+tests/
+tools/
+node_modules/
+CNAME
+Makefile
+*.txt
+.*
+*~

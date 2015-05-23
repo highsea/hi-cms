@@ -1,0 +1,412 @@
+<% include header.html %>
+<style type="text/css">
+	.avatar{height: 25px;width:25px;display: inline-block;}
+	.message_img img{width: 200px;}
+	.status_2{background:#ccc;opacity: 0.5; }
+	.upUser{display: inline-block;width: 25px;height: 25px;overflow: hidden;}
+	.upUser img{width: 25px;height: 25px;}
+	.sex_0{border-left: 3px solid #000;}
+	.sex_2{border-left: 3px solid #f00;}
+	.sex_1{border-left: 3px solid #ff0;}
+	.read_0{color: #04c}
+
+
+</style>
+
+<% if (result!='') { %>  
+
+<div class="container-fluid">
+
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="navbar">
+				<div class="navbar-inner">
+					<div class="container-fluid">
+						 <a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a> <a href="/" class="brand">小脚丫</a>
+						<div class="nav-collapse collapse navbar-responsive-collapse">
+							<ul class="nav">
+								<li class="current">
+									 <a href="/home">内容管理</a>
+								</li>
+								<li>
+									 <a href="/admin">账号管理</a>
+								</li>
+								<li>
+									 <a href="/paster">贴纸管理</a>
+								</li>
+								
+							</ul>
+							<ul class="nav pull-right">
+								<li>
+									 <a href="/logout">登出</a>
+								</li>
+								<li class="divider-vertical">
+								</li>
+								<li class="dropdown">
+									 <a data-toggle="dropdown" class="dropdown-toggle" href="#" title="欢迎您 <%=username%> "><img style="height: 20px" height="20px" src="<%=info.avatar%>"><strong class="caret"></strong></a>
+									<ul class="dropdown-menu">
+										<li>
+											<a href="/home"><%=username%> 的设置</a>
+										</li>
+										<li>
+											 <a href="#">其他</a>
+										</li>
+										
+										<li class="divider">
+										</li>
+										<li>
+
+										<% if(info.type==8){%>
+										<a>管理员选项</a>
+										<% } else{%>
+										<a>用户您好 <%=info.type%></a>
+										<% } %>
+											
+										</li>
+									</ul>
+								</li>
+
+							</ul>
+						</div>
+						
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+
+	
+	
+
+
+
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="tabbable" id="tabs-25490">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						 <a href="#panel-1" data-toggle="tab" >全部</a>
+					</li>
+					<li>
+						 <a href="#panel-2" data-toggle="tab" >热门推荐</a>
+					</li>
+					<li>
+						 <a href="#panel-3" data-toggle="tab" class="sta" data-sta='del'>已被删除</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="panel-1">
+						<div class="row-fluid">
+							
+							<div class="span3">
+								类型:
+								<select class="span8 mark">
+									<option selected value="all">全部</option>
+									<option value="p1">单图</option>
+									<option value="mp">多图</option>
+							        <option value="tp">图文</option>
+								</select>
+							</div>
+							<div class="span3">
+								发表时间
+								<select class="span8 time">
+									<option value="d3">三天内</option>
+							        <option selected value="w1">一周内</option>
+							        <option value="w2">俩周内</option>
+							        <option value="m1">一个月</option>
+							        <option value="m2">俩个月</option>
+							        <option value="m6">半年内</option>
+
+							    </select>
+							</div>
+							<div class="span3">
+								排序:
+								<select class="span8 order">
+							        <option selected value="time">按时间</option>
+							        <option value="up">按获赞数</option>
+							        <option value="read">按阅读量</option>
+							        <option value="comment">按回复数</option>
+
+							    </select>
+							</div>
+							<div class="span3">
+								<a class="btn btn-success showMessage">查看消息</a>
+							</div>
+							
+						</div>
+
+						<hr>
+
+
+						<!-- messages -->
+
+						<!-- <div class="accordion" id="accordion-A">
+							<div class="accordion-group">
+								<div class="accordion-heading">
+									 <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion-A" href="#accordion-head-a1">选项卡 #1</a>
+								</div>
+								<div id="accordion-head-a1" class="accordion-body collapse">
+									<div class="accordion-inner">
+										功能块...
+									</div>
+								</div>
+							</div>
+							<div class="accordion-group">
+								<div class="accordion-heading">
+									 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-A" href="#accordion-head-a2">选项卡 #2</a>
+								</div>
+								<div id="accordion-head-a2" class="accordion-body collapse">
+									<div class="accordion-inner">
+										功能块...
+									</div>
+								</div>
+							</div>
+						</div> -->
+
+
+
+						<!--  -->
+
+						<div class="row-fluid messageList">
+				            <ul class="thumbnails">
+
+				              
+				              加载中……
+				            </ul>
+				        </div>
+						<!--  -->
+
+
+
+
+					</div>
+					<div class="tab-pane" id="panel-2">
+						<div class="row-fluid">
+							
+							<div class="span3">
+								类型:
+								<select class="span8" data-marketing="">
+									<option value="betweenness">全部</option>
+									<option value="closeness">单图</option>
+									<option value="40">多图</option>
+							        <option value="50">图文</option>
+								</select>
+							</div>
+							<div class="span3">
+								发表时间
+								<select class="span8">
+									<option value="10">三天内</option>
+							        <option value="20">一周内</option>
+							        <option value="30">俩周内</option>
+							    </select>
+							</div>
+							<div class="span3">
+								排序:
+								<select class="span8">
+							        <option value="60">按时间排序</option>
+							        <option value="70">按热度排序</option>
+							    </select>
+							</div>
+							<div class="span3">
+								<a class="btn btn-success ">查看消息</a>
+							</div>
+						</div>
+
+						<!--  -->
+
+						<a id="modal-554326" href="#modal-container-554326" role="button" class="btn" data-toggle="modal">触发遮罩窗体</a>
+
+
+	
+
+						<!--  -->
+					</div>
+					<div class="tab-pane" id="panel-3">
+
+					删除的
+					</div>
+				</div>
+			</div>
+			
+
+			<!-- <div class="accordion" id="accordion-B">
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						 <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion-B" href="#accordion-head-b1">选项卡 #1</a>
+					</div>
+					<div id="accordion-head-b1" class="accordion-body collapse">
+						<div class="accordion-inner">
+							功能块...
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-B" href="#accordion-head-b2">选项卡 #2</a>
+					</div>
+					<div id="accordion-head-b2" class="accordion-body collapse">
+						<div class="accordion-inner">
+							功能块...
+						</div>
+					</div>
+				</div>
+			</div> -->
+			
+			<div id="modal-container-554326" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-header">
+					 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h3 id="myModalLabel">
+						标题栏
+					</h3>
+				</div>
+				<div class="modal-body">
+					<p>
+						显示信息
+					</p>
+				</div>
+				<div class="modal-footer">
+					 <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button> <button class="btn btn-primary">保存设置</button>
+				</div>
+			</div>
+			<!-- modal -->
+
+
+
+		</div>
+	</div>
+</div>
+
+
+
+	
+	
+    
+
+	<% } else{%>
+    <section>
+	<div class="well">
+		<p>登录失败……</p>
+		<a class='btn btn-primary' href="/">重新登陆</a>
+	</div>
+    </section>
+    <%}%>
+
+
+<% include footer.html %>
+<script>
+window.onload=function(){
+
+	seajs.config({
+	base: '/javascripts',
+	alias: {
+		'boots-jquery':'assets/boots-jquery',
+		//'jquery': 'jquery/jquery/1.10.1/jquery',
+		//'bootstrap':'bootstrap/bootstrap/2.3.2/bootstrap',
+        //"zepto":  "jquery/zepto/1.1.6/zepto",
+        "all": "share/all/2.0.0/all",
+        'verify':'share/verify/1.0.0/verify',
+        //'e_zetpo':'share/extend/1.0.0/extendzepto',
+	  }
+	})
+	
+    seajs.use(['boots-jquery', 'all'], function($,A){
+    	var $ = jQuery;
+		
+    	var mark = $('.mark'),
+    		time = $('.time'),
+    		order = $('.order'),
+    		messageList = $('.messageList');
+
+    	// 找到 消息数量 .messageList>ul>li
+		var messageLi = messageList.children('ul').children('li'),
+			mesLength = messageLi.length;
+
+    	//已被删除
+    	$('#tabs-25490').on('click', '.sta', function(event) {
+    		event.preventDefault();
+    		/* Act on the event */
+    	});
+
+    	$('.showMessage').on('click', function () {
+    		messageAjax ('#tabs-25490');
+    	})
+
+    	//默认获取的消息
+    	function messageAjax (elm) {
+    		messageList.children('ul').html('正在载入……');
+    		//载入消息
+    		A.ajax('/message', {
+	    		time 	: time.val(),
+	    		sta 	: 'all',
+	    		order 	: order.val(),
+	    		mark 	: mark.val(),
+	    	}, elm, function (dataList) {
+	    		//渲染 消息
+	    		A.showMessage(dataList, '.messageList', function(){
+	    			//载入 赞
+	    			A.ajax('/mup', {
+	    				time 	: time.val(),
+	    			}, elm, function(data){
+	    				//console.log(data);
+	    				var u = data.data.list,
+	    					uLength = data.data.length;
+
+	    				messageList.find('.up').children('p').html('赞：');
+
+	    				for (var i = 0; i < uLength; i++) {
+	    					var msg_id = u[i].msg_id,
+	    					    user_id = u[i].user_id,
+	    					    ctime = u[i].ctime,
+	    					    nickname = u[i].nickname,
+	    					    sex = u[i].sex,
+	    					    avatar = u[i].avatar;
+
+	    					var upStr = ' <a href="#" class="upUser sex_'+sex+'" data-uid="'+user_id+'" title="'+nickname+'('+A.sex[sex]+')发表于'+A.js_date_time(ctime)+'"> <img src="/Uploads/Picture/'+avatar+'" height="25px" alt="" /> </a> ';
+	    					$('li[data-msgid="'+msg_id+'"]').find('.up').children('p').append(upStr);
+	    				};
+
+	    				//载入 回复
+	    				A.ajax('/mcomment', {
+	    					time 	: time.val(),
+	    				}, elm, function(mm){
+	    					console.log(mm);
+	    					var m = mm.data.list,
+	    						mLength = mm.data.length;
+	    					messageList.find('.comment').children('p').html('评论：');
+
+	    					for (var i = 0; i < mLength; i++) {
+	    						var msg_id = m[i].msg_id,
+	    							user_id = m[i].user_id,
+	    							user_id_b = m[i].user_id_b,
+	    							message = m[i].message,
+	    							ctime = m[i].ctime,
+	    							is_read = m[i].is_read,
+	    							nickname = m[i].nickname,
+	    							sex = m[i].sex,
+	    							avatar = m[i].avatar;
+
+	    						if (true) {
+	    							
+	    						};
+
+	    						var commentStr = '<p data-uid="'+user_id+'" class="commentUser sex_'+sex+' read_'+is_read+'"><a title="发表于'+A.js_date_time(ctime)+'">'+nickname+'<img class="avatar" src="/Uploads/Picture/'+avatar+'" ></a>: '+message+'</p>';
+
+	    						$('li[data-msgid="'+msg_id+'"]').find('.comment').children('p').append(commentStr);
+	    					};
+
+	    				});
+
+	    			})
+	    		});
+	    	})
+    	}
+    	messageAjax ('#tabs-25490');
+    	
+
+    })
+    
+}
+
+
+</script>

@@ -1,0 +1,100 @@
+
+<% include header.html %>
+<style type="text/css">
+      body {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #f5f5f5;
+      }
+
+      .form-signin {
+        max-width: 300px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form-signin .form-signin-heading,
+      .form-signin .checkbox {
+        margin-bottom: 10px;
+      }
+      .form-signin input[type="text"],
+      .form-signin input[type="password"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+
+</style>
+
+<div class="container">
+
+	<form class="form-signin" action="home" method="post">
+		<fieldset> 
+			<legend class="form-signin-heading">登陆</legend>
+			<input type="text" name="user" class="input-block-level user_user" placeholder="请输入你的账号">
+			<input type="password" name="password" class="input-block-level user_password" placeholder="请输入你的密码">
+		</fieldset>
+        <fieldset>
+            <a class="" href="#">忘记密码</a>
+            <label class="checkbox">
+                <input type="checkbox" value="remember-me" checked> 记住我
+            </label>
+        </fieldset>
+        <fieldset>
+            <button type="submit" class="btn btn-primary user_submit">登陆</button>
+            <a class="btn btn-success" href="#">注册</a>
+        </fieldset>
+
+	</form>
+
+</div> <!-- /container -->
+
+<% include footer.html %>
+
+<script>
+
+window.onload=function(){
+
+	seajs.config({
+	base: '/javascripts',
+	alias: {
+		    'jquery': 'jquery/jquery/1.10.1/jquery',
+        "zepto":  "jquery/zepto/1.1.6/zepto",
+        "all": "share/all/2.0.0/all",
+        'verify':'share/verify/1.0.0/verify',
+	  }
+	});
+
+    seajs.use(['jquery', 'verify'], function($,V){
+
+        var $ = jQuery;
+        var user_submit = $('.user_submit');
+
+        user_submit.on('click', function(e) {
+
+            var user_user = $('.user_user'),
+                user_password = $('.user_password');
+                
+            if (user_user.val()=='') {
+                user_user.attr({placeholder: '用户名不能为空'}).toggleClass('highlight');
+                return false;
+            }else if(user_password.val()==''){
+                user_password.attr({placeholder: '密码不能为空'}).toggleClass('highlight');
+                return false;
+            }else{
+                return true;
+            }
+        });
+    })
+}
+
+
+</script>

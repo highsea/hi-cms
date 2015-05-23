@@ -1,0 +1,49 @@
+<% include header.html %>
+
+<header class="container-fluid">
+	<% if (result!='') { %>  
+    <section class="row-fluid">
+		<ul>
+			<li>用户管理</li>
+			<li>活动报名</li>
+			<li>项目管理</li>
+
+		</ul>
+    </section>
+    <% } else{%>
+
+    <section class="row-fluid">
+		<form class="form-horizontal">
+			<fieldset>
+			    <legend>管理员登陆 </legend>
+			</fieldset>
+			<div class="control-group">
+				 <label class="control-label" for="inputEmail">名称</label>
+				<div class="controls">
+					<input id="inputEmail" type="text" />
+				</div>
+			</div>
+			<div class="control-group">
+				 <label class="control-label" for="inputPassword">密钥</label>
+				<div class="controls">
+					<input id="inputPassword" type="password" />
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					 <!-- <label class="checkbox"><input type="checkbox" />Remember me</label> --> <button type="submit" class="btn">登陆</button>
+				</div>
+			</div>
+		</form>
+    </section>
+    <% } %>
+</header>
+
+
+<footer class="container-fluid">
+    <section class="row-fluid">
+
+    </section>
+</footer>
+
+<% include footer.html %>

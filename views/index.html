@@ -1,0 +1,227 @@
+<%=include header.html%>
+
+
+
+<div class="container-narrow">
+
+<header class="container-fluid">
+
+
+</header>
+
+
+
+    <div class="jumbotron">
+        <h1><%=title%></h1>
+        <p class="lead">This Projedt by NodeJs + Mysql + express + connect-redis；</p>
+        <div class="tips"></div>
+
+
+        <a class="btn btn-large btn-success" href="/login">去登陆</a>
+    </div>
+
+    <hr>
+    <div class="row-fluid marketing">
+        <div class="span6">
+            <h4>用户数量</h4>
+            <p>目前平台注册人数：<%=usernum%>人 </p>
+        </div>
+
+        <div class="span6">
+            <h4>你访问次数</h4>
+            <p>一共<%=visit%>次</p>
+            
+        </div>
+    </div>
+
+    <div class="marketing row-fluid">
+        <div class='span12'>
+            <h4 class="span12">广场: 一共 <%=page.allnews%> 条消息 <small>含未屏蔽消息</small>，每页 20条，分 <%=page.pageCount%> 页 </h4>
+            <% d = rows %>
+            <% com_length = d.length %>
+            <% if(com_length){ %>
+            
+
+
+                <% for(i=0;i<com_length;i++){ %>
+                        <div class="thumbnail span2" data-pg="<%=i%>" data-msgid="<%=d[i].msg_id%>" > 
+                            <ul>
+                                <li><i>(<%=(i+1)%>/<%=com_length%>) </i> <b><%=d[i].user_id%></b></li>
+                                <!-- <li>logo: <a href="" target="_blank"><img src="" height="90" /></a></li> -->
+                                <li>
+                                    
+                                    <p> <%=d[i].message%></p>
+                                </li>
+                                <li class="photo">
+                                    <p> <%=d[i].photo%> </p>
+                                </li>
+                                <li>
+                                    <p ><%=d[i].location%></p>
+                                </li>
+                                <li>
+                                    <p>赞数：<%=d[i].up_count%></p>
+                                </li>
+
+                                <li>
+                                    <p>回复数：<%=d[i].comment_count%></p>
+                                </li>
+                                <li>
+                                    <p>阅读数：<%=d[i].read_count%></p>
+                                </li>
+                                <li class="time">
+                                    <p>发表时间：<span><%=d[i].ctime%></span></p>
+                                </li>
+                            </ul>
+                            
+                        </div>
+                        
+                <% } %>
+            <% } %>
+        </div>
+    </div>
+
+    
+
+
+    //修改分页的div，增加自定义的属性
+<div class="span12">
+<div id="page1" pageCount="<%=page.pageCount%>" pageNum="<%=page.num %>" pageSize="<%=page.size%>" pageLimit="<%=page.limit%>" numberOfPages="<%=page.numberOf%>"></div>
+
+
+
+
+    <footer id="footer" class="container-fluid">
+        <p class="muted credit">by<a href="http://highsea90.com/"> highsea </a>.</p>
+    </footer>
+
+</div>
+<%=include footer.html%>
+
+
+<script>
+//document.write('<script src=' + ('__proto__' in {} ? 'zepto' : 'jquery') + '.js><\/script>');
+window.onload=function(){
+
+	seajs.config({
+	base: '/javascripts',
+	alias: {
+        'boots-jquery':'assets/boots-jquery',
+        //"zepto"     :  "jquery/zepto/1.1.6/zepto.min",
+		//'jquery'    : 'jquery/jquery/1.10.1/jquery',
+        'verify'    : 'share/verify/1.0.0/verify',
+        'all'       : 'share/all/2.0.0/all',
+        //'bootstrap' : 'bootstrap/bootstrap/2.3.2/bootstrap.min',
+        'paginator' : 'bootstrap/paginator/1.0.2/bootstrap-paginator.min'
+	  }
+	});
+
+    seajs.use(['boots-jquery', 'verify', 'all', 'paginator'], function($,V,A,P){
+
+        //var $ = Zepto;
+        var $ = jQuery;
+
+        //console.log(B);
+
+        var photo = $('.thumbnail').find('.photo').children('p'),
+            time = $('.thumbnail').find('.time').find('span'),
+            photoLength = photo.length;
+            
+            
+
+        /*for (var i = 0; i < photoLength; i++) {
+            var url = photo.eq(i).text();
+
+            // $.each(url, function(i, item){
+            //     str += '<img src='+item+'>'; 
+            // }); 
+            if (JSON.parse(url).length==1) {
+                str += '<img src=http://localhost:3000/Uploads/Picture/'+url[0]+'>';
+            }else{
+                for (var k = 0; k < url.length; k++) {
+                    var imgurl = '<img src=http://localhost:3000/Uploads/Picture/'+url[k]+'>';
+                    str += imgurl;
+                }
+            }
+            
+            photo.html(str); 
+            //JSON.parse(jQuery('.photo').children('p').eq(0).text())[0]
+        };*/
+
+        for (var i = 0; i < photoLength; i++) {
+            var url = JSON.parse(photo.eq(i).text());
+            var unixtime = time.eq(i).text();
+            var str='';
+
+            if (url.length==1) {
+                str += '<img src=http://localhost:3000/Uploads/Picture/'+url[0]+'>';
+            }else{
+                for (var k = 0; k < url.length; k++) {
+                    var imgurl = '<img src=http://localhost:3000/Uploads/Picture/'+url[k]+'>';
+                    str += imgurl;
+                }
+            }
+            photo.eq(i).html(str); 
+
+            time.eq(i).html(A.js_date_time(unixtime));
+
+        };
+
+
+
+
+       
+
+            //获得浏览器参数
+            $.extend({
+                getUrlVars: function(){
+                    var vars = [], 
+                        hash;
+                    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                    for(var i = 0; i < hashes.length; i++){
+                        hash = hashes[i].split('=');
+                        vars.push(hash[0]);
+                        vars[hash[0]] = hash[1];
+                    }
+                    return vars;
+                },
+                getUrlVar: function(name){
+                    return $.getUrlVars()[name];
+                }
+            });
+
+            //封装浏览器参数
+            var composeUrlParams=function(){
+                var param='';
+                $.each($.getUrlVars(), function(i, item) {
+                    if(item!='p'){
+                        var val=$.getUrlVar(item);
+                        if(val) param += "&" + item+"="+val;
+                    }
+                });
+                return param;
+            }
+
+            //分页功能
+            var page=$('#page1');
+            var options = {
+                currentPage     : page.attr('pageNum'),
+                totalPages      : page.attr('pageCount'),
+                numberOfPages   : page.attr('numberOfPages'),
+                pageUrl         : function(type, page, current){
+                    return "/index?"+composeUrlParams()+"&p="+page;
+                }
+            }
+            $('#page1').bootstrapPaginator(options);
+      
+
+
+
+
+    })
+
+}
+
+</script>
+
+
+

@@ -1,0 +1,178 @@
+<% include header.html %>
+
+
+
+<header class="container-fluid">
+	
+	
+    <section class="row-fluid">
+     	<!-- 第一步骤 -->
+		<form class="span12 subject_1">
+          <fieldset>
+              <legend>项目基本信息</legend>
+          </fieldset>
+          <div class="control-group">
+		    <label class="control-label span3">项目名称</label>
+		    <div class="controls span9">
+		      <input type="text" class="sub_name" name='xiangmu' placeholder="中英文都可" autocomplete="off">
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span3">公司名称</label>
+		    <div class="controls span9">
+		      <input type="text" class="sub_company" name="gongsi" placeholder="中英文都可" autocomplete="off">
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span3">融资情况</label>
+		    <div class="controls span9">
+		        <select class="sub_finan" name="rongzi">
+				  <option value="100000">融资1</option>
+				  <option value="200000">融资2</option>
+				  
+				</select>
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span3">发展阶段</label>
+		    <div class="controls span9">
+		        <select class="sub_stage" name="jieduan">
+				  <option value="100000">阶段1</option>
+				  <option value="200000">阶段2</option>
+				  
+				</select>
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span3">领域</label>
+		    <div class="controls span9">
+		        <select class="sub_scope" name="lingyu">
+				  <option value="100000">领域1</option>
+				  <option value="200000">领域2</option>
+				  
+				</select>
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span3">地区</label>
+		    <div class="controls span9">
+		        <select class="sub_city" name="diqu">
+				  <option value="100000">北京</option>
+				  <option value="200000">上海</option>
+				  <option value="300000">广州</option>
+				  <option value="400000">香港</option>
+				  <option value="500000">浙江</option>
+				</select>
+		    </div>
+		  </div>
+		    
+
+		  <div class="control-group">
+		    <div class="controls">
+		    	<a class="btn btn-primary"> 下一步 </a>
+		    </div>
+		  </div>
+        </form>
+        <!-- 第二步骤 -->
+        <form class="span12 subject_2">
+          <fieldset>
+              <legend>图片简介</legend>
+          </fieldset>
+          <div class="control-group">
+		    <label class="control-label span12">项目简介</label>
+		    <div class="controls span12">
+		      
+		      <textarea cols="30" rows="10" class="sub_content" name='jianjie' placeholder="中英文都可" autocomplete="off">
+		      		
+		      </textarea>
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span12">项目图片</label>
+		    <div class="controls span12">
+		       <ul>
+		       	<li><img src="images/add.gif" alt=""></li>
+		       	<li><img src="images/add.gif" alt=""></li>
+		       	<li><img src="images/add.gif" alt=""></li>
+
+		       </ul>
+		    </div>
+		  </div>
+		  
+		  
+		  
+		  
+		    
+
+		  <div class="control-group">
+		    <div class="controls">
+		    	<a class="btn btn-primary"> 下一步 </a>
+		    </div>
+		  </div>
+        </form>
+        <!-- 第三步 -->
+        <form class="span12 subject_3" action="addsubject" method="post">
+          <fieldset>
+              <legend>创始团队信息</legend>
+          </fieldset>
+          <div class="control-group">
+		    <label class="control-label span3">CEO</label>
+		    <div class="controls span9">
+		      <input type="text" class="leader_1" name='ceoname' placeholder="中英文都可" autocomplete="off">
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span3">邮箱</label>
+		    <div class="controls span9">
+		      <input type="text" class="email_1" name="ceoemail" autocomplete="off">
+		    </div>
+		  </div>
+		  
+		  <div class="control-group">
+		    <label class="control-label span3">团队核心1</label>
+		    <div class="controls span9">
+		      <input type="text" class="leader_2" name='teamname1' placeholder="中英文都可" autocomplete="off">
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span3">邮箱</label>
+		    <div class="controls span9">
+		      <input type="text" class="email_2" name="teamemail1" autocomplete="off">
+		    </div>
+		  </div>
+
+		  <div class="control-group">
+		    <label class="control-label span3">团队核心2</label>
+		    <div class="controls span9">
+		      <input type="text" class="leader_3" name='teamname2' placeholder="中英文都可" autocomplete="off">
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label span3">邮箱</label>
+		    <div class="controls span9">
+		      <input type="text" class="email_3" name="teamemail2" autocomplete="off">
+		    </div>
+		  </div>
+		    
+
+		  <div class="control-group">
+		    <div class="controls">
+				<input type="hidden" name='step1_step2' value=''>
+		    	<input type="submit" value="完成" class="btn btn-success ">
+		    </div>
+		  </div>
+        </form>
+		
+		
+    </section>
+	
+</header>
+
+
+<footer class="container-fluid">
+    <section class="row-fluid">
+
+    </section>
+</footer>
+
+<% include footer.html %>
