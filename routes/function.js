@@ -82,9 +82,13 @@ function userinfo (req, res, name, cb){
 @
 */
 
+function nowUnix(){
+    return Math.round(new Date().getTime()/1000);
+}
+
 function dayAgo(n){
-    var nowUnix = Math.round(new Date().getTime()/1000);
-    return nowUnix-3600*24*n
+    //var nowUnix = ;
+    return nowUnix()-3600*24*n
 }
 
 
@@ -108,5 +112,6 @@ exports.jsonTips 			= jsonTips;
 exports.userinfo            = userinfo;
 exports.friendlyError       = friendlyError;
 exports.dayAgo              = dayAgo;
+exports.nowUnix             = nowUnix;
 
 

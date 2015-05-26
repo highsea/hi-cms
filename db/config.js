@@ -39,6 +39,8 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 		1020:'没有填写信息',
 		1021:'没有填写id，该接口通过ID查询',
 		1022:'没有填写name，该接口通过name查询',
+		1023:'没有填写value，该接口通过value设置值',
+
 	},
 	//正常接收 2XXX
 	Code2X = {
@@ -49,6 +51,8 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 		2010:'请检查用户名密码以及分类',
 		2011:'请检查菜单字母简写和中文名',
 		2003:'您需要先登录',
+		2004:'您需要先登录，或者您的权限不够高！',
+
 	},
 	//重定向 3XXX
 	Code3X = {

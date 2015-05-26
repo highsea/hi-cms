@@ -23,7 +23,7 @@ function mdb(callback){
 	    user: 'root',
 	    password: '',
 	    database:'xiaojiaoyar',
-	    port: 3306,
+	    port: 3308,
 	});
 
 	if (typeof(callback)=='function') {

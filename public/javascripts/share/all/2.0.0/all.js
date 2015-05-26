@@ -29,6 +29,11 @@ define(function(require, exports, module) {
 		'yonghuming1':'该用户名可以抢注！',
 		'0':'错误！请检查填写的信息',
 		'1':'格式正确~',
+		'nothing':'哎哟没有数据，换一个筛选条件试试看～',
+		'load': '正在载入……',
+		'confirm': '身份验证通过',
+		'confirm_msg_re' : "身份验证通过，确定该操作吗？",
+		'confirm_msg_good':"推荐数值越大越考前，确定该操作吗？",
 	}
 
 	all.authority = {
@@ -71,6 +76,61 @@ define(function(require, exports, module) {
 	@ 获取当前 host
 	@*/
 	all.domain = window.location.protocol+'//'+window.location.host;
+
+	all.elm = function (dom){
+		return $('.'+dom);
+	}
+
+/*
+@ 展示评论 
+*/
+
+    all.showComment = function(dataList, callback){
+
+    	var m = dataList.data.list,
+			mLength = dataList.data.length;
+
+    		
+		var messageList = $('.messageList');
+		messageList.find('.comment').children('p').html('评论：');
+
+		for (var i = 0; i < mLength; i++) {
+			var msg_id = m[i].msg_id,
+				commentid = m[i].id,
+				user_id = m[i].user_id,
+				user_id_b = m[i].user_id_b,
+				message = m[i].message,
+				ctime = m[i].ctime,
+				is_read = m[i].is_read,
+				nickname = m[i].nickname,
+				sex = m[i].sex,
+				avatar = m[i].avatar;
+
+			var currentDOM_msg = $('li[data-msgid="'+msg_id+'"]');
+
+			/*if (user_id!=currentDOM_msg.data('user_id')) {
+
+				var commentStr = '<p data-userid="'+user_id+'" data-useridb="'+user_id_b+'" class="commentUser sex_'+sex+' read_'+is_read+'"><a title="发表于'+A.js_date_time(ctime)+'">'+nickname+'<img class="avatar" src="/Uploads/Picture/'+avatar+'" ></a>: '+message+'</p>';
+
+				currentDOM_msg.find('.comment').children('p').append(commentStr);
+				
+			}else if(user_id_b==currentDOM_msg.find('.comment').children('p').find('p').data('user_id')){
+				var userID_BY_Str = '回复'+user_id_b+'：<p data-userid="'+user_id+'" data-useridb="'+user_id_b+'" class="commentUser sex_'+sex+' read_'+is_read+'"><a title="发表于'+A.js_date_time(ctime)+'">'+nickname+'<img class="avatar" src="/Uploads/Picture/'+avatar+'" ></a>: '+message+'</p>';
+				currentDOM_msg.find('.comment').children('p').find('[data-userid="'+user_id_b+'"]').append(userID_BY_Str);
+
+			}*/
+
+			var commentStr = '<p class="commentHTML" data-commentid="'+commentid+'" data-userid="'+user_id+'" data-useridb="'+user_id_b+'" class="commentUser sex_'+sex+' read_'+is_read+'"><a title="发表于'+all.js_date_time(ctime)+'">'+nickname+'<img class="avatar" src="/Uploads/Picture/'+avatar+'" ></a>: '+message+'  <i class="btn reComment"> 放回收站</i></p>';
+
+			currentDOM_msg.find('.comment').children('p').append(commentStr);
+
+			
+		};
+
+		callback();
+
+
+    }
 /*
 @ 展示 message
 @
@@ -113,7 +173,7 @@ define(function(require, exports, module) {
 				photoStr += '<li><img src="/Uploads/Picture/'+photo[0]+'" alt="" /></li>'
 			}
 
-			str += '<li class="span5 status_'+status+'" data-msgid="'+msg_id+'" id="'+user_id+'" data-sex="'+sex+'">'+
+			str += '<li class="span5 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'">'+
 			                '<div data-feedtype="'+feedtype+'" class="thumbnail">'+
 			                  '<h4><img class="avatar" src="/Uploads/Picture/'+avatar+'" alt="" />'+nickname+' </h4>'+
 			                  '<small>发表于：'+all.js_date_time(ctime)+'</small>'+
@@ -128,8 +188,8 @@ define(function(require, exports, module) {
 			                    '<p>评论：正在载入……</p>'+
 			                  '</div>'+
 			                  '<div class="caption order">'+
-								'<a class="btn btn-success">推荐 '+order_count+'</a> '+
-								'&nbsp; <a class="btn btn-danger">删除 </a>'+
+								'<a class="btn btn-success goodmsg">推荐 '+order_count+'</a> '+
+								'&nbsp; <a class="btn btn-danger recycleMessage ">动态放回收站 </a>'+
 			                  '</div>'+
 			                '</div>'+
 			              '</li>';
@@ -169,6 +229,8 @@ define(function(require, exports, module) {
 			}
 		})
 	}
+
+
 
 	module.exports = all;
 

@@ -9,6 +9,9 @@
 	.sex_2{border-left: 3px solid #f00;}
 	.sex_1{border-left: 3px solid #ff0;}
 	.read_0{color: #04c}
+	.recomment{background: #ccc}
+	body .current{background: #5bb75b;}
+	.navbar .current a{color: #fff!important}
 
 
 </style>
@@ -89,10 +92,13 @@
 						 <a href="#panel-1" data-toggle="tab" >全部</a>
 					</li>
 					<li>
-						 <a href="#panel-2" data-toggle="tab" >热门推荐</a>
+						 <a href="#panel-2" data-toggle="tab" class="good" data-sta='hot'>热门推荐</a>
 					</li>
 					<li>
-						 <a href="#panel-3" data-toggle="tab" class="sta" data-sta='del'>已被删除</a>
+						 <a href="#panel-3" data-toggle="tab" class="sta" data-sta='del'>动态回收站</a>
+					</li>
+					<li>
+						 <a href="#panel-4" data-toggle="tab" class="comment_sta" data-sta='commentd'>评论回收站</a>
 					</li>
 				</ul>
 				<div class="tab-content">
@@ -186,36 +192,54 @@
 							
 							<div class="span3">
 								类型:
-								<select class="span8" data-marketing="">
-									<option value="betweenness">全部</option>
-									<option value="closeness">单图</option>
-									<option value="40">多图</option>
-							        <option value="50">图文</option>
+								<select class="span8 mark_good">
+									<option selected value="all">全部</option>
+									<option value="p1">单图</option>
+									<option value="mp">多图</option>
+							        <option value="tp">图文</option>
 								</select>
 							</div>
 							<div class="span3">
 								发表时间
-								<select class="span8">
-									<option value="10">三天内</option>
-							        <option value="20">一周内</option>
-							        <option value="30">俩周内</option>
+								<select class="span8 time_good">
+									<option value="d3">三天内</option>
+							        <option selected value="w1">一周内</option>
+							        <option value="w2">俩周内</option>
+							        <option value="m1">一个月</option>
+							        <option value="m2">俩个月</option>
+							        <option value="m6">半年内</option>
+
 							    </select>
 							</div>
 							<div class="span3">
 								排序:
-								<select class="span8">
-							        <option value="60">按时间排序</option>
-							        <option value="70">按热度排序</option>
+								<select class="span8 order_good">
+							        <option selected value="time">按时间</option>
+							        <option value="up">按获赞数</option>
+							        <option value="read">按阅读量</option>
+							        <option value="comment">按回复数</option>
+
 							    </select>
 							</div>
 							<div class="span3">
-								<a class="btn btn-success ">查看消息</a>
+								<a class="btn btn-success msgHot">看推荐的消息</a>
 							</div>
 						</div>
 
 						<!--  -->
+						<hr>
 
-						<a id="modal-554326" href="#modal-container-554326" role="button" class="btn" data-toggle="modal">触发遮罩窗体</a>
+						
+
+						<div class="row-fluid msgHotList">
+				            <ul class="thumbnails">
+
+				              
+				              推荐的 loading
+				            </ul>
+				        </div>
+
+
 
 
 	
@@ -224,7 +248,89 @@
 					</div>
 					<div class="tab-pane" id="panel-3">
 
-					删除的
+						<div class="row-fluid">
+							
+							<div class="span3">
+								类型:
+								<select class="span8 mark_delete">
+									<option selected value="all">全部</option>
+									<option value="p1">单图</option>
+									<option value="mp">多图</option>
+							        <option value="tp">图文</option>
+								</select>
+							</div>
+							<div class="span3">
+								发表时间
+								<select class="span8 time_delete">
+									<option value="d3">三天内</option>
+							        <option selected value="w1">一周内</option>
+							        <option value="w2">俩周内</option>
+							        <option value="m1">一个月</option>
+							        <option value="m2">俩个月</option>
+							        <option value="m6">半年内</option>
+
+							    </select>
+							</div>
+							<div class="span3">
+								排序:
+								<select class="span8 order_delete">
+							        <option selected value="time">按时间</option>
+							        <option value="up">按获赞数</option>
+							        <option value="read">按阅读量</option>
+							        <option value="comment">按回复数</option>
+
+							    </select>
+							</div>
+							<div class="span3">
+								<a class="btn btn-success msgDelete">已删消息</a>
+							</div>
+						</div>
+						<hr>
+
+						<div class="row-fluid msgDeleteList">
+				            <ul class="thumbnails">
+
+				              
+				              删除的 loading
+				            </ul>
+				        </div>
+
+
+
+					
+					</div>
+					<div class="tab-pane" id="panel-4">
+
+						<div class="row-fluid">
+							
+							
+							<div class="span3">
+								发表时间
+								<select class="span8 time_del_com">
+									<option value="d3">三天内</option>
+							        <option selected value="w1">一周内</option>
+							        <option value="w2">俩周内</option>
+							        <option value="m1">一个月</option>
+							        <option value="m2">俩个月</option>
+							        <option value="m6">半年内</option>
+
+							    </select>
+							</div>
+							
+							<div class="span3">
+								<a class="btn btn-success commentDelShow">已删评论</a>
+							</div>
+						</div>
+						<hr>
+
+						<div class="row-fluid commentDeleteList">
+				            <ul class="thumbnails">
+
+				              
+				              评论回收站 loading
+				            </ul>
+				        </div>
+
 					</div>
 				</div>
 			</div>
@@ -252,8 +358,10 @@
 					</div>
 				</div>
 			</div> -->
+
+			<!-- <a id="modal-554326" href="#modal-container-554326" role="button" class="btn" data-toggle="modal">正在开发</a> -->
 			
-			<div id="modal-container-554326" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<!-- <div id="modal-container-554326" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-header">
 					 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<h3 id="myModalLabel">
@@ -268,8 +376,26 @@
 				<div class="modal-footer">
 					 <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button> <button class="btn btn-primary">保存设置</button>
 				</div>
-			</div>
+			</div> -->
 			<!-- modal -->
+
+			<!-- Button to trigger modal -->
+			<!-- <a href="#myModal" role="button" class="btn" data-toggle="modal">查看演示案例</a> -->
+			 
+			<!-- Modal -->
+			<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			  <div class="modal-header">
+			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+			    <h3 id="myModalLabel">标题栏</h3>
+			  </div>
+			  <div class="modal-body">
+			    <p>显示信息</p>
+			  </div>
+			  <div class="modal-footer">
+			    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+			    <button class="btn btn-primary confirm">确定保存</button>
+			  </div>
+			</div>
 
 
 
@@ -310,8 +436,10 @@ window.onload=function(){
 	  }
 	})
 	
-    seajs.use(['boots-jquery', 'all'], function($,A){
+    seajs.use(['boots-jquery', 'all', 'verify'], function($,A,V){
     	var $ = jQuery;
+
+    	//console.log(V);
 		
     	var mark = $('.mark'),
     		time = $('.time'),
@@ -322,86 +450,335 @@ window.onload=function(){
 		var messageLi = messageList.children('ul').children('li'),
 			mesLength = messageLi.length;
 
-    	//已被删除
-    	$('#tabs-25490').on('click', '.sta', function(event) {
+		//评论回收站
+		$('#tabs-25490').on('click', '.comment_sta,.commentDelShow', function(event){
+			event.preventDefault();
+			$('.commentDeleteList').children('ul').html(A.textTips['load']);
+			//渲染 回收站的评论
+			A.ajax('/mcomment', {
+				time : A.elm('time_del_com').val(),
+				msg  : 'del',
+
+			}, '#tabs-25490', function(dataList){
+
+				if (dataList.data.length>0) {
+					var comd = dataList.data.list,
+					    dlength = comd.length,
+					    commentStr = '';
+
+					for (var i = 0; i < dlength; i++) {
+
+						commentStr += '<li class="commentHTML" data-commentid="'+comd[i].id+'" data-userid="'+comd[i].user_id+'" data-useridb="'+comd[i].user_id_b+'" class="commentUser sex_'+A.sex[comd[i].sex]+' read_'+comd[i].is_read+'">  <a title="">'+comd[i].nickname+'<img class="avatar" src="/Uploads/Picture/'+comd[i].avatar+'" ></a>: '+comd[i].message+' <span>发表于'+A.js_date_time(comd[i].ctime)+'</span> <i class="btn btn-warning okComment"> 恢复评论</i>  <i class="btn "> 完全删除</i></li>';
+					};
+
+					//console.log(dataList);
+					$('.commentDeleteList').children('ul').html(commentStr);
+				}else{
+
+					$('.commentDeleteList').children('ul').html(A.textTips['nothing']);
+
+				}
+
+			})
+
+
+		}).
+		on('click', '.good,.msgHot', function(event) {
+			event.preventDefault();
+			//推荐的消息 展示
+			var msgHotList = $('.msgHotList');
+    		msgHotList.children('ul').html(A.textTips['load']);
+
+    		A.ajax('/message', {
+    			time 	: A.elm('time_good').val(),
+	    		sta 	: 'good',
+	    		order 	: A.elm('order_good').val(),
+	    		mark 	: A.elm('mark_good').val(),
+	    	}, '#tabs-25490', function (dataList) {
+	    		if (dataList.data.length>0) {
+	    			//渲染热门推荐的 动态
+	    			A.showMessage(dataList, '.msgHotList', function(){
+
+	    				msgHotList.find('.up').html('赞：不显示');
+		    			msgHotList.find('.comment').html('评论：不显示');
+
+
+		    		})
+	    		}else{
+	    			msgHotList.children('ul').html(A.textTips['nothing']);
+	    		}
+	    	})
+		}).
+		on('click', '.goodmsg', function(event) {
+			event.preventDefault();
+			//推荐 ，数值越大越靠前， 默认 0:不推荐
+			var parentDom = $(this).closest('.thumbnail').parent('li'),
+				thisDom = $(this);
+
+			$('#myModal').modal('show');
+			// bootstrap V2版本 不支持 Modal 回调！！！！
+			$('#myModalLabel').text('热门推荐');
+			$('.modal-body').children('p').html('<p>'+A.textTips['confirm']+'<p/><p>'+A.textTips['confirm_msg_good']+'</p><p>请输入推荐的数值：<input class="confirmVal" type="text" value="" placeholder="0" /></p>');
+
+			$('.confirm').on('click', function(){
+
+				var confirmValue = $('.confirmVal').val();
+				if (V.isDigit(confirmValue)) {
+
+					$('#myModal').modal('hide');
+
+					A.ajax('/goodMessage', {
+						id : parentDom.data('msgid'),
+						value : confirmValue,
+					},'#tabs-25490', function(dataList){
+						console.log(dataList);
+						if (dataList.code=='2000') {
+							
+							thisDom.html('推荐 '+confirmValue);
+						};
+						//console.log(id);
+					})
+
+
+				}else{
+					alert('请输入数字');
+				}
+			})
+
+
+
+
+
+			/*if(confirm(A.textTips['confirm_msg_re'])) {
+
+				var parentDom = $(this).closest('.thumbnail').parent('li'),
+					thisDom = $(this);
+				A.ajax('/goodMessage', {
+					id : parentDom.data('msgid'),
+					value : 3,
+				},'#tabs-25490', function(dataList){
+					console.log(dataList);
+					if (dataList.code=='2000') {
+						
+						thisDom.html('推荐 '+'3');
+					};
+					//console.log(id);
+				})
+
+			}*/
+
+
+
+		});
+
+    	//已被删除 message delete
+    	$('#tabs-25490').on('click', '.sta,.msgDelete', function(event) {
     		event.preventDefault();
+    		var msgDeleteList = $('.msgDeleteList');
+    		msgDeleteList.children('ul').html(A.textTips['load']);
+
+    		/*if ($(this).data('sta')=='del') {
+
+    		};*/
+
+
+    		A.ajax('/message', {
+    			time 	: A.elm('time_delete').val(),
+	    		sta 	: 'del',
+	    		order 	: A.elm('order_delete').val(),
+	    		mark 	: A.elm('mark_delete').val(),
+	    	}, '#tabs-25490', function (dataList) {
+
+	    		if (dataList.data.length>0) {
+
+	    			//渲染回收站的 动态
+	    			A.showMessage(dataList, '.msgDeleteList', function(){
+
+		    			msgDeleteList.find('.up').html('赞：不显示');
+		    			msgDeleteList.find('.comment').html('评论：不显示');
+
+		    			msgDeleteList.find('.order').html('<a class="btn btn-warning defaultMessage">还原状态 </a> <a class="btn btn-inverse">完全删除 </a>')
+		    		})
+
+	    		}else{
+
+	    			msgDeleteList.children('ul').html(A.textTips['nothing']);
+
+	    		}
+	    	})
     		/* Act on the event */
+    	}).
+    	on('click', '.recycleMessage', function(event) {
+    		event.preventDefault();
+    		//消息放入回收站
+			if(confirm(A.textTips['confirm_msg_re'])) {
+
+				var parentDom = $(this).closest('.thumbnail').parent('li'),
+					thisDom = $(this);
+				A.ajax('/recycleMessage', {
+					id : parentDom.data('msgid'),
+					value : 2,
+				},'#tabs-25490', function(dataList){
+					console.log(dataList);
+					if (dataList.code=='2000') {
+						parentDom.attr({
+							class: 'span5 status_2',
+						});
+						thisDom.attr({
+							class: 'btn btn-warning defaultMessage',
+						}).html('还原状态');
+					};
+					//console.log(id);
+				})
+
+			}
+
+    	}).
+    	on('click', '.defaultMessage', function(event) {
+    		event.preventDefault();
+    		//消息还原显示
+    		if(confirm(A.textTips['confirm_msg_re'])) {
+
+				var parentDom = $(this).closest('.thumbnail').parent('li'),
+					thisDom = $(this);
+				A.ajax('/recycleMessage', {
+					id : parentDom.data('msgid'),
+					value : 1,
+				},'#tabs-25490', function(dataList){
+					console.log(dataList);
+					if (dataList.code=='2000') {
+						parentDom.attr({
+							class: 'span5 status_1',
+						});
+						thisDom.attr({
+							class: 'btn btn-danger recycleMessage',
+						}).html('动态放回收站');
+					};
+					//console.log(id);
+				})
+
+			}
+
+    	}).
+    	on('click', '.reComment', function(event) {
+    		event.preventDefault();
+    		//设置 评论状态 setComment 放回收站
+    		if(confirm(A.textTips['confirm_msg_re'])) {
+
+				var parentDom = $(this).closest('.commentHTML'),
+					thisDom = $(this);
+				A.ajax('/setComment', {
+					id : parentDom.data('commentid'),
+					value : 0,
+				},'#tabs-25490', function(dataList){
+					console.log(dataList);
+					if (dataList.code=='2000') {
+						parentDom.addClass('recomment');
+						thisDom.attr({
+							class: 'btn btn-warning okComment',
+						}).html('恢复评论');
+					};
+					//console.log(id);
+				})
+
+			}
+
+    	}).
+    	on('click', '.okComment', function(event) {
+    		event.preventDefault();
+    		//设置 评论状态 恢复评论
+    		if(confirm(A.textTips['confirm_msg_re'])) {
+
+				var parentDom = $(this).closest('.commentHTML'),
+					thisDom = $(this);
+				A.ajax('/setComment', {
+					id : parentDom.data('commentid'),
+					value : 1,
+				},'#tabs-25490', function(dataList){
+					console.log(dataList);
+					if (dataList.code=='2000') {
+						parentDom.removeClass('recomment');
+						thisDom.attr({
+							class: 'btn reComment',
+						}).html('放回收站');
+					};
+					//console.log(id);
+				})
+
+			}
     	});
 
+    	// 开始查询 动态 待优化
     	$('.showMessage').on('click', function () {
     		messageAjax ('#tabs-25490');
     	})
 
-    	//默认获取的消息
+
+    	
+
+
+    	//默认获取的动态消息
     	function messageAjax (elm) {
-    		messageList.children('ul').html('正在载入……');
+    		messageList.children('ul').html(A.textTips['load']);
     		//载入消息
     		A.ajax('/message', {
 	    		time 	: time.val(),
-	    		sta 	: 'all',
+	    		sta 	: 'show',
 	    		order 	: order.val(),
 	    		mark 	: mark.val(),
 	    	}, elm, function (dataList) {
-	    		//渲染 消息
-	    		A.showMessage(dataList, '.messageList', function(){
-	    			//载入 赞
-	    			A.ajax('/mup', {
-	    				time 	: time.val(),
-	    			}, elm, function(data){
-	    				//console.log(data);
-	    				var u = data.data.list,
-	    					uLength = data.data.length;
 
-	    				messageList.find('.up').children('p').html('赞：');
+	    		if (dataList.data.length=='0'){
+	    			messageList.children('ul').html(A.textTips['nothing'])
+	    		}else{
 
-	    				for (var i = 0; i < uLength; i++) {
-	    					var msg_id = u[i].msg_id,
-	    					    user_id = u[i].user_id,
-	    					    ctime = u[i].ctime,
-	    					    nickname = u[i].nickname,
-	    					    sex = u[i].sex,
-	    					    avatar = u[i].avatar;
+	    			//渲染 消息
+		    		A.showMessage(dataList, '.messageList', function(){
+		    			//载入 赞
+		    			A.ajax('/mup', {
+		    				time 	: time.val(),
+		    			}, elm, function(data){
+		    				//console.log(data);
+		    				var u = data.data.list,
+		    					uLength = data.data.length;
 
-	    					var upStr = ' <a href="#" class="upUser sex_'+sex+'" data-uid="'+user_id+'" title="'+nickname+'('+A.sex[sex]+')发表于'+A.js_date_time(ctime)+'"> <img src="/Uploads/Picture/'+avatar+'" height="25px" alt="" /> </a> ';
-	    					$('li[data-msgid="'+msg_id+'"]').find('.up').children('p').append(upStr);
-	    				};
+		    				messageList.find('.up').children('p').html('赞：');
 
-	    				//载入 回复
-	    				A.ajax('/mcomment', {
-	    					time 	: time.val(),
-	    				}, elm, function(mm){
-	    					console.log(mm);
-	    					var m = mm.data.list,
-	    						mLength = mm.data.length;
-	    					messageList.find('.comment').children('p').html('评论：');
+		    				for (var i = 0; i < uLength; i++) {
+		    					var msg_id = u[i].msg_id,
+		    					    user_id = u[i].user_id,
+		    					    ctime = u[i].ctime,
+		    					    nickname = u[i].nickname,
+		    					    sex = u[i].sex,
+		    					    avatar = u[i].avatar;
 
-	    					for (var i = 0; i < mLength; i++) {
-	    						var msg_id = m[i].msg_id,
-	    							user_id = m[i].user_id,
-	    							user_id_b = m[i].user_id_b,
-	    							message = m[i].message,
-	    							ctime = m[i].ctime,
-	    							is_read = m[i].is_read,
-	    							nickname = m[i].nickname,
-	    							sex = m[i].sex,
-	    							avatar = m[i].avatar;
+		    					var upStr = ' <a href="#" class="upUser sex_'+sex+'" data-uid="'+user_id+'" title="'+nickname+'('+A.sex[sex]+')发表于'+A.js_date_time(ctime)+'"> <img src="/Uploads/Picture/'+avatar+'" height="25px" alt="" /> </a> ';
+		    					$('li[data-msgid="'+msg_id+'"]').find('.up').children('p').append(upStr);
+		    				};
 
-	    						if (true) {
-	    							
-	    						};
+		    				//载入 回复
+		    				A.ajax('/mcomment', {
+		    					time 	: time.val(),
+		    					msg 	: 'ready',
+		    				}, elm, function(mm){
+		    					//console.log(mm);
+		    					//渲染 评论
+		    					A.showComment(mm, function(){
 
-	    						var commentStr = '<p data-uid="'+user_id+'" class="commentUser sex_'+sex+' read_'+is_read+'"><a title="发表于'+A.js_date_time(ctime)+'">'+nickname+'<img class="avatar" src="/Uploads/Picture/'+avatar+'" ></a>: '+message+'</p>';
+		    					})
 
-	    						$('li[data-msgid="'+msg_id+'"]').find('.comment').children('p').append(commentStr);
-	    					};
+		    				});
 
-	    				});
+		    			})
+		    		});
 
-	    			})
-	    		});
+	    		}
+	    		
 	    	})
     	}
     	messageAjax ('#tabs-25490');
+
+    	
     	
 
     })

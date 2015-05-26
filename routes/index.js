@@ -176,7 +176,7 @@ exports.message = function (req, res) {
         time: 'w1', 
         mark: 'tp', 
         order: 'time', 
-        sta: 'all'
+        sta: 'showall'
     };
     var name = req.session.username;
 
@@ -205,7 +205,8 @@ exports.message = function (req, res) {
             //显示（垃圾） sta
             del         : ' and lf_message.status = 2',//不显示的
             show        : ' and lf_message.status = 1',//显示的
-            all         : '',//都要
+            showall     : '',//都要
+            good        : ' and lf_message.order_count!=0',//推荐的 
 
         };
 
@@ -224,11 +225,11 @@ exports.message = function (req, res) {
             doc['sta'] = req.query.sta;//0 1 a
         };
 
-        console.log('req.query.order'+req.query.order+"---doc['order'] :"+doc['order'] );
+        //console.log('req.query.order'+req.query.order+"---doc['order'] :"+doc['order'] );
 
         // var day3fomat = new Date(sql['d3']*1000).toLocaleString();
         // console.log('day3fomat:'+day3fomat+';day3agoUnix:'+sql['d3']);
-        var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime from lf_users,lf_message where lf_users.user_id=lf_message.user_id and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by '+sql[doc['order']]+' desc limit 10000';
+        var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime from lf_users,lf_message where lf_users.user_id=lf_message.user_id and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by lf_message.order_count desc,'+sql[doc['order']]+' desc limit 10000';
         //select * from lf_message where ctime>=1431739693 and message=''  order by ctime desc limit 100000
 
         //每次查询1w条，前期不做分页 
@@ -254,7 +255,13 @@ exports.message = function (req, res) {
 @ 相关参数  msg（all filter）id（Num） time ，主要用于前端对 message 的补充
 @ jsonp  code message data
 @ 权限：登录用户 http://localhost:3000/mcomment?msg=filter&id=668&time=w1
+@              http://localhost:3000/mcomment?msg=del&time=m1
 */
+
+
+// 增加2 新建一个字段 type 区别评论回收站
+//alter table lf_message_comment add type int(11) NOT NULL DEFAULT '1' after id;
+//alter table `lf_message_comment` drop column type; 
 
 exports.mcomment = function (req, res) {
 
@@ -269,9 +276,12 @@ exports.mcomment = function (req, res) {
     if (name) {
 
         var sql={
-            //评论过滤
-            all     : '',
-            filter  : 'filter',
+            //评论过滤 针对id筛选
+            all         : '',
+            filter      : 'filter',
+            del         : 'lf_message_comment.type="0" and',
+            //过滤没有被放回收站的
+            ready       : 'lf_message_comment.type="1" and',
             //时间筛选
             d3          : fun.dayAgo(3),//3天前
             w1          : fun.dayAgo(7),//一周前
@@ -300,8 +310,8 @@ exports.mcomment = function (req, res) {
         };
 
         console.log("sql[doc['msg']]: "+sql[doc['msg']]);
-
-        var commentSQL = 'select lf_message_comment.msg_id,lf_message_comment.user_id,lf_message_comment.user_id_b,lf_message_comment.message,lf_message_comment.ctime,lf_message_comment.is_read,lf_users.user_id,lf_users.nickname,lf_users.sex,lf_users.avatar from lf_users,lf_message_comment where '+sql[doc['msg']]+' lf_users.user_id=lf_message_comment.user_id  and lf_message_comment.ctime>='+sql[doc['time']]+' order by lf_message_comment.ctime desc limit 10000';
+        //若是 被删除的评论 则再选出 删除时间和删除人
+        var commentSQL = 'select lf_message_comment.id,lf_message_comment.msg_id,lf_message_comment.user_id,lf_message_comment.type,lf_message_comment.user_id_b,lf_message_comment.message,lf_message_comment.ctime,lf_message_comment.is_read,lf_users.user_id,lf_users.nickname,lf_users.sex,lf_users.avatar from lf_users,lf_message_comment where '+sql[doc['msg']]+' lf_users.user_id=lf_message_comment.user_id and lf_message_comment.ctime>='+sql[doc['time']]+' order by lf_message_comment.ctime desc limit 10000';
         //每次查询1w条，前期不做分页 
         db.query(commentSQL, function (commentList) {
 
@@ -376,18 +386,155 @@ exports.mup = function (req, res) {
                 length  : mupList.length,
                 list    : mupList,
             };
-
             fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
-            
         })
 
     }else{
-
         fun.friendlyError(req, res, config.Code2X[2003]);
-
     }
-    
 }
+
+
+/*
+@ 动态回收站 Recycle Message API
+@ 相关参数 id（msg_id） value （1 显示 2 回收站）| 自动记录 放回收站的管理员id以及放入时间
+@ jsonp
+@ 需要验证 1.登录 2.管理员  http://localhost:3000/recycleMessage?id=193&value=1
+*/
+/*
+// 增加3 新建一个字段 examine_time (最后审核时间) examine_admin (最后审核的管理员id)
+//alter table lf_message add examine_time int(13) NOT NULL DEFAULT '0' after ctime;
+//alter table `lf_message` drop column examine_time; 
+
+//alter table lf_message add examine_admin varchar(15) NOT NULL DEFAULT 'unknow' after ctime;
+//alter table `lf_message` drop column examine_admin; 
+*/
+
+exports.recycleMessage = function(req, res){
+    var name = req.session.username,
+        type = req.session.type;
+    var doc ={
+        id          : '0',
+        value       : '0'
+        //id      : '',
+        //time: 'w1', 
+    };
+    if (name&&type==8) {
+
+        if (req.query.id) {
+            doc['id'] = req.query.id;
+            if (req.query.value) {
+                doc['value'] = req.query.value;
+                var updateSQL = "update lf_message set status = '"+doc['value']+"',examine_admin='"+name+"',examine_time='"+ fun.nowUnix() +"' WHERE lf_message.msg_id = '"+doc['id']+"'";
+                db.query(updateSQL, function (result) {
+                    //console.log(fun.nowUnix());
+                    fun.jsonTips(req, res, 2000, 'msg_id:'+doc['id']+',value:'+doc['value'], result);
+                })
+            }else{
+                fun.jsonTips(req, res, 1023, config.Code1X[1023], null);
+            }
+        }else{
+            fun.jsonTips(req, res, 1021, config.Code1X[1021], null);
+        }
+
+
+    }else{
+        var text = config.Code4X[2004];
+        fun.friendlyError(req, res, text); 
+    }
+}
+
+
+/*
+@ 消息推荐 order_count  Message API
+@ 相关参数 id（msg_id） value （int 越大越靠前）| 自动记录推荐的管理员id以及推荐时间
+@ jsonp
+@ 需要验证 1.登录 2.管理员  http://localhost:3000/goodMessage?id=193&value=1
+*/
+exports.goodMessage = function(req, res){
+    var name = req.session.username,
+        type = req.session.type;
+    var doc ={
+        id          : '0',
+        value       : '0'
+        //id      : '',
+        //time: 'w1', 
+    };
+    if (name&&type==8) {
+
+        if (req.query.id) {
+            doc['id'] = req.query.id;
+            if (req.query.value) {
+                doc['value'] = req.query.value;
+                var updateSQL = "update lf_message set order_count = '"+doc['value']+"',examine_admin='"+name+"',examine_time='"+ fun.nowUnix() +"' WHERE lf_message.msg_id = '"+doc['id']+"'";
+                db.query(updateSQL, function (result) {
+                    //console.log(fun.nowUnix());
+                    fun.jsonTips(req, res, 2000, 'msg_id:'+doc['id']+',value:'+doc['value'], result);
+                })
+            }else{
+                fun.jsonTips(req, res, 1023, config.Code1X[1023], null);
+            }
+        }else{
+            fun.jsonTips(req, res, 1021, config.Code1X[1021], null);
+        }
+
+
+    }else{
+        var text = config.Code4X[2004];
+        fun.friendlyError(req, res, text); 
+    }
+}
+
+
+/*
+@ 设置评论状态 lf_message_comment type API
+@ 相关参数 id（msg_id） value （int 0:回收站 1:正常）| 自动记录推荐的管理员id以及推荐时间
+@ jsonp
+@ 需要验证 1.登录 2.管理员  http://localhost:3000/setComment?id=1470&value=0
+*/
+
+
+// 增加4 新建一个字段 examine_time (最后审核时间) examine_admin (最后审核的管理员id)
+//alter table lf_message_comment add examine_time int(13) NOT NULL DEFAULT '0' after ctime;
+//alter table `lf_message_comment` drop column examine_time; 
+
+//alter table lf_message_comment add examine_admin varchar(15) NOT NULL DEFAULT 'unknow' after ctime;
+//alter table `lf_message_comment` drop column examine_admin; 
+
+exports.setComment = function(req, res){
+    var name = req.session.username,
+        type = req.session.type;
+    var doc ={
+        id          : '0',
+        value       : '0'
+        //id      : '',
+        //time: 'w1', 
+    };
+    if (name&&type==8) {
+
+        if (req.query.id) {
+            doc['id'] = req.query.id;
+            if (req.query.value) {
+                doc['value'] = req.query.value;
+                var updateSQL = "update lf_message_comment set type = '"+doc['value']+"',examine_admin='"+name+"',examine_time='"+ fun.nowUnix() +"' WHERE lf_message_comment.id = '"+doc['id']+"'";
+                db.query(updateSQL, function (result) {
+                    //console.log(fun.nowUnix());
+                    fun.jsonTips(req, res, 2000, 'msg_id:'+doc['id']+',value:'+doc['value'], result);
+                })
+            }else{
+                fun.jsonTips(req, res, 1023, config.Code1X[1023], null);
+            }
+        }else{
+            fun.jsonTips(req, res, 1021, config.Code1X[1021], null);
+        }
+
+    }else{
+        var text = config.Code4X[2004];
+        fun.friendlyError(req, res, text); 
+    }
+}
+
+
 
 
 /*
@@ -404,6 +551,7 @@ exports.homepost = function(req, res){
     }else{
         //先查询 是否有此 用户名
         //扩展： 手机号、邮箱、用户名 任意登录
+        // 增加1 新建一个字段 type 区别管理员
         //alter table lf_users add type int(11) NOT NULL DEFAULT '1' after user_id;
         //alter table `lf_users` drop column type;  
         db.query(sql, function(rows){   
