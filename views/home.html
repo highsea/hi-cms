@@ -391,7 +391,7 @@ window.onload=function(){
 
 					for (var i = 0; i < dlength; i++) {
 
-						commentStr += '<li class="commentHTML" data-commentid="'+comd[i].id+'" data-userid="'+comd[i].user_id+'" data-useridb="'+comd[i].user_id_b+'" class="commentUser sex_'+A.sex[comd[i].sex]+' read_'+comd[i].is_read+'">  <a title="">'+comd[i].nickname+'<img class="avatar" src="/Uploads/Picture/'+comd[i].avatar+'" ></a>: '+comd[i].message+' <span>发表于'+A.js_date_time(comd[i].ctime)+'</span> <i class="btn btn-warning okComment"> 恢复评论</i>  <i class="btn "> 完全删除</i></li>';
+						commentStr += '<li class="commentHTML" data-commentid="'+comd[i].id+'" data-userid="'+comd[i].user_id+'" data-useridb="'+comd[i].user_id_b+'" class="commentUser sex_'+A.sex[comd[i].sex]+' read_'+comd[i].is_read+'">  <a title="">'+comd[i].nickname+'<img class="avatar" src="http://m.xiaojiaoyar.com/Uploads/Picture/'+comd[i].avatar+'" ></a>: '+comd[i].message+' <span>发表于'+A.js_date_time(comd[i].ctime)+'</span> <i class="btn btn-warning okComment"> 恢复评论</i>  <i class="btn "> 完全删除</i></li>';
 					};
 
 					//console.log(dataList);
@@ -684,7 +684,7 @@ window.onload=function(){
 		    					    sex = u[i].sex,
 		    					    avatar = u[i].avatar;
 
-		    					var upStr = ' <a href="#" class="upUser sex_'+sex+'" data-uid="'+user_id+'" title="'+nickname+'('+A.sex[sex]+')发表于'+A.js_date_time(ctime)+'"> <img src="/Uploads/Picture/'+avatar+'" height="25px" alt="" /> </a> ';
+		    					var upStr = ' <a href="#" class="upUser sex_'+sex+'" data-uid="'+user_id+'" title="'+nickname+'('+A.sex[sex]+')发表于'+A.js_date_time(ctime)+'"> <img src="http://m.xiaojiaoyar.com/Uploads/Picture/'+avatar+'" height="25px" alt="" /> </a> ';
 		    					$('li[data-msgid="'+msg_id+'"]').find('.up').children('p').append(upStr);
 		    				};
 

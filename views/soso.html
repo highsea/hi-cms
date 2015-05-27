@@ -105,7 +105,7 @@
 
 								<li class="span5 status_<%=msgData[i].status%>" data-msgid="<%=msgData[i].msg_id%>" data-userid="<%=msgData[i].user_id%>" data-sex="<%=msgData[i].sex%>">
 									<div data-feedtype="<%=msgData[i].feedtype%>" class="thumbnail">
-										<h4><img class="avatar" src="/Uploads/Picture/<%=msgData[i].avatar%>" alt=""><%=msgData[i].nickname%> </h4>
+										<h4><img class="avatar" src="http://m.xiaojiaoyar.com/Uploads/Picture/<%=msgData[i].avatar%>" alt=""><%=msgData[i].nickname%> </h4>
 										<small class="time">发表于：<span><%=msgData[i].ctime%></span> </small>  | 
 										<small> 用户id：<i><%=msgData[i].user_id%> </i></small> | 
 										<small> 消息id：<a href="/soso?msgid=<%=msgData[i].msg_id%>"><%=msgData[i].msg_id%></a></small>
@@ -210,10 +210,10 @@ window.onload=function(){
             var str='';
 
             if (url.length==1) {
-                str += '<img src=/Uploads/Picture/'+url[0]+'>';
+                str += '<img src=http://m.xiaojiaoyar.com/Uploads/Picture/'+url[0]+'>';
             }else{
                 for (var k = 0; k < url.length; k++) {
-                    var imgurl = '<img src=/Uploads/Picture/'+url[k]+'>';
+                    var imgurl = '<img src=http://m.xiaojiaoyar.com/Uploads/Picture/'+url[k]+'>';
                     str += imgurl;
                 }
             }

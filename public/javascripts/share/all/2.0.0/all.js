@@ -120,7 +120,7 @@ define(function(require, exports, module) {
 
 			}*/
 
-			var commentStr = '<p class="commentHTML" data-commentid="'+commentid+'" data-userid="'+user_id+'" data-useridb="'+user_id_b+'" class="commentUser sex_'+sex+' read_'+is_read+'"><a title="发表于'+all.js_date_time(ctime)+'">'+nickname+'<img class="avatar" src="/Uploads/Picture/'+avatar+'" ></a>: '+message+'  <i class="btn reComment"> 放回收站</i></p>';
+			var commentStr = '<p class="commentHTML" data-commentid="'+commentid+'" data-userid="'+user_id+'" data-useridb="'+user_id_b+'" class="commentUser sex_'+sex+' read_'+is_read+'"><a title="发表于'+all.js_date_time(ctime)+'">'+nickname+'<img class="avatar" src="http://m.xiaojiaoyar.com/Uploads/Picture/'+avatar+'" ></a>: '+message+'  <i class="btn reComment"> 放回收站</i></p>';
 
 			currentDOM_msg.find('.comment').children('p').append(commentStr);
 
@@ -174,16 +174,16 @@ define(function(require, exports, module) {
 
 			if (photo.length>1) {
 				for (var k = 0; k < photo.length; k++) {
-					photoStr += '<li><img src="/Uploads/Picture/'+photo[k]+'" alt="" /></li>';
+					photoStr += '<li><img src="http://m.xiaojiaoyar.com/Uploads/Picture/'+photo[k]+'" alt="" /></li>';
 				};
 
 			}else{
-				photoStr += '<li><img src="/Uploads/Picture/'+photo[0]+'" alt="" /></li>'
+				photoStr += '<li><img src="http://m.xiaojiaoyar.com/Uploads/Picture/'+photo[0]+'" alt="" /></li>'
 			}
 
 			str += '<li class="span5 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'" data-eadmin="'+eadmin+'" data-etime="'+etime+'">'+
 			                '<div data-feedtype="'+feedtype+'" class="thumbnail">'+
-			                  '<h4><small>[第<em>'+page['currentp']+'</em>页：'+(i+1)+'/'+dlength+']</small><img class="avatar" src="/Uploads/Picture/'+avatar+'" alt="" />'+nickname+'<br><small><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
+			                  '<h4><small>[第<em>'+page['currentp']+'</em>页：'+(i+1)+'/'+dlength+']</small><img class="avatar" src="http://m.xiaojiaoyar.com/Uploads/Picture/'+avatar+'" alt="" />'+nickname+'<br><small><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
 			                  '<small>发表于：'+all.js_date_time(ctime)+' </small> '+
 			                  ' | <small> 用户id：<i>'+user_id+' </i></small> | <small> 消息id：<a href="/soso?msgid='+msg_id+'">'+msg_id+'</a></small>'+
 			                  '<p>浏览数：<span>'+read_count+'</span> 评论数：<span>'+comment_count+'</span> 赞：<span>'+up_count+'</span></p>'+

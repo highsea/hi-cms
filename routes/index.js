@@ -43,6 +43,13 @@ var picPATH = config.productInfo.picupload;
 @ 首页 登录页
 @ 相关接口： homepost （以页面跳转方式）
 */
+
+//增加管理员
+//INSERT INTO `xiaojiaoyar`.`lf_users` (`user_id`, `level`, `mobile`, `passwd`, `sex`, `nickname`, `sign`, `province`, `city`, `avatar`, `single`, `status`, `last_time`, `last_ip`, `grade`, `score`, `reg_ip`, `flag`, `platform`, `ctime`, `mtime`, `token`) VALUES ('1515810', '8', '', '123456', '0', 'highsea', '', '', '', '', '', '1', '0', '', '0', '0', '', '0', '0', '0', '0', '')
+//INSERT INTO `xiaojiaoyar`.`lf_users` (`user_id`, `level`, `passwd`, `nickname`) VALUES ('1515810', '8', '123456', 'highsea')
+//INSERT INTO `xiaojiaoyar`.`lf_users` (`user_id`, `level`, `passwd`, `nickname`) VALUES ('201505', '8', '123456', 'xiaojiaoyar')
+
+
 exports.index = function(req, res){
     //分页
     var search  ={};
