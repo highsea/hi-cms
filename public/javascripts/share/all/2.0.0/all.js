@@ -177,7 +177,7 @@ define(function(require, exports, module) {
 
 			str += '<li class="span5 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'" data-eadmin="'+eadmin+'" data-etime="'+etime+'">'+
 			                '<div data-feedtype="'+feedtype+'" class="thumbnail">'+
-			                  '<h4><img class="avatar" src="/Uploads/Picture/'+avatar+'" alt="" />'+nickname+' </h4>'+
+			                  '<h4><small>['+(i+1)+'/'+dlength+']</small><img class="avatar" src="/Uploads/Picture/'+avatar+'" alt="" />'+nickname+' </h4>'+
 			                  '<small>发表于：'+all.js_date_time(ctime)+' </small> '+
 			                  ' | <small> 用户id：<i>'+user_id+' </i></small> | <small> 消息id：<a href="/soso?msgid='+msg_id+'">'+msg_id+'</a></small>'+
 			                  '<p>浏览数：<span>'+read_count+'</span> 评论数：<span>'+comment_count+'</span> 赞：<span>'+up_count+'</span></p>'+

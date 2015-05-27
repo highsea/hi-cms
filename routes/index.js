@@ -92,6 +92,8 @@ exports.index = function(req, res){
             req.session.isVisit = 1;
             
         }
+
+        console.log(res);
         
         res.render('index', {
             title   : config.productInfo.name ,
@@ -168,9 +170,9 @@ exports.homeget = function(req, res) {
 
 /*
 @ message jsonp 接口[赞、评论 数据封装见相应接口 mup  mcomment]
-@ 请求参数 time mark order 值见 sql 对象
+@ 请求参数 time mark order | p(分页，当前页) size(默认20) 值见 sql 对象
 @ jsonp  code message data
-@ 权限： 必须登录后的用户才接受请求  http://localhost:3000/message?callback=dataList&time=w1&sta=show&order=read&mark=tp
+@ 权限： 必须登录后的用户才接受请求 http://localhost:3000/message?callback=dataList&time=w2&sta=show&order=read&mark=tp&p=2&size=10
 */
 exports.message = function (req, res) {
     var doc = {
@@ -179,11 +181,11 @@ exports.message = function (req, res) {
         order: 'time', 
         sta: 'showall'
     };
-    var page = {limit:5,num:1,size:20};
+    var page = {currentp:1,size:20};
 
     //查看哪页
     if(fun.isDigit(req.query.p)){
-        page['num']= req.query.p < 1 ? 1 : req.query.p;
+        page['currentp']= req.query.p < 1 ? 1 : req.query.p;
     }
     //每页多少条
     if (fun.isDigit(req.query.size)) {
@@ -241,19 +243,36 @@ exports.message = function (req, res) {
 
         // var day3fomat = new Date(sql['d3']*1000).toLocaleString();
         // console.log('day3fomat:'+day3fomat+';day3agoUnix:'+sql['d3']);
-        var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time from lf_users,lf_message where lf_users.user_id=lf_message.user_id and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by lf_message.order_count desc,'+sql[doc['order']]+' desc limit '+(page['num']-1)*page['size']+', '+page['size'];
+        var totalSQL   = 'select count(*) from lf_message where lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by lf_message.order_count desc';
+
+        var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time from lf_users,lf_message where lf_users.user_id=lf_message.user_id and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by lf_message.order_count desc,'+sql[doc['order']]+' desc limit '+(page['currentp']-1)*page['size']+', '+page['size'];
         //select * from lf_message where ctime>=1431739693 and message=''  order by ctime desc limit 100000
 
-        //每次查询1w条，前期不做分页 
+        //分页－－查询总条数
+        db.query(totalSQL, function(rowsCount){
 
-        db.query(messageSQL, function (messageList) {
+            rowsCount = rowsCount[0]['count(*)'];
+            console.log('消息总条数：'+rowsCount);
+            page['allnews'] = rowsCount;
+            page['pageCount'] = Math.ceil(rowsCount/page['size']);//ceil向上取整 round四舍五入  floor向下取整
+            //page['numberOf']    = page['pageCount']>5?5:page['pageCount'];
+            
+            // 输出 message 查询结果
+            db.query(messageSQL, function (messageList) {
 
-            var data = {
-                length : messageList.length,
-                list : messageList,
-            };
-            fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
+
+                var data = {
+                    length : messageList.length,
+                    page : page,
+                    list : messageList,
+                };
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
+            })
+
+
         })
+
+        
 
     }else{
         fun.friendlyError(req, res, config.Code2X[2003]);

@@ -132,34 +132,6 @@
 
 						<hr>
 
-
-						<!-- messages -->
-
-						<!-- <div class="accordion" id="accordion-A">
-							<div class="accordion-group">
-								<div class="accordion-heading">
-									 <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion-A" href="#accordion-head-a1">选项卡 #1</a>
-								</div>
-								<div id="accordion-head-a1" class="accordion-body collapse">
-									<div class="accordion-inner">
-										功能块...
-									</div>
-								</div>
-							</div>
-							<div class="accordion-group">
-								<div class="accordion-heading">
-									 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-A" href="#accordion-head-a2">选项卡 #2</a>
-								</div>
-								<div id="accordion-head-a2" class="accordion-body collapse">
-									<div class="accordion-inner">
-										功能块...
-									</div>
-								</div>
-							</div>
-						</div> -->
-
-
-
 						<!--  -->
 
 						<div class="row-fluid messageList">
@@ -170,6 +142,10 @@
 				            </ul>
 				        </div>
 						<!--  -->
+
+						<div class="row-fluid defaultPage">
+							<input type="text" placeholder="请输入页码" ><a class="btn">查看</a>
+						</div>
 
 
 
@@ -482,6 +458,8 @@ window.onload=function(){
 	    		sta 	: 'good',
 	    		order 	: A.elm('order_good').val(),
 	    		mark 	: A.elm('mark_good').val(),
+	    		size 	: '10',
+
 	    	}, '#tabs-25490', function (dataList) {
 	    		if (dataList.data.length>0) {
 	    			//渲染热门推荐的 动态
@@ -575,6 +553,7 @@ window.onload=function(){
 	    		sta 	: 'del',
 	    		order 	: A.elm('order_delete').val(),
 	    		mark 	: A.elm('mark_delete').val(),
+	    		size 	: '10',
 	    	}, '#tabs-25490', function (dataList) {
 
 	    		if (dataList.data.length>0) {
@@ -698,7 +677,7 @@ window.onload=function(){
 
     	// 开始查询 动态 待优化
     	$('.showMessage').on('click', function () {
-    		messageAjax ('#tabs-25490');
+    		messageAjax ('#tabs-25490',1);
     	})
 
 
@@ -706,7 +685,7 @@ window.onload=function(){
 
 
     	//默认获取的动态消息
-    	function messageAjax (elm) {
+    	function messageAjax (elm, n) {
     		messageList.children('ul').html(A.textTips['load']);
     		//载入消息
     		A.ajax('/message', {
@@ -714,6 +693,8 @@ window.onload=function(){
 	    		sta 	: 'show',
 	    		order 	: order.val(),
 	    		mark 	: mark.val(),
+	    		size 	: '10',
+	    		p 		: n,
 	    	}, elm, function (dataList) {
 
 	    		if (dataList.data.length=='0'){
