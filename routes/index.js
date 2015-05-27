@@ -26,17 +26,6 @@ var transporter = nodemailer.createTransport({
 
 var picPATH = config.productInfo.picupload;
 
-
-// var mysql = require('mysql');
-// var conn = mysql.createConnection({
-//     host: 'hdm-144.hichina.com',
-//     user: 'hdm1440387',
-//     password: 'Highsea301',
-//     database:'hdm1440387_db',
-//     port: 3306,
-// });
-
-
 // string.trim() 前台处理
 
 /*
@@ -552,7 +541,7 @@ exports.setComment = function(req, res){
             doc['id'] = req.query.id;
             if (req.query.value) {
                 doc['value'] = req.query.value;
-                var updateSQL = "update lf_message_comment set type = '"+doc['value']+"',examine_admin='"+name+"',examine_time='"+ fun.nowUnix() +"' WHERE lf_message_comment.id = '"+doc['id']+"'";
+                var updateSQL = "update lf_message_comment set status = '"+doc['value']+"',examine_admin='"+name+"',examine_time='"+ fun.nowUnix() +"' WHERE lf_message_comment.id = '"+doc['id']+"'";
                 db.query(updateSQL, function (result) {
                     //console.log(fun.nowUnix());
                     fun.jsonTips(req, res, 2000, 'msg_id:'+doc['id']+',value:'+doc['value'], result);
@@ -768,6 +757,23 @@ exports.soso = function(req, res){
 }
 
 
+/*
+@   贴纸管理页面
+@
+@
+*/
+exports.paster = function(req, res){
+    var name = req.session.username;
+
+
+    if (name) {
+
+
+    }else{
+        res.redirect('/');
+    }
+
+} 
 
 
 
