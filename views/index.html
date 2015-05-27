@@ -18,6 +18,7 @@
 
 
         <a class="btn btn-large btn-success" href="/login">去登陆</a>
+        <p class="lead">用户名：520520 密码：123456</p>
     </div>
 
     <hr>
@@ -35,6 +36,15 @@
     </div>
 
     <div class="marketing row-fluid">
+
+        <div id="page1" pageCount="<%=page.pageCount%>" pageNum="<%=page.num %>" pageSize="<%=page.size%>" pageLimit="<%=page.limit%>" numberOfPages="<%=page.numberOf%>"></div>
+
+        <form action="/">
+            
+            跳转到第<input type="text" name="p" value="" placeholder="">页
+            <button type="submit" class="btn btn-success">提交</button>
+        </form>
+
         <div class='span12'>
             <h4 class="span12">广场: 一共 <%=page.allnews%> 条消息 <small>含未屏蔽消息</small>，每页 20条，分 <%=page.pageCount%> 页 </h4>
             <% d = rows %>
@@ -85,8 +95,6 @@
 
     //修改分页的div，增加自定义的属性
 <div class="span12">
-<div id="page1" pageCount="<%=page.pageCount%>" pageNum="<%=page.num %>" pageSize="<%=page.size%>" pageLimit="<%=page.limit%>" numberOfPages="<%=page.numberOf%>"></div>
-
 
 
 
@@ -115,7 +123,7 @@ window.onload=function(){
 	  }
 	});
 
-    seajs.use(['boots-jquery', 'verify', 'all', 'paginator'], function($,V,A,P){
+    seajs.use(['boots-jquery', 'verify', 'all'], function($,V,A){
 
         //var $ = Zepto;
         var $ = jQuery;
@@ -153,10 +161,10 @@ window.onload=function(){
             var str='';
 
             if (url.length==1) {
-                str += '<img src=http://localhost:3000/Uploads/Picture/'+url[0]+'>';
+                str += '<img src=/Uploads/Picture/'+url[0]+'>';
             }else{
                 for (var k = 0; k < url.length; k++) {
-                    var imgurl = '<img src=http://localhost:3000/Uploads/Picture/'+url[k]+'>';
+                    var imgurl = '<img src=/Uploads/Picture/'+url[k]+'>';
                     str += imgurl;
                 }
             }
@@ -172,7 +180,7 @@ window.onload=function(){
        
 
             //获得浏览器参数
-            $.extend({
+            /*$.extend({
                 getUrlVars: function(){
                     var vars = [], 
                         hash;
@@ -199,10 +207,10 @@ window.onload=function(){
                     }
                 });
                 return param;
-            }
+            }*/
 
             //分页功能
-            var page=$('#page1');
+            /*var page=$('#page1');
             var options = {
                 currentPage     : page.attr('pageNum'),
                 totalPages      : page.attr('pageCount'),
@@ -210,8 +218,8 @@ window.onload=function(){
                 pageUrl         : function(type, page, current){
                     return "/index?"+composeUrlParams()+"&p="+page;
                 }
-            }
-            $('#page1').bootstrapPaginator(options);
+            }*/
+            //$('#page1').bootstrapPaginator(options);
       
 
 

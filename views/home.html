@@ -1,20 +1,5 @@
 <% include header.html %>
-<style type="text/css">
-	.avatar{height: 25px;width:25px;display: inline-block;}
-	.message_img img{width: 200px;}
-	.status_2{background:#ccc;opacity: 0.5; }
-	.upUser{display: inline-block;width: 25px;height: 25px;overflow: hidden;}
-	.upUser img{width: 25px;height: 25px;}
-	.sex_0{border-left: 3px solid #000;}
-	.sex_2{border-left: 3px solid #f00;}
-	.sex_1{border-left: 3px solid #ff0;}
-	.read_0{color: #04c}
-	.recomment{background: #ccc}
-	body .current{background: #5bb75b;}
-	.navbar .current a{color: #fff!important}
 
-
-</style>
 
 <% if (result!='') { %>  
 
@@ -36,6 +21,9 @@
 								</li>
 								<li>
 									 <a href="/paster">贴纸管理</a>
+								</li>
+								<li>
+									 <a href="/soso">消息查询</a>
 								</li>
 								
 							</ul>
@@ -59,10 +47,10 @@
 										</li>
 										<li>
 
-										<% if(info.type==8){%>
+										<% if(info.level==8){%>
 										<a>管理员选项</a>
 										<% } else{%>
-										<a>用户您好 <%=info.type%></a>
+										<a>用户您好 <%=info.level%></a>
 										<% } %>
 											
 										</li>

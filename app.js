@@ -99,7 +99,7 @@ app.get('/index', routes.index);
 
 app.get('/users', user.list);
 // 项目路由
-//会员
+//
 app.get('/login', routes.login);//
 app.get('/logout', routes.logout);//
 app.post('/home', routes.homepost);//post
@@ -110,7 +110,8 @@ app.get('/mup', routes.mup);
 app.get('/recycleMessage', routes.recycleMessage);
 app.get('/goodMessage', routes.goodMessage);
 app.get('/setComment', routes.setComment);
-
+app.get('/lookmsg', routes.lookmsg);
+app.get('/soso', routes.soso);
 
 
 

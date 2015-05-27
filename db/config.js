@@ -19,6 +19,7 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 		index : '首页',
 		login : '登陆',
 		activity:'活动',
+		soso : '搜索',
 		forget : '忘记密码页面',
 		register : '用户注册页面',
 		home : '的主页',
@@ -40,6 +41,8 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 		1021:'没有填写id，该接口通过ID查询',
 		1022:'没有填写name，该接口通过name查询',
 		1023:'没有填写value，该接口通过value设置值',
+		1024:'没有填写stype，该接口通过type查询',
+
 
 	},
 	//正常接收 2XXX

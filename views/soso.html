@@ -1,42 +1,232 @@
 <% include header.html %>
 
-<section class="row-fluid" id='mainNav'>
-    <nav>
-        <ul>
-            <li><a href="/financing">最新融资</a></li>
-            <li class='current-li'><a href="/soso">搜搜</a></li>
-            <li><a href="/activity">活动</a></li>
-        </ul>
-    </nav>
+<% if (result!='') { %>  
+
+
+<div class="container-fluid">
+
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="navbar">
+				<div class="navbar-inner">
+					<div class="container-fluid">
+						 <a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a> <a href="/" class="brand">小脚丫</a>
+						<div class="nav-collapse collapse navbar-responsive-collapse">
+							<ul class="nav">
+								<li>
+									 <a href="/home">内容管理</a>
+								</li>
+								<li>
+									 <a href="/admin">账号管理</a>
+								</li>
+								<li>
+									 <a href="/paster">贴纸管理</a>
+								</li>
+								<li class="current">
+									 <a href="/soso">消息查询</a>
+								</li>
+								
+							</ul>
+							<ul class="nav pull-right">
+								<li>
+									 <a href="/logout">登出</a>
+								</li>
+								<li class="divider-vertical">
+								</li>
+								<li class="dropdown">
+									 <a data-toggle="dropdown" class="dropdown-toggle" href="#" title="欢迎您 <%=username%> "><img style="height: 20px" height="20px" src="<%=info.avatar%>"><strong class="caret"></strong></a>
+									<ul class="dropdown-menu">
+										<li>
+											<a href="/home"><%=username%> 的设置</a>
+										</li>
+										<li>
+											 <a href="#">其他</a>
+										</li>
+										
+										<li class="divider">
+										</li>
+										<li>
+
+										<% if(info.type==8){%>
+										<a>管理员选项</a>
+										<% } else{%>
+										<a>用户您好 <%=info.type%></a>
+										<% } %>
+											
+										</li>
+									</ul>
+								</li>
+
+							</ul>
+						</div>
+						
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- tab -->
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="tabbable" id="tabs-938867">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						 <a href="#panel-685375" data-toggle="tab">消息ID查询</a>
+					</li>
+					<li>
+						 <a href="#panel-367058" data-toggle="tab">文本模糊查询</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="panel-685375">
+						<div class="row-fluid message_msgid">
+						<form action="/soso">
+							<div class="span3">
+								<input name="msgid" type="text" value="" placeholder="请输入消息id（数字）">
+							</div>
+							<div class="span3">
+								<button type="submit" class="btn">查询</button>
+							</div>
+						</form>
+
+						</div>
+
+						<hr>
+
+						<div class="msgData">
+							<ul>
+
+				            <% com_length = msgData.length %>
+				            <% if(com_length){ %>
+								<% if(msgData.lenght!=0){%>
+
+								<% for(i=0;i<com_length;i++){ %>
+
+								<li class="span5 status_<%=msgData[i].status%>" data-msgid="<%=msgData[i].msg_id%>" data-userid="<%=msgData[i].user_id%>" data-sex="<%=msgData[i].sex%>">
+									<div data-feedtype="<%=msgData[i].feedtype%>" class="thumbnail">
+										<h4><img class="avatar" src="/Uploads/Picture/<%=msgData[i].avatar%>" alt=""><%=msgData[i].nickname%> </h4>
+										<small class="time">发表于：<span><%=msgData[i].ctime%></span> </small>  | 
+										<small> 用户id：<i><%=msgData[i].user_id%> </i></small> | 
+										<small> 消息id：<a href="/soso?msgid=<%=msgData[i].msg_id%>"><%=msgData[i].msg_id%></a></small>
+										<p>浏览数：<span><%=msgData[i].read_count%></span> 评论数：<span><%=msgData[i].comment_count%></span> 赞：<span><%=msgData[i].up_count%></span></p>
+										<p><%=msgData[i].message%></p>
+										<div class="message_img">
+											<p><%=msgData[i].photo%><!-- <img src="/Uploads/Picture/" alt=""> --></p>
+										</div>
+										<div class="caption up">
+											<p>赞： 不显示 </p>
+											<ul></ul>
+										</div>
+										<div class="caption comment">
+											<p>评论：不显示</p>
+										</div>
+										<!-- <div class="caption order">
+											<a class="btn btn-success goodmsg">推荐 4</a> &nbsp; <a class="btn btn-danger recycleMessage ">动态放回收站 </a>
+										</div> -->
+										<div class="h5url">
+											<p><a href="<%=outURL%>" target="_blank">h5Url</a></p><textarea rows="5"><%=outURL%></textarea>
+										</div>
+									</div>
+								</li>
+
+								<%}%>
+								<%}%>
+							<%}%>		
+							</ul>
+						</div>
+
+						
+					</div>
+					<div class="tab-pane" id="panel-367058">
+						<div class="row-fluid message_text">
+							<div class="span3">
+								<input type="text" value="" placeholder="请输入消息文本（模糊匹配）">
+							</div>
+							<div class="span3">
+								<a class="btn">查询</a>
+							</div>
+
+							<hr>
+
+							例如 ： 查询  <a href="/lookmsg?stype=text&value=%E8%B5%9A" target="_blank">赚</a> , 
+
+						    <a href="/lookmsg?stype=text&value=q" target="_blank">q </a>
+
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- tab end -->
+
+</div>
+
+
+<% } else{%>
+<section>
+<div class="well">
+	<p>登录失败……</p>
+	<a class='btn btn-primary' href="/">重新登陆</a>
+</div>
 </section>
-
-<header class="container-fluid">
-	
-	
-    <section class="row-fluid search">
-		
-		<div class="sosoform">
-			<input type="text" placeholder="寻找你要的项目">
-		</div>
-		
-    </section>
-    <section class="row-fluid company">
-		
-		<div class="information">
-			<ul>
-				<li></li>
-			</ul>
-		</div>
-		
-    </section>
-	
-</header>
+<%}%>
 
 
-<footer class="container-fluid">
-    <section class="row-fluid">
-
-    </section>
-</footer>
 
 <% include footer.html %>
+
+<script type="text/javascript">
+window.onload=function(){
+
+	seajs.config({
+	base: '/javascripts',
+	alias: {
+		'boots-jquery':'assets/boots-jquery',
+		//'jquery': 'jquery/jquery/1.10.1/jquery',
+		//'bootstrap':'bootstrap/bootstrap/2.3.2/bootstrap',
+        //"zepto":  "jquery/zepto/1.1.6/zepto",
+        "all": "share/all/2.0.0/all",
+        'verify':'share/verify/1.0.0/verify',
+        //'e_zetpo':'share/extend/1.0.0/extendzepto',
+	  }
+	})
+	
+    seajs.use(['boots-jquery', 'all', 'verify'], function($,A,V){
+    	var $ = jQuery;
+
+    	$('.message_img')
+
+    	var photo = $('.thumbnail').find('.message_img').children('p'),
+            time = $('.thumbnail').find('.time').find('span'),
+            photoLength = photo.length;
+            
+            
+        for (var i = 0; i < photoLength; i++) {
+            var url = JSON.parse(photo.eq(i).text());
+            var unixtime = time.eq(i).text();
+            var str='';
+
+            if (url.length==1) {
+                str += '<img src=/Uploads/Picture/'+url[0]+'>';
+            }else{
+                for (var k = 0; k < url.length; k++) {
+                    var imgurl = '<img src=/Uploads/Picture/'+url[k]+'>';
+                    str += imgurl;
+                }
+            }
+            photo.eq(i).html(str); 
+
+            time.eq(i).html(A.js_date_time(unixtime));
+
+        };
+
+
+	})
+}
+
+
+</script>
+

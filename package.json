@@ -26,7 +26,7 @@
     "connect-redis": "^2.3.0",
     "express-session": "^1.11.2",
     "date-utils": "^1.2.16",
-    "moment": "^2.10.3"
+    "utility": "^1.4.0"
   },
   "devDependencies": {
     "grunt": "^0.4.5"

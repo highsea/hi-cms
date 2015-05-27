@@ -1,43 +1,86 @@
 <% include header.html %>
 
-<header class="container-fluid">
 	<% if (result!='') { %>  
-    <section class="row-fluid">
-		<ul>
-			<li>用户管理</li>
-			<li>活动报名</li>
-			<li>项目管理</li>
+<div class="container-fluid">
 
-		</ul>
-    </section>
-    <% } else{%>
+    <div class="row-fluid">
+		<div class="span12">
+			<div class="navbar">
+				<div class="navbar-inner">
+					<div class="container-fluid">
+						 <a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a> <a href="/" class="brand">小脚丫</a>
+						<div class="nav-collapse collapse navbar-responsive-collapse">
+							<ul class="nav">
+								<li>
+									 <a href="/home">内容管理</a>
+								</li>
+								<li class="current">
+									 <a href="/admin">账号管理</a>
+								</li>
+								<li>
+									 <a href="/paster">贴纸管理</a>
+								</li>
+								<li>
+									 <a href="/soso">消息查询</a>
+								</li>
+								
+							</ul>
+							<ul class="nav pull-right">
+								<li>
+									 <a href="/logout">登出</a>
+								</li>
+								<li class="divider-vertical">
+								</li>
+								<li class="dropdown">
+									 <a data-toggle="dropdown" class="dropdown-toggle" href="#" title="欢迎您 <%=username%> "><img style="height: 20px" height="20px" src="<%=info.avatar%>"><strong class="caret"></strong></a>
+									<ul class="dropdown-menu">
+										<li>
+											<a href="/home"><%=username%> 的设置</a>
+										</li>
+										<li>
+											 <a href="#">其他</a>
+										</li>
+										
+										<li class="divider">
+										</li>
+										<li>
 
-    <section class="row-fluid">
-		<form class="form-horizontal">
-			<fieldset>
-			    <legend>管理员登陆 </legend>
-			</fieldset>
-			<div class="control-group">
-				 <label class="control-label" for="inputEmail">名称</label>
-				<div class="controls">
-					<input id="inputEmail" type="text" />
+										<% if(info.level==8){%>
+										<a>管理员选项</a>
+										<% } else{%>
+										<a>用户您好 <%=info.level%></a>
+										<% } %>
+											
+										</li>
+									</ul>
+								</li>
+
+							</ul>
+						</div>
+						
+					</div>
 				</div>
+				
 			</div>
-			<div class="control-group">
-				 <label class="control-label" for="inputPassword">密钥</label>
-				<div class="controls">
-					<input id="inputPassword" type="password" />
-				</div>
-			</div>
-			<div class="control-group">
-				<div class="controls">
-					 <!-- <label class="checkbox"><input type="checkbox" />Remember me</label> --> <button type="submit" class="btn">登陆</button>
-				</div>
-			</div>
-		</form>
-    </section>
-    <% } %>
-</header>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+		<div class="span12">
+		正在开发ing
+		</div>
+	</div>
+
+</div>
+<% } else{%>
+<section>
+<div class="well">
+	<p>登录失败……</p>
+	<a class='btn btn-primary' href="/">重新登陆</a>
+</div>
+</section>
+<%}%>
+
 
 
 <footer class="container-fluid">

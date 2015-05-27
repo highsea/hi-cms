@@ -11,7 +11,7 @@ var db = require('./../db/mysql_db.js'),
     formidable = require('formidable'),
     fs = require('fs'),
     config = require('./../db/config'),
-    moment = require('moment');
+    utility = require('utility');
 
 var appsetFile = ['./db/appset-', '.json'].join('');// new Date()-0,
 var JsonObj = JSON.parse(fs.readFileSync(appsetFile));
@@ -49,7 +49,7 @@ exports.index = function(req, res){
     var page    ={limit:5,num:1,size:20};
 
     //查看哪页
-    if(req.query.p){
+    if(fun.isDigit(req.query.p)){
         page['num']= req.query.p < 1 ? 1 : req.query.p;
     }
     //每页多少条
@@ -141,13 +141,14 @@ exports.homeget = function(req, res) {
 
         db.query(sql.thisUser, function(userList){
 
-            console.log(userList[0]);
+            //console.log(userList[0]);
+            req.session.userinfo = userList[0];
 
             res.render('home', {
                 title       : name+config.productInfo.home,
                 username    : name,
                 result      : req.session.result,
-                info        : userList[0],
+                info        : req.session.userinfo,
             });
             /*console.log(moment().format());
             var nowTime = moment().format('L');
@@ -178,6 +179,17 @@ exports.message = function (req, res) {
         order: 'time', 
         sta: 'showall'
     };
+    var page = {limit:5,num:1,size:20};
+
+    //查看哪页
+    if(fun.isDigit(req.query.p)){
+        page['num']= req.query.p < 1 ? 1 : req.query.p;
+    }
+    //每页多少条
+    if (fun.isDigit(req.query.size)) {
+        page['size']= req.query.size<1 ? 1 : req.query.size;
+    };
+
     var name = req.session.username;
 
     if (name) {
@@ -229,7 +241,7 @@ exports.message = function (req, res) {
 
         // var day3fomat = new Date(sql['d3']*1000).toLocaleString();
         // console.log('day3fomat:'+day3fomat+';day3agoUnix:'+sql['d3']);
-        var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime from lf_users,lf_message where lf_users.user_id=lf_message.user_id and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by lf_message.order_count desc,'+sql[doc['order']]+' desc limit 10000';
+        var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time from lf_users,lf_message where lf_users.user_id=lf_message.user_id and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by lf_message.order_count desc,'+sql[doc['order']]+' desc limit '+(page['num']-1)*page['size']+', '+page['size'];
         //select * from lf_message where ctime>=1431739693 and message=''  order by ctime desc limit 100000
 
         //每次查询1w条，前期不做分页 
@@ -421,7 +433,7 @@ exports.recycleMessage = function(req, res){
     };
     if (name&&type==8) {
 
-        if (req.query.id) {
+        if (fun.isDigit(req.query.id)) {
             doc['id'] = req.query.id;
             if (req.query.value) {
                 doc['value'] = req.query.value;
@@ -462,7 +474,7 @@ exports.goodMessage = function(req, res){
     };
     if (name&&type==8) {
 
-        if (req.query.id) {
+        if (fun.isDigit(req.query.id)) {
             doc['id'] = req.query.id;
             if (req.query.value) {
                 doc['value'] = req.query.value;
@@ -512,7 +524,7 @@ exports.setComment = function(req, res){
     };
     if (name&&type==8) {
 
-        if (req.query.id) {
+        if (fun.isDigit(req.query.id)) {
             doc['id'] = req.query.id;
             if (req.query.value) {
                 doc['value'] = req.query.value;
@@ -554,12 +566,14 @@ exports.homepost = function(req, res){
         // 增加1 新建一个字段 type 区别管理员
         //alter table lf_users add type int(11) NOT NULL DEFAULT '1' after user_id;
         //alter table `lf_users` drop column type;  
+        //修改 type 为 level
+        //alter table lf_users CHANGE type level int;
         db.query(sql, function(rows){   
             if (rows.length=='1') {
                 console.log(rows);
                 req.session.username = query.name;
                 req.session.result = 1;
-                req.session.type = rows[0].type
+                req.session.type = rows[0].level;
                 //可以避免 刷新页面时提示 是否重复提交（登录数据）
                 res.redirect('/home');
             }else{
@@ -590,8 +604,152 @@ exports.logout = function(req, res){
 
 };
 
+/*
+@ 模糊查询
+@
+@
+*/
+exports.lookmsg = function(req, res){
 
-//------------------------------------------------------------------------
+    var name = req.session.username,
+        type = req.session.type;
+    var doc ={
+        value       : '',
+        stype        : 'msgid',
+    };
+    if (name&&type==8) {
+
+        var sql = {
+            //stype
+            'msgid' : '123',
+            'text'  : 'nothing',
+        }
+
+        console.log(req.query.stype);
+
+        if (sql[req.query.stype]) {
+            doc['stype']=req.query.stype;
+            // msgid 对 id的 精确查询 
+            if (doc['stype']=='msgid') {
+                //如果查询是 msgid 那么必须是 int
+                if (fun.isDigit(req.query.value)) {
+                    sql['msgid'] = ' and msg_id='+req.query.value;
+                }
+
+            }
+            // text 对 message 的模糊查询
+            if (doc['stype']=='text') {
+                if (req.query.value) {
+                    sql['text'] = ' and message LIKE "%'+req.query.value+'%"';
+                }else{
+                    sql['text'] = '';
+                }
+            };
+
+            var searchSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime from lf_users,lf_message where lf_users.user_id=lf_message.user_id '+sql[doc['stype']]+' order by lf_message.order_count desc,lf_message.ctime desc limit 100000';
+
+            db.query(searchSQL, function (result) {
+                //console.log(fun.nowUnix());
+                var data = {
+                    len : result.length,
+                    list: result,
+                    /*query : {
+                        stype : doc['stype'],
+                        value: 
+                    }*/
+                }
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
+            })
+
+
+        }else{
+            fun.jsonTips(req, res, 1024, config.Code1X[1024], null);
+        }
+
+        
+
+
+    }else{
+        var text = config.Code4X[2004];
+        fun.friendlyError(req, res, text); 
+    }
+
+}
+
+
+
+/*
+@   搜索页面 
+@
+@
+*/
+exports.soso = function(req, res){
+    var name = req.session.username;
+
+
+    if (name) {
+
+        var sql = {
+            thisUser    : 'select * from lf_users where user_id="'+name+'"',
+            thismsg     : '',
+        };
+
+        db.query(sql.thisUser, function(userList){
+
+            //console.log(userList[0]);
+
+            if (fun.isDigit(req.query.msgid)) {
+
+                sql['thismsg']='select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime from lf_users,lf_message where lf_users.user_id=lf_message.user_id and msg_id="'+req.query.msgid+'"';
+
+
+                var timestamp = fun.nowUnix(),
+                    baseURL = 'http://api.xiaojiaoyar.com/index.php?s=/Api/ShareLink/shareLinkEx/msg_id/'+req.query.msgid+'/timestamp/'+timestamp+'/randomKey/20150305',
+                    token = utility.md5(baseURL),
+                    
+                    outURL = 'http://api.xiaojiaoyar.com/index.php?s=/Api/ShareLink/shareLinkEx/msg_id/'+req.query.msgid+'/timestamp/'+timestamp+'/token/'+token;
+
+
+                db.query(sql['thismsg'], function(msgData){
+
+                    res.render('soso', {
+                        title       : name+config.productInfo.soso,
+                        username    : name,
+                        result      : req.session.result,
+                        info        : req.session.userinfo,
+                        msgData     : msgData,
+                        outURL      : outURL,
+                    });
+
+                })
+
+            }else{
+
+                res.render('soso', {
+                    title       : name+config.productInfo.soso,
+                    username    : name,
+                    result      : req.session.result,
+                    info        : req.session.userinfo,
+                    msgData     : '',
+                });
+
+            }
+            
+        })
+        
+    }else{
+        res.redirect('/');
+    }
+
+}
+
+
+
+
+
+
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 /*
 @  用户注册页面
@@ -801,11 +959,22 @@ exports.friendlyError = function(req, res){
 
 // 管理员页面
 exports.admin = function(req, res){
-    res.render('admin', {
-        title: config.productInfo.admin,
-        result:0,//未登录
-        resultREG:0//未注册
-    })
+
+    var name = req.session.username;
+
+    if (name) {
+
+        res.render('admin', {
+            title: config.productInfo.admin,
+            username    : name,
+            result      : req.session.result,
+            info        : req.session.userinfo,
+        });
+        
+    }else{
+        res.redirect('/');
+    }
+
 }
 
 /*

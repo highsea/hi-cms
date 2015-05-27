@@ -91,6 +91,18 @@ function dayAgo(n){
     return nowUnix()-3600*24*n
 }
 
+/*
+@ 验证 数字 
+@
+*/
+
+function isDigit (s){
+    var patrn=/^[0-9]{1,20}$/;
+    if (!patrn.exec(s)) return false
+    return true
+}
+
+
 
 /*
 @ 自定义的友好错误提示页面 渲染
@@ -104,6 +116,9 @@ function friendlyError(req, res, text){
 }
 
 
+
+
+
 exports.add_update_verify 	= add_update_verify;
 //exports.login_verify  		= login_verify;
 exports.jsonTips 			= jsonTips;
@@ -113,5 +128,6 @@ exports.userinfo            = userinfo;
 exports.friendlyError       = friendlyError;
 exports.dayAgo              = dayAgo;
 exports.nowUnix             = nowUnix;
+exports.isDigit             = isDigit;
 
 
