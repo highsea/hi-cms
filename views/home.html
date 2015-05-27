@@ -20,7 +20,7 @@
 									 <a href="/admin">账号管理</a>
 								</li>
 								<li>
-									 <a href="/paster">贴纸管理</a>
+									 <a href="#">贴纸管理</a>
 								</li>
 								<li>
 									 <a href="/soso">消息查询</a>
@@ -195,6 +195,17 @@
 							</div>
 						</div>
 
+
+						<hr>
+						<!--  -->
+
+						<div class="row-fluid setpage none">
+							
+							<p class="pageinfo"></p>
+							<p><input type="text" value="1" ><a class="btn goog_Page">查看</a></p>
+							
+						</div>
+
 						<!--  -->
 						<hr>
 
@@ -253,6 +264,16 @@
 							<div class="span3">
 								<a class="btn btn-success msgDelete">已删消息</a>
 							</div>
+						</div>
+
+						<hr>
+						<!--  -->
+
+						<div class="row-fluid setpage none">
+							
+							<p class="pageinfo"></p>
+							<p><input type="text" value="1" ><a class="btn delete_Page">查看</a></p>
+							
 						</div>
 						<hr>
 
@@ -406,7 +427,7 @@ window.onload=function(){
 
 
 		}).
-		on('click', '.good,.msgHot', function(event) {
+		on('click', '.good,.msgHot,.goog_Page', function(event) {
 			event.preventDefault();
 			//推荐的消息 展示
 			var msgHotList = $('.msgHotList');
@@ -418,7 +439,7 @@ window.onload=function(){
 	    		order 	: A.elm('order_good').val(),
 	    		mark 	: A.elm('mark_good').val(),
 	    		size 	: '10',
-
+	    		p 		: $('.goog_Page').siblings('input').val(),
 	    	}, '#tabs-25490', function (dataList) {
 	    		if (dataList.data.length>0) {
 	    			//渲染热门推荐的 动态
@@ -499,7 +520,7 @@ window.onload=function(){
 		});
 
     	//已被删除 message delete
-    	$('#tabs-25490').on('click', '.sta,.msgDelete', function(event) {
+    	$('#tabs-25490').on('click', '.sta,.msgDelete,.delete_Page', function(event) {
     		event.preventDefault();
     		var msgDeleteList = $('.msgDeleteList');
     		msgDeleteList.children('ul').html(A.textTips['load']);
@@ -515,6 +536,7 @@ window.onload=function(){
 	    		order 	: A.elm('order_delete').val(),
 	    		mark 	: A.elm('mark_delete').val(),
 	    		size 	: '10',
+	    		p 		: $('.delete_Page').siblings('input').val(),
 	    	}, '#tabs-25490', function (dataList) {
 
 	    		if (dataList.data.length>0) {

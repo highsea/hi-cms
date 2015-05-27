@@ -295,9 +295,9 @@ exports.message = function (req, res) {
 */
 
 
-// 增加2 新建一个字段 type 区别评论回收站
-//alter table lf_message_comment add type int(11) NOT NULL DEFAULT '1' after id;
-//alter table `lf_message_comment` drop column type; 
+// 增加2 新建一个字段 status 区别评论回收站
+//alter table lf_message_comment add status int(11) NOT NULL DEFAULT '1' after id;
+//alter table `lf_message_comment` drop column status; 
 
 exports.mcomment = function (req, res) {
 
@@ -315,9 +315,9 @@ exports.mcomment = function (req, res) {
             //评论过滤 针对id筛选
             all         : '',
             filter      : 'filter',
-            del         : 'lf_message_comment.type="0" and',
+            del         : 'lf_message_comment.status="0" and',
             //过滤没有被放回收站的
-            ready       : 'lf_message_comment.type="1" and',
+            ready       : 'lf_message_comment.status="1" and',
             //时间筛选
             d3          : fun.dayAgo(3),//3天前
             w1          : fun.dayAgo(7),//一周前
@@ -345,9 +345,9 @@ exports.mcomment = function (req, res) {
             };
         };
 
-        console.log("sql[doc['msg']]: "+sql[doc['msg']]);
+        //console.log("sql[doc['msg']]: "+sql[doc['msg']]);
         //若是 被删除的评论 则再选出 删除时间和删除人
-        var commentSQL = 'select lf_message_comment.id,lf_message_comment.msg_id,lf_message_comment.user_id,lf_message_comment.type,lf_message_comment.user_id_b,lf_message_comment.message,lf_message_comment.ctime,lf_message_comment.is_read,lf_users.user_id,lf_users.nickname,lf_users.sex,lf_users.avatar from lf_users,lf_message_comment where '+sql[doc['msg']]+' lf_users.user_id=lf_message_comment.user_id and lf_message_comment.ctime>='+sql[doc['time']]+' order by lf_message_comment.ctime desc limit 10000';
+        var commentSQL = 'select lf_message_comment.id,lf_message_comment.msg_id,lf_message_comment.user_id,lf_message_comment.status,lf_message_comment.user_id_b,lf_message_comment.message,lf_message_comment.ctime,lf_message_comment.is_read,lf_users.user_id,lf_users.nickname,lf_users.sex,lf_users.avatar from lf_users,lf_message_comment where '+sql[doc['msg']]+' lf_users.user_id=lf_message_comment.user_id and lf_message_comment.ctime>='+sql[doc['time']]+' order by lf_message_comment.ctime desc limit 10000';
         //每次查询1w条，前期不做分页 
         db.query(commentSQL, function (commentList) {
 
