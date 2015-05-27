@@ -93,8 +93,6 @@ exports.index = function(req, res){
             
         }
 
-        console.log(res);
-        
         res.render('index', {
             title   : config.productInfo.name ,
             result  : 0,//未登录

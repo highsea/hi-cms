@@ -131,7 +131,16 @@
 						</div>
 
 						<hr>
+						<!--  -->
 
+						<div class="row-fluid setpage none">
+							
+							<p class="pageinfo"></p>
+							<p><input type="text" value="1" ><a class="btn defaultPage">查看</a></p>
+							
+						</div>
+						
+						<hr>
 						<!--  -->
 
 						<div class="row-fluid messageList">
@@ -141,11 +150,7 @@
 				              加载中……
 				            </ul>
 				        </div>
-						<!--  -->
-
-						<div class="row-fluid defaultPage">
-							<input type="text" placeholder="请输入页码" ><a class="btn">查看</a>
-						</div>
+						
 
 
 
@@ -299,52 +304,6 @@
 				</div>
 			</div>
 			
-
-			<!-- <div class="accordion" id="accordion-B">
-				<div class="accordion-group">
-					<div class="accordion-heading">
-						 <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion-B" href="#accordion-head-b1">选项卡 #1</a>
-					</div>
-					<div id="accordion-head-b1" class="accordion-body collapse">
-						<div class="accordion-inner">
-							功能块...
-						</div>
-					</div>
-				</div>
-				<div class="accordion-group">
-					<div class="accordion-heading">
-						 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-B" href="#accordion-head-b2">选项卡 #2</a>
-					</div>
-					<div id="accordion-head-b2" class="accordion-body collapse">
-						<div class="accordion-inner">
-							功能块...
-						</div>
-					</div>
-				</div>
-			</div> -->
-
-			<!-- <a id="modal-554326" href="#modal-container-554326" role="button" class="btn" data-toggle="modal">正在开发</a> -->
-			
-			<!-- <div id="modal-container-554326" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-header">
-					 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h3 id="myModalLabel">
-						标题栏
-					</h3>
-				</div>
-				<div class="modal-body">
-					<p>
-						显示信息
-					</p>
-				</div>
-				<div class="modal-footer">
-					 <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button> <button class="btn btn-primary">保存设置</button>
-				</div>
-			</div> -->
-			<!-- modal -->
-
-			<!-- Button to trigger modal -->
-			<!-- <a href="#myModal" role="button" class="btn" data-toggle="modal">查看演示案例</a> -->
 			 
 			<!-- Modal -->
 			<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -467,6 +426,8 @@ window.onload=function(){
 
 	    				msgHotList.find('.up').html('赞：不显示');
 		    			msgHotList.find('.comment').html('评论：不显示');
+		    			//显示删除的操作者，时间
+		    			msgHotList.find('.thumbnail').children('h4').find('i').show();
 
 
 		    		})
@@ -563,6 +524,9 @@ window.onload=function(){
 
 		    			msgDeleteList.find('.up').html('赞：不显示');
 		    			msgDeleteList.find('.comment').html('评论：不显示');
+
+
+
 
 		    			msgDeleteList.find('.order').html('<a class="btn btn-warning defaultMessage">还原状态 </a> <a class="btn btn-inverse">完全删除 </a>')
 		    		})
@@ -673,13 +637,12 @@ window.onload=function(){
 				})
 
 			}
+    	}).
+    	on('click', '.showMessage,.defaultPage', function(event) {
+    		event.preventDefault();
+    		//开始查询 动态 待优化
+    		messageAjax ('#tabs-25490',$('.defaultPage').siblings('input').val());
     	});
-
-    	// 开始查询 动态 待优化
-    	$('.showMessage').on('click', function () {
-    		messageAjax ('#tabs-25490',1);
-    	})
-
 
     	
 

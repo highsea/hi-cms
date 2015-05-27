@@ -20,7 +20,7 @@ var express = require('express')
 // });
 
 
-var session = require('express-session');
+/*var session = require('express-session');
 var redisStore = require('connect-redis')(session);
 
 var app = express();
@@ -32,7 +32,27 @@ app.use(session({
   // 编写自己的 store 也很简单
   store: new redisStore(),
   secret: 'xiaojiaoyartoken'
+}));*/
+
+//
+
+var session = require('express-session');
+var cookieParser = require('cookie-parser');
+
+var app = express();
+
+app.use(cookieParser());
+app.use(session({
+    secret: 'xiaojiaoyar',
+    name: 'testapp',   //这里的name值得是cookie的name，默认cookie的name是：connect.sid
+    cookie: {maxAge: 80000 },  //设置maxAge是80000ms，即80s后session和相应的cookie失效过期
+    resave: false,
+    saveUninitialized: true,
 }));
+
+
+
+
 
 
 // all environments
@@ -46,8 +66,8 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 
 
-app.use(express.cookieParser());
-app.use(express.cookieSession({secret : 'oa.xiaojiaoyar.com'}));
+//app.use(express.cookieParser());
+//app.use(express.cookieSession({secret : 'www.xiaojiaoyar.com'}));
 // app.use(express.session({
 // 	secret : 'oa.xiaojiaoyar.com',
 // 	store: store,

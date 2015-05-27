@@ -139,6 +139,12 @@ define(function(require, exports, module) {
 		
 
 		var m = dataList.data.list;
+		var page = {
+			currentp : dataList.data.page.currentp,
+			size : dataList.data.page.size,
+			allnews : dataList.data.page.allnews,
+			pageCount : dataList.data.page.pageCount,
+		}
 		//console.log(m)
 		var dlength = dataList.data.length;
 		var str = '';
@@ -177,7 +183,7 @@ define(function(require, exports, module) {
 
 			str += '<li class="span5 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'" data-eadmin="'+eadmin+'" data-etime="'+etime+'">'+
 			                '<div data-feedtype="'+feedtype+'" class="thumbnail">'+
-			                  '<h4><small>['+(i+1)+'/'+dlength+']</small><img class="avatar" src="/Uploads/Picture/'+avatar+'" alt="" />'+nickname+' </h4>'+
+			                  '<h4><small>[第<em>'+page['currentp']+'</em>页：'+(i+1)+'/'+dlength+']</small><img class="avatar" src="/Uploads/Picture/'+avatar+'" alt="" />'+nickname+'<br><small><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
 			                  '<small>发表于：'+all.js_date_time(ctime)+' </small> '+
 			                  ' | <small> 用户id：<i>'+user_id+' </i></small> | <small> 消息id：<a href="/soso?msgid='+msg_id+'">'+msg_id+'</a></small>'+
 			                  '<p>浏览数：<span>'+read_count+'</span> 评论数：<span>'+comment_count+'</span> 赞：<span>'+up_count+'</span></p>'+
@@ -199,6 +205,7 @@ define(function(require, exports, module) {
 
 		}
 		$(dom).children('ul').html(str);
+		$(dom).siblings('.setpage').show().children('.pageinfo').html('一共<i>'+page['allnews']+'</i> 条结果，当前第<em>'+page['currentp']+'</em>页，分<b>'+page['pageCount']+'</b>页');
 		callback();
 	}
 

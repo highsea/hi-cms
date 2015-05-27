@@ -65,6 +65,9 @@ body{background: #fff;overflow-x: hidden}
 li,ul,p{list-style: none;padding: 0;margin: 0}
 .clear {clear: both;float: none;}
 
+.none{display: none;}
+.block{display: block;}
+
 body .none{display: none;}
 body .tab-body .block{display: block;}
 
