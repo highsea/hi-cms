@@ -132,6 +132,9 @@ app.get('/goodMessage', routes.goodMessage);
 app.get('/setComment', routes.setComment);
 app.get('/lookmsg', routes.lookmsg);
 app.get('/soso', routes.soso);
+app.get('/userinfo', routes.userinfo);
+app.get('/up1user', routes.up1user);
+app.get('/lookuser', routes.lookuser);
 
 
 
@@ -150,7 +153,6 @@ app.get('/getuser', routes.getuser);//by id 二次登陆
 app.get('/userbyname', routes.userbyname);// name 二次登陆
 app.get('/sessionuser', routes.sessionuser);// 当前登录用户
 
-app.get('/up1user', routes.up1user);
 app.get('/userCount', routes.userCount);
 app.get('/remove1user', routes.remove1user);
 app.get('/oneuser', routes.oneuser);

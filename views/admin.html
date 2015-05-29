@@ -67,7 +67,51 @@
 
 	<div class="row-fluid">
 		<div class="span12">
-		正在开发ing
+			<div class="tabbable" id="tabs-533320">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						 <a href="#panel-727360" data-toggle="tab">用户账号</a>
+					</li>
+					<li>
+						 <a href="#panel-374630" data-toggle="tab">马甲账号</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="panel-727360">
+						<div class="row-fluid">
+							
+							<div class="span2">
+								用户昵称或账号id
+							</div>
+							<div class="span4">
+								<input type="text" class="userInput" placeholder="请输入用户昵称或账号id">
+							</div>
+							
+							<div class="span4">
+								<a class="btn btn-success showUser">搜索</a>
+							</div>
+
+						</div>
+						<hr>
+						<!-- <div class="row-fluid lookuserPage none">
+							
+						</div> -->
+						<hr>
+						<div class="row-fluid">
+							
+							<div class="span12 userInfoTable-fa">
+								
+								
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane" id="panel-374630">
+						<p>
+							第二部分内容.
+						</p>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -90,3 +134,166 @@
 </footer>
 
 <% include footer.html %>
+
+
+
+
+
+
+<script>
+
+window.onload=function(){
+
+	seajs.config({
+	base: '/javascripts',
+	alias: {
+		'boots-jquery':'assets/boots-jquery',
+		'jquery': 'jquery/jquery/1.10.1/jquery',
+		'bootstrap':'bootstrap/bootstrap/2.3.2/bootstrap',
+        //"zepto":  "jquery/zepto/1.1.6/zepto",
+        'datatables' : 'jquery/datatable/1.10.4/jquery.dataTables.js',
+        "all": "share/all/2.0.0/all",
+        'verify':'share/verify/1.0.0/verify',
+        //'e_zetpo':'share/extend/1.0.0/extendzepto',
+	  }
+	})
+	
+    seajs.use(['jquery','bootstrap', 'all', 'verify', 'datatables'], function($,B,A,V,D){
+    	var $ = jQuery;
+    	//console.log($);
+    	//console.log(D);
+
+    	var lookuserPage = $('.lookuserPage');
+    	$('#tabs-533320').on('click', '.showUser,.userPageNum', function(e){
+    		e.preventDefault();
+
+			$('.userInfoTable-fa').html('<table class="table" id="userInfoTable"></table>');
+
+    		A.ajax('/lookuser', {
+    			value 	: $('.userInput').val(),
+    			p 		: lookuserPage.children('input').val(),
+    		}, '#tabs-533320', function(dataList){
+    			console.log(dataList);
+    			//var page = dataList.data.page;
+    			//lookuserPage.show().html('<p class="pageinfo">一共<i>'+page.allnews+'</i> 条结果，当前第<em>'+page.currentp+'</em>页，分<b>'+page.pageCount+'</b>页</p><p>跳转到第<input type="text" value="1" placeholder="请输入页码">页 <a class="btn userPageNum"> 确 定 </a></p>');
+    			var u = dataList.data.list,
+    			    ulength = dataList.data.len,
+    			    str = '',
+    			    data_tableArr = [];
+
+    			for (var i = 0; i < ulength; i++) {
+    				/*var user_id = u[i].user_id,
+    					nickname = u[i].nickname,
+    					level = u[i].level,
+    					mobile = u[i].mobile,
+    					sex = u[i].sex,
+    					sign = u[i].sign,
+    					province = u[i].province,
+    					city = u[i].city,
+    					avatar =u[i].avatar,
+    					status = u[i].status,
+    					last_time = u[i].last_time,
+    					last_ip = u[i].last_ip,
+    					grade = u[i].grade,
+    					score = u[i].score,
+    					reg_ip = u[i].reg_ip,
+    					flag = u[i].flag,
+    					platform = u[i].platform,
+    					ctime = u[i].ctime,
+    					mtime = u[i].mtime,
+    					token = u[i].token;*/
+    				var status = u[i].status;
+    				var caozuoDom = '<a data-status="'+status+'" class="btn setUser btn-danger">关小黑屋</a>';
+    				if (status==1) {
+    					caozuoDom = '<a data-status="'+status+'" class="btn setUser btn-danger">关小黑屋</a>';
+    				};
+    				if (status==0||status==2) {
+    					caozuoDom = '<a data-status="'+status+'" class="btn setUser btn-warning">释放他出来</a>';
+    				};
+
+    				var new_data = {
+    					xuhao 		: i+1,
+    					nickname 	: '<a data-sex="'+u[i].sex+'" data-level="'+u[i].level+'">'+u[i].nickname+'</a>',
+    					zhanghao 	: u[i].user_id,
+    					userhome 	: '/'+u[i].user_id+'/',
+    					caozuo 		:  caozuoDom,
+    					caozuoren   : u[i].examine_admin,
+    					caozuotime  : u[i].examine_time,
+    				}
+					data_tableArr.push(new_data);
+
+    				//str += '';
+    			};
+
+
+				var columnArr = [
+				    { data : 'xuhao'},
+				    { data : 'nickname'},
+				    { data : 'zhanghao'},
+				    { data : 'userhome'},
+				    { data : 'caozuo'},
+				    { data : 'caozuoren'},
+				    { data : 'caozuotime'},
+				];
+
+				/*console.log(data_tableArr);
+
+				console.log(A.install_TB);*/
+				A.install_TB('userInfoTable', data_tableArr, columnArr, '<thead><tr><th>序号</th><th>用户昵称</th><th>账号</th><th>个人主页</th><th>操作</th><th>曾操作人</th><th>曾操作时间</th></tr></thead><tbody></tbody>');
+
+
+    		})
+			//ajax end
+
+    	}).
+		on('click', '.setUser', function(event) {
+			event.preventDefault();
+			//关小黑屋 2 和 释放 0
+
+			var status = $(this).data('status'),
+				value ='0';
+
+
+			var thisUid = $(this).closest('tr').children('td').eq(2).text();
+			var thisDom = $(this);
+
+			console.log(thisUid);
+
+			if (status==1) {
+				value = 2;//或者 0
+			}else{
+				value = 1;
+			}
+
+			
+			//关小黑屋 设置 禁用用户
+			A.ajax('/up1user', {
+				userid : thisUid,
+				column : "status",
+				value : value,
+			}, '#tabs-533320', function(result){
+
+				var changedRows = result.data.changedRows;
+
+				console.log(result);
+				if (status==1) {
+					console.log(status);
+					thisDom.closest('td').html('<a data-status="2" class="btn setUser btn-warning">释放他出来</a>');
+				}else if (status==2) {
+
+					thisDom.closest('td').html('<a data-status="1" class="btn setUser btn-danger">关小黑屋</a>');
+				};
+			})
+
+		});
+    	
+
+
+    })
+
+
+}
+</script>
+
+
+

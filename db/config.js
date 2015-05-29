@@ -42,6 +42,7 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 		1022:'没有填写name，该接口通过name查询',
 		1023:'没有填写value，该接口通过value设置值',
 		1024:'没有填写stype，该接口通过type查询',
+		1025:'参数不正确，请查看 API 文档',
 
 
 	},

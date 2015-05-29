@@ -237,7 +237,7 @@ exports.message = function (req, res) {
 
         // var day3fomat = new Date(sql['d3']*1000).toLocaleString();
         // console.log('day3fomat:'+day3fomat+';day3agoUnix:'+sql['d3']);
-        var totalSQL   = 'select count(*) from lf_message where lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by lf_message.order_count desc';
+        var totalSQL   = 'select count(*) from lf_message where lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']];
 
         var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time from lf_users,lf_message where lf_users.user_id=lf_message.user_id and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by lf_message.order_count desc,'+sql[doc['order']]+' desc limit '+(page['currentp']-1)*page['size']+', '+page['size'];
         //select * from lf_message where ctime>=1431739693 and message=''  order by ctime desc limit 100000
@@ -762,11 +762,69 @@ exports.soso = function(req, res){
 @
 @
 */
-exports.paster = function(req, res){
+
+//增加5:  
+//alter table lf_paster_info add examine_time int(13) NOT NULL DEFAULT '0' after ctime;
+//alter table lf_paster_info add examine_admin varchar(15) NOT NULL DEFAULT 'unknow' after ctime;
+//
+//alter table lf_paster_info add status int(11) NOT NULL DEFAULT '1' after id;
+
+
+exports.pasterinfo = function(req, res){
     var name = req.session.username;
 
-
     if (name) {
+
+
+        var doc = {
+            //time: 'w1', 
+            typeid: '1', 
+            order: 'time', 
+            sta: 'all'
+        };
+        var page = {currentp:1,size:20};
+
+        //查看哪页
+        if(fun.isDigit(req.query.p)){
+            page['currentp']= req.query.p < 1 ? 1 : req.query.p;
+        }
+        //每页多少条
+        if (fun.isDigit(req.query.size)) {
+            page['size']= req.query.size<1 ? 1 : req.query.size;
+        };
+
+
+
+        var sql = {
+            //status show
+            all         : '',
+            filter      : 'filter',
+            ready       : 'lf_paster_info.status="1" and',
+            del         : 'lf_paster_info.status="0" and',
+            //order 
+            time        : 'lf_paster_info.ctime',
+            sort        : 'lf_paster_info.sort',
+
+        }
+
+        if (sql[req.query.sta]) {
+            doc['sta'] = req.query.sta;
+        };
+        if (sql[req.query.order]) {
+            doc['order'] = req.query.order;
+        };
+        if (sql[req.query.sta]&&req.query.sta=='filter') {
+            if (req.query.id) {
+
+            }else{
+
+
+            }
+
+        };
+
+        var pasterSQL = 'select * form lf_paster_info where '+sql[doc['sta']];
+        //SELECT * FROM `lf_paster_info` ORDER BY `lf_paster_info`.`type_id` ASC
 
 
     }else{
@@ -776,8 +834,242 @@ exports.paster = function(req, res){
 } 
 
 
+/*
+@  用户信息获取 lf_user
+@  相关参数 排序：order（时间／积分／最后登录时间） 状态：sta（所有／过滤带id／正常／删除／禁用／管理员）
+@  jsonp
+@  http://localhost:3000/userinfo?order=time&sta=filter&id=520520&p=1&size=10
+*/
+
+//增加6:  账号管理的 操作人（examine_admin） 操作时间 （examine_time）
+//alter table lf_users add examine_time int(13) NOT NULL DEFAULT '0' after ctime;
+//alter table lf_users add examine_admin varchar(15) NOT NULL DEFAULT 'unknow' after ctime;
+//
+
+exports.userinfo = function(req, res){
+    var name = req.session.username;
+
+    if (name) {
+        var doc = {
+            order: 'time', 
+            sta: 'all'
+        };
+        var page = {currentp:1,size:20};
+        //查看哪页
+        if(fun.isDigit(req.query.p)){
+            page['currentp']= req.query.p < 1 ? 1 : req.query.p;
+        }
+        //每页多少条
+        if (fun.isDigit(req.query.size)) {
+            page['size']= req.query.size<1 ? 1 : req.query.size;
+        };
+        var sql = {
+            //status show
+            all         : ' status!="" ',
+            filter      : ' filter',
+            ready       : ' lf_users.status="1" ',
+            del         : ' lf_users.status="2" ',
+            forbid      : ' lf_users.status="0" ', 
+            admin       : ' lf_users.level="8" ',
+            //order 
+            time        : 'lf_users.ctime',
+            score       : 'lf_users.score',
+            last_time   : 'lf_users.last_time',
+
+        }
+        if (sql[req.query.sta]) {
+            doc['sta'] = req.query.sta;
+        };
+        if (sql[req.query.order]) {
+            doc['order'] = req.query.order;
+        };
+        if (sql[req.query.sta]&&req.query.sta=='filter') {
+            if (req.query.id) {
+                doc['sta'] = 'filter';
+                sql['filter'] = ' lf_users.user_id="'+req.query.id+'" ';
+            }else{
+                sql['filter']='';
+            }
+        };
+        var querySQL = {
+            totalSQL : 'select count(*) from lf_users where'+ sql[doc['sta']],
+            userSQL : 'select * from lf_users where '+ sql[doc['sta']]+' order by '+ sql[doc['order']] +' limit '+(page['currentp']-1)*page['size']+', '+page['size'],
+        }
+        
+        //分页－－查询总条数
+        db.query(querySQL['totalSQL'], function(rowsCount){
+            rowsCount = rowsCount[0]['count(*)'];
+            console.log('会员条数：'+rowsCount);
+            page['allnews'] = rowsCount;
+            page['pageCount'] = Math.ceil(rowsCount/page['size']);//ceil向上取整 round四舍五入  floor向下取整
+            //page['numberOf']    = page['pageCount']>5?5:page['pageCount'];
+            
+            // 输出 user 查询结果
+            db.query(querySQL['userSQL'], function(userData){
+                var data = {
+                        len : userData.length,
+                        page : page,
+                        list : userData,
+                    };
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
+            })
+        })
+    }else{
+        res.redirect('/');
+    }
+} 
+
+/*
+@ 用户信息模糊查询
+@
+@ http://localhost:3000/lookuser?value=hi
+*/
+
+//找出u_name中既有“三”又有“猫”的记录，请使用and条件 
+//SELECT * FROM [user] WHERE u_name LIKE '%三%' AND u_name LIKE '%猫%' 
+
+exports.lookuser = function(req, res){
+    //验证 管理员&&是否登录
+    fun.verifyAdmin(req, res, function(){
+
+        var page = {currentp:1,size:20};
+        var doc = {
+            type : 'userid',
+        }
+        //查看哪页
+        if(fun.isDigit(req.query.p)){
+            page['currentp']= req.query.p < 1 ? 1 : req.query.p;
+        }
+        //每页多少条
+        if (fun.isDigit(req.query.size)) {
+            page['size']= req.query.size<1 ? 1 : req.query.size;
+        };
 
 
+        var querySQL = {
+            userid   : 'select * from lf_users',
+            nickname : 'select * from lf_users',
+            totalSQL : 'select count(*) from lf_users',
+        }
+
+
+
+        if (fun.isDigit(req.query.value)) {
+            doc['type'] = 'userid';
+            querySQL['userid'] =  'select * from lf_users where user_id='+req.query.value; 
+            // 单条信息
+            querySQL['totalSQL'] = 'select count(*) from lf_users where user_id='+req.query.value; 
+            
+
+        }
+        if (!fun.isDigit(req.query.value)) {
+            doc['type'] = 'nickname';
+
+            querySQL['nickname'] = 'select * from lf_users where nickname like "%'+req.query.value+'%" ';
+            querySQL['totalSQL'] = 'select count(*) from lf_users where nickname like "%'+req.query.value+'%" ';
+        }
+        // 如果 包含 空格／＋／等组合查询 ［待优化］
+
+
+
+        
+        //分页－－查询总条数
+        db.query(querySQL['totalSQL'], function(rowsCount){
+            rowsCount = rowsCount[0]['count(*)'];
+            console.log('会员条数：'+rowsCount);
+            page['allnews'] = rowsCount;
+            page['pageCount'] = Math.ceil(rowsCount/page['size']);//ceil向上取整 round四舍五入  floor向下取整
+            //page['numberOf']    = page['pageCount']>5?5:page['pageCount'];
+            
+            // 输出 user 查询结果
+            db.query(querySQL[doc['type']], function(userData){
+                var data = {
+                        len : userData.length,
+                        page : page,
+                        list : userData,
+                    };
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
+            })
+        })
+
+
+    })
+} 
+
+
+/*              
+@  用户信息更新 update
+@  参数 userid／column／value （都必须） 
+@  jsonp
+@  http://localhost:3000/up1user?userid=123&column=status
+*/
+//API  接口实现方法：
+//请求 ?user_id=123&status=1
+//判断 req.query.(some) 参数的值知否符合表设置的数据类型 
+//执行 sql   [每请求一个参数（可以组合） 执行一遍对应的sql，需要 n 个函数]
+
+//请求 ?user_id=123&column=status&value=1
+//查找 column 并判断 value
+//执行sql 一个函数即可
+
+
+exports.up1user = function(req, res){
+    var session = {
+        name : req.session.username,
+        level : req.session.type,
+    }
+
+    if (session.name&&session.level=="8") {
+        //必须 有 userid 参数
+        if (fun.isDigit(req.query.userid)&&req.query.column) {
+
+            var doc = {
+                column : 'status',
+                value : '1',                
+            };
+
+            var sql = {
+                //user_id     : req.query.userid, 
+                status      : ' status="'+req.query.value+'" ',
+                level       : '1',
+                //mobile      : ''
+
+            }
+
+            if (req.query.column=='level'&&fun.isDigit(req.query.value)) {
+                doc['column'] = 'level';
+                sql['level'] = ' level ="'+req.query.value+'" ';
+            };
+            /*if (req.query.column=='status'&&fun.isDigit(req.query.value)) {
+                doc['column'] = 'status';
+                sql['status'] = ' status="'+req.query.value+'" ';
+            };*/
+
+            
+            var updateUser = 'update lf_users set '+ sql[doc['column']] + 'where lf_users.user_id="'+req.query.userid+'"'
+            db.query(updateUser, function(data){
+                fun.jsonTips(req, res, 200, config.Code2X[2000], data);
+            })
+
+
+
+        }else{
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+        
+        
+        
+    }else{
+        res.redirect('/');
+    }
+} 
+
+//var updateSQL = "update lf_message_comment set status = '"+doc['value']+"',examine_admin='"+name+"',examine_time='"+ fun.nowUnix() +"' WHERE lf_message_comment.id = '"+doc['id']+"'";
+
+
+
+//"update lf_message set status = '"+doc['value']+"
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1109,7 +1401,7 @@ exports.remove1user = function(req, res){
     });
 }
 
-
+/*
 //更改 update 单个用户信息 get
 exports.up1user = function(req, res){
 
@@ -1126,7 +1418,7 @@ exports.up1user = function(req, res){
         });
     });
 }
-
+*/
 
 //路由get 新增 后台管理员添加 create 用户
 exports.adduserget = function(req, res){

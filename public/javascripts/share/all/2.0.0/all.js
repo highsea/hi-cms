@@ -4,6 +4,9 @@ define(function(require, exports, module) {
 
 	var all = {};
 
+/*
+@ 普通时间 时间 转换为 unix
+*/
 	all.js_strto_time = function (str_time) {
 		var new_str = str_time.replace(/:/g,'-');
 	    new_str = new_str.replace(/ /g,'-');
@@ -11,6 +14,9 @@ define(function(require, exports, module) {
 	    var datum = new Date(Date.UTC(arr[0],arr[1]-1,arr[2],arr[3]-8,arr[4],arr[5]));
 	    return strtotime = datum.getTime()/1000;
 	}
+/*
+@ unix 时间 转换为 普通时间 
+*/
 
 	all.js_date_time = function (unixtime) {
 		var timestr = new Date(parseInt(unixtime) * 1000);
@@ -58,6 +64,9 @@ define(function(require, exports, module) {
 		all.alertHtml('.form', 'info', resultHTML, '');
 	}
 
+/*
+@ 一个 tips 
+*/
 	all.alertHtml = function(dom, info, title, message){
 
 		$('.alert').remove();
@@ -131,6 +140,21 @@ define(function(require, exports, module) {
 
 
     }
+
+
+    all.paginator = function (cpage, nbtn, allp){
+
+    	var options = {  
+            bootstrapMajorVersion:3,  
+            currentPage 	: cpage,//当前页面
+            numberOfPages 	: nbtn,//一页显示几个按钮（在ul里面生成5个li）  
+            totalPages		: allp //总页数  
+        }  
+    	return options;
+    }
+
+
+
 /*
 @ 展示 message
 @
@@ -210,6 +234,40 @@ define(function(require, exports, module) {
 	}
 
 
+//生成表格
+    all.install_TB = function(t, dataArr, columnArr, tableHead){
+
+    //$('.modal-body').html('<table id="modal_table"></table>');
+    $('#'+t).html('')
+    .append(tableHead)
+    .DataTable({
+        data    : dataArr,
+        columns : columnArr,
+        "sDom"  : "l f t i p r",
+        "oLanguage": {
+        "sLengthMenu": "每页显示 _MENU_ 条",
+        "sZeroRecords": "哎哟，找不到……",
+        "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+        "sInfoEmpty": "没有数据",
+        "sInfoFiltered": "(从 _MAX_ 条数据中检索)",
+        "sSearch" : "任意关键字检索",
+        "oPaginate": {
+            "sFirst": "首页",
+            "sPrevious": "前一页",
+            "sNext": "后一页",
+            "sLast": "尾页"
+            },
+        "sZeroRecords": "没有检索到数据",
+        "sProcessing": "<img src='http://images.cnitblog.com/blog2015/531703/201503/241551310675303.gif' />"
+        }
+    });
+
+}
+
+
+/*
+@ 重新封装了 AJAX （支持 callback）
+*/
 	all.ajax = function(url, data, dom, callback){
 
 		$.ajax({
@@ -235,7 +293,7 @@ define(function(require, exports, module) {
 				}
 			},
 			error : function(){
-					all.alertHtml(dom, 'danger', dataList.code, dataList.message);
+					all.alertHtml(dom, 'danger', '网络错误', '请稍后重试');
 			}
 		})
 	}

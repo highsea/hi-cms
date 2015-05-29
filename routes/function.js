@@ -16,14 +16,30 @@ var database = require('./../db/mysql_db.js'),
 @  
 @
 */
-function userCount (){
+/*function userCount (){
     database
+}
+*/
+
+function verifyAdmin(req, res, callback){
+    var session = {
+        name : req.session.username,
+        level : req.session.type,
+    }
+
+    if (session.name&&session.level=="8") {
+        
+        callback();
+        
+    }else{
+        //前端ajax设置 当 code＝2004 则跳转到登录页
+        jsonTips(req, res, 2004, config.Code2X[2004], null)
+    }
 }
 
 
-
 //方法 用户名 密码 type 验证--用于 更新用户 新建用户
-function add_update_verify(req, res, callback){
+/*function add_update_verify(req, res, callback){
     var r = req.query;
     if (!r.user||r.user==''||!r.password||r.password==''||!r.type||r.type=='') {
         //||!r.id||r.id==''
@@ -33,7 +49,7 @@ function add_update_verify(req, res, callback){
         callback();
     }
 }
-
+*/
 //方法 jsonp 提示 接口生成
 
 function jsonTips(req, res, code, message, data){
@@ -119,7 +135,7 @@ function friendlyError(req, res, text){
 
 
 
-exports.add_update_verify 	= add_update_verify;
+//exports.add_update_verify 	= add_update_verify;
 //exports.login_verify  		= login_verify;
 exports.jsonTips 			= jsonTips;
 //exports.json_api 			= json_api;
@@ -129,5 +145,6 @@ exports.friendlyError       = friendlyError;
 exports.dayAgo              = dayAgo;
 exports.nowUnix             = nowUnix;
 exports.isDigit             = isDigit;
+exports.verifyAdmin         = verifyAdmin;
 
 
