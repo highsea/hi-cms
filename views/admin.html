@@ -257,7 +257,7 @@ window.onload=function(){
 			var thisUid = $(this).closest('tr').children('td').eq(2).text();
 			var thisDom = $(this);
 
-			console.log(thisUid);
+			//console.log(thisUid);
 
 			if (status==1) {
 				value = 2;//或者 0
@@ -275,9 +275,9 @@ window.onload=function(){
 
 				var changedRows = result.data.changedRows;
 
-				console.log(result);
+				//console.log(result);
 				if (status==1) {
-					console.log(status);
+					//console.log(status);
 					thisDom.closest('td').html('<a data-status="2" class="btn setUser btn-warning">释放他出来</a>');
 				}else if (status==2) {
 

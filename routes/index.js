@@ -1048,7 +1048,7 @@ exports.up1user = function(req, res){
             
             var updateUser = 'update lf_users set '+ sql[doc['column']] + 'where lf_users.user_id="'+req.query.userid+'"'
             db.query(updateUser, function(data){
-                fun.jsonTips(req, res, 200, config.Code2X[2000], data);
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
             })
 
 

@@ -285,6 +285,8 @@ define(function(require, exports, module) {
 
 					callback(dataList);
 
+					console.log(dataList);
+
 				}else if(dataList.code==3001){
 					all.alertHtml('.form', 'danger', '该账号已经被注册了', '');
 					all.inputBg(dom, 'close.gif');
