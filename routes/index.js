@@ -1068,8 +1068,67 @@ exports.up1user = function(req, res){
 //var updateSQL = "update lf_message_comment set status = '"+doc['value']+"',examine_admin='"+name+"',examine_time='"+ fun.nowUnix() +"' WHERE lf_message_comment.id = '"+doc['id']+"'";
 
 
+/*
+@  个人主页
+@  参数 type（userid）value（int）
+@  http://localhost:3000/userzone?type=userid&value=1120
+*/
 
-//"update lf_message set status = '"+doc['value']+"
+exports.userzone = function(req, res){
+    //验证 管理员&&是否登录
+    fun.verifyAdmin(req, res, function(){
+
+        var page = {currentp:1,size:20};
+        var doc = {
+            column : 'userid',
+            type : 'message',
+        }
+        //查看哪页
+        if(fun.isDigit(req.query.p)){
+            page['currentp']= req.query.p < 1 ? 1 : req.query.p;
+        }
+        //每页多少条
+        if (fun.isDigit(req.query.size)) {
+            page['size']= req.query.size<1 ? 1 : req.query.size;
+        };
+
+
+        var querySQL = {
+            userid   : 'select * from lf_users',
+            nickname : 'select * from lf_users',
+            //totalSQL : 'select count(*) from lf_users',
+        }
+
+
+
+        if (fun.isDigit(req.query.value)) {
+            doc['column'] = 'userid';
+            querySQL['userid'] =  'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time from lf_users,lf_message where lf_users.user_id=lf_message.user_id and lf_users.user_id='+req.query.value; 
+            // 单条信息
+            //querySQL['totalSQL'] = 'select count(*) from lf_users where user_id='+req.query.value; 
+
+            //分页－－查询总条数
+            db.query(querySQL[doc['column']], function(userZoneData){
+                rowsCount = userZoneData.length;
+                console.log('信息条数：'+rowsCount);
+                page['allnews'] = rowsCount;
+                page['pageCount'] = Math.ceil(rowsCount/page['size']);//ceil向上取整 round四舍五入  floor向下取整
+                //page['numberOf']    = page['pageCount']>5?5:page['pageCount'];
+                var data = {
+                    len : rowsCount,
+                    page : page,
+                    list : userZoneData,
+                };
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], userZoneData);
+            })
+
+        }else{
+
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+        
+    })
+} 
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -135,6 +135,7 @@ app.get('/soso', routes.soso);
 app.get('/userinfo', routes.userinfo);
 app.get('/up1user', routes.up1user);
 app.get('/lookuser', routes.lookuser);
+app.get('/userzone', routes.userzone);
 
 
 

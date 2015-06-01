@@ -4,6 +4,48 @@ define(function(require, exports, module) {
 
 	var all = {};
 
+
+	/*$.extend({
+        getUrlVars: function(){
+            var vars = [], 
+                hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for(var i = 0; i < hashes.length; i++){
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        },
+        getUrlVar: function(name){
+            return $.getUrlVars()[name];
+        }
+    })
+*/
+
+	/*
+	@  获取浏览器url 参数 （通过 hash 哈希值）
+	*/
+    all.getUrlVars = function(){
+    	var vars = [], 
+            hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++){
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+
+    }
+    /*
+    @ 获取 url 某个 参数值
+    */
+    all.getUrlVar = function(name){
+        return all.getUrlVars()[name];
+    }
+
+
 /*
 @ 普通时间 时间 转换为 unix
 */
@@ -40,6 +82,7 @@ define(function(require, exports, module) {
 		'confirm': '身份验证通过',
 		'confirm_msg_re' : "身份验证通过，确定该操作吗？",
 		'confirm_msg_good':"推荐数值越大越考前，确定该操作吗？",
+		'host' : 'http://m.xiaojiaoyar.com/Uploads/Picture/'
 	}
 
 	all.authority = {
@@ -54,8 +97,8 @@ define(function(require, exports, module) {
 
 	all.sex={
 		2 : '女',
-		0 : '男',
-		1 : '未知',
+		1 : '男',
+		0 : '未知',
 	}
 
 	all.alertFun = function(dom,text,pic){
@@ -129,7 +172,7 @@ define(function(require, exports, module) {
 
 			}*/
 
-			var commentStr = '<p class="commentHTML" data-commentid="'+commentid+'" data-userid="'+user_id+'" data-useridb="'+user_id_b+'" class="commentUser sex_'+sex+' read_'+is_read+'"><a title="发表于'+all.js_date_time(ctime)+'">'+nickname+'<img class="avatar" src="http://m.xiaojiaoyar.com/Uploads/Picture/'+avatar+'" ></a>: '+message+'  <i class="btn reComment"> 放回收站</i></p>';
+			var commentStr = '<p class="commentHTML" data-commentid="'+commentid+'" data-userid="'+user_id+'" data-useridb="'+user_id_b+'" class="commentUser sex_'+sex+' read_'+is_read+'"><a title="发表于'+all.js_date_time(ctime)+'">'+nickname+'<img class="avatar" src="'+all.textTips['host']+avatar+'" ></a>: '+message+'  <i class="btn reComment"> 放回收站</i></p>';
 
 			currentDOM_msg.find('.comment').children('p').append(commentStr);
 
@@ -198,16 +241,16 @@ define(function(require, exports, module) {
 
 			if (photo.length>1) {
 				for (var k = 0; k < photo.length; k++) {
-					photoStr += '<li><img src="http://m.xiaojiaoyar.com/Uploads/Picture/'+photo[k]+'" alt="" /></li>';
+					photoStr += '<li><img src="'+all.textTips['host']+photo[k]+'" alt="" /></li>';
 				};
 
 			}else{
-				photoStr += '<li><img src="http://m.xiaojiaoyar.com/Uploads/Picture/'+photo[0]+'" alt="" /></li>'
+				photoStr += '<li><img src="'+all.textTips['host']+photo[0]+'" alt="" /></li>'
 			}
 
 			str += '<li class="span5 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'" data-eadmin="'+eadmin+'" data-etime="'+etime+'">'+
 			                '<div data-feedtype="'+feedtype+'" class="thumbnail">'+
-			                  '<h4><small>[第<em>'+page['currentp']+'</em>页：'+(i+1)+'/'+dlength+']</small><img class="avatar" src="http://m.xiaojiaoyar.com/Uploads/Picture/'+avatar+'" alt="" />'+nickname+'<br><small><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
+			                  '<h4><small>[第<em>'+page['currentp']+'</em>页：'+(i+1)+'/'+dlength+']</small><img class="avatar" src="'+all.textTips['host']+avatar+'" alt="" />'+nickname+'<br><small class="goods_info"><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
 			                  '<small>发表于：'+all.js_date_time(ctime)+' </small> '+
 			                  ' | <small> 用户id：<i>'+user_id+' </i></small> | <small> 消息id：<a href="/soso?msgid='+msg_id+'">'+msg_id+'</a></small>'+
 			                  '<p>浏览数：<span>'+read_count+'</span> 评论数：<span>'+comment_count+'</span> 赞：<span>'+up_count+'</span></p>'+
@@ -285,7 +328,7 @@ define(function(require, exports, module) {
 
 					callback(dataList);
 
-					console.log(dataList);
+					//console.log(dataList);
 
 				}else if(dataList.code==3001){
 					all.alertHtml('.form', 'danger', '该账号已经被注册了', '');

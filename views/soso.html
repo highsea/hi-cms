@@ -77,6 +77,9 @@
 					<li>
 						 <a href="#panel-367058" data-toggle="tab">文本模糊查询</a>
 					</li>
+					<li>
+						 <a href="#panel-367059" data-toggle="tab">用户历史消息</a>
+					</li>
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="panel-685375">
@@ -156,6 +159,31 @@
 						</div>
 						
 					</div>
+					
+					<div class="tab-pane" id="panel-367059">
+						<div class="row-fluid message_text">
+							<div class="span6">
+								<div>
+								按用户id查询类型:
+									<select class="mark_delete">
+										<option selected value="message">查动态</option>
+										<option value="comment">查评论</option>
+									</select>
+								</div>
+							</div>
+							<div class="span3">
+								<input type="text" value="" class="userzone_V" placeholder="请输入用户id（查看个人主页）">
+							</div>
+							<div class="span3">
+								<a class="btn btn-success userzone_S"> 查 询 </a>
+							</div>
+
+							<hr>
+
+
+						</div>
+						
+					</div>
 				</div>
 			</div>
 		</div>
@@ -197,7 +225,7 @@ window.onload=function(){
     seajs.use(['boots-jquery', 'all', 'verify'], function($,A,V){
     	var $ = jQuery;
 
-    	$('.message_img')
+    	//$('.message_img')
 
     	var photo = $('.thumbnail').find('.message_img').children('p'),
             time = $('.thumbnail').find('.time').find('span'),
@@ -222,6 +250,23 @@ window.onload=function(){
             time.eq(i).html(A.js_date_time(unixtime));
 
         };
+
+        //
+        //console.log(A.getUrlVars());
+
+        if (A.getUrlVar('tab')=='userzone') {
+
+        	//$('#tabs-938867').
+        	$('#tabs-938867').children('ul.nav-tabs').children('li').eq(2).addClass('active').siblings('li').removeClass('active')
+        	$('#tabs-938867').children('div.tab-content').children('div').eq(2).addClass('active').siblings('div').removeClass('active')
+        	var userid = A.getUrlVar('userid');
+        	$('.userzone_V').val(userid);
+
+
+        	
+        }else{
+        	console.log(A.getUrlVar('tab'));
+        }
 
 
 	})

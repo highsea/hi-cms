@@ -1,6 +1,9 @@
 <% include header.html %>
 
 	<% if (result!='') { %>  
+
+<link rel="stylesheet" type="text/css" href="stylesheets/datatables.min.css">
+
 <div class="container-fluid">
 
     <div class="row-fluid">
@@ -73,7 +76,7 @@
 						 <a href="#panel-727360" data-toggle="tab">用户账号</a>
 					</li>
 					<li>
-						 <a href="#panel-374630" data-toggle="tab">马甲账号</a>
+						 <a href="#panel-374630" data-toggle="tab">权限管理</a>
 					</li>
 				</ul>
 				<div class="tab-content">
@@ -84,7 +87,7 @@
 								用户昵称或账号id
 							</div>
 							<div class="span4">
-								<input type="text" class="userInput" placeholder="请输入用户昵称或账号id">
+								<input type="text" class="userInput" placeholder="用户昵称或账号id(留空也可)">
 							</div>
 							
 							<div class="span4">
@@ -96,10 +99,11 @@
 						<!-- <div class="row-fluid lookuserPage none">
 							
 						</div> -->
+						<small> <b>点击《搜索》后，牛逼的表格操作说明：</b> 1.点击任意表头栏目可排序；2.支持全文检索</small> 
 						<hr>
 						<div class="row-fluid">
 							
-							<div class="span12 userInfoTable-fa">
+							<div class="userInfoTable-fa">
 								
 								
 							</div>
@@ -107,7 +111,7 @@
 					</div>
 					<div class="tab-pane" id="panel-374630">
 						<p>
-							第二部分内容.
+							权限目前 只有 超级管理员与 普通账户
 						</p>
 					</div>
 				</div>
@@ -163,9 +167,20 @@ window.onload=function(){
     	//console.log($);
     	//console.log(D);
 
+    	var B = seajs.require('bootstrap');
+  		var D = seajs.require('datatables');
+
+  		/*console.log(B);
+  		console.log(D);*/
+
+
+
+
     	var lookuserPage = $('.lookuserPage');
     	$('#tabs-533320').on('click', '.showUser,.userPageNum', function(e){
     		e.preventDefault();
+
+
 
 			$('.userInfoTable-fa').html('<table class="table" id="userInfoTable"></table>');
 
@@ -173,7 +188,7 @@ window.onload=function(){
     			value 	: $('.userInput').val(),
     			p 		: lookuserPage.children('input').val(),
     		}, '#tabs-533320', function(dataList){
-    			console.log(dataList);
+    			//console.log(dataList);
     			//var page = dataList.data.page;
     			//lookuserPage.show().html('<p class="pageinfo">一共<i>'+page.allnews+'</i> 条结果，当前第<em>'+page.currentp+'</em>页，分<b>'+page.pageCount+'</b>页</p><p>跳转到第<input type="text" value="1" placeholder="请输入页码">页 <a class="btn userPageNum"> 确 定 </a></p>');
     			var u = dataList.data.list,
@@ -183,23 +198,23 @@ window.onload=function(){
 
     			for (var i = 0; i < ulength; i++) {
     				/*var user_id = u[i].user_id,
-    					nickname = u[i].nickname,
-    					level = u[i].level,
-    					mobile = u[i].mobile,
-    					sex = u[i].sex,
-    					sign = u[i].sign,
-    					province = u[i].province,
-    					city = u[i].city,
-    					avatar =u[i].avatar,
-    					status = u[i].status,
-    					last_time = u[i].last_time,
+    					nickname = u[i].nickname,//
+    					level = u[i].level,//
+    					mobile = u[i].mobile,//
+    					sex = u[i].sex,//
+    					sign = u[i].sign,//
+    					province = u[i].province,//
+    					city = u[i].city,//
+    					avatar =u[i].avatar,//
+    					status = u[i].status,//
+    					last_time = u[i].last_time,//
     					last_ip = u[i].last_ip,
     					grade = u[i].grade,
     					score = u[i].score,
     					reg_ip = u[i].reg_ip,
     					flag = u[i].flag,
     					platform = u[i].platform,
-    					ctime = u[i].ctime,
+    					ctime = u[i].ctime,//
     					mtime = u[i].mtime,
     					token = u[i].token;*/
     				var status = u[i].status;
@@ -213,12 +228,12 @@ window.onload=function(){
 
     				var new_data = {
     					xuhao 		: i+1,
-    					nickname 	: '<a data-sex="'+u[i].sex+'" data-level="'+u[i].level+'">'+u[i].nickname+'</a>',
+    					nickname 	: '<a data-sex="'+u[i].sex+'" data-level="'+u[i].level+'">'+u[i].nickname+'</a><p><img src="'+A.textTips['host']+u[i].avatar+'" alt="" class="avatar" /></p><p>手机号：'+u[i].mobile+'</p>',
     					zhanghao 	: u[i].user_id,
-    					userhome 	: '/'+u[i].user_id+'/',
+    					userhome 	: '<p>主页：<a href="/userzone/'+u[i].user_id+'" target="_blank">'+u[i].user_id+'</a></p><p>签名：'+u[i].sign+'</p><p>等级：'+u[i].level+'</p><p>性别：'+A.sex[u[i].sex]+'</p><p>地区：'+u[i].province+u[i].city+'</p><p>积分：'+u[i].score+'</p>',
     					caozuo 		:  caozuoDom,
     					caozuoren   : u[i].examine_admin,
-    					caozuotime  : u[i].examine_time,
+    					caozuotime  : '<p>最后登录时间：<br>'+A.js_date_time(u[i].last_time)+'</p><p>账号创建时间：<br>'+A.js_date_time(u[i].ctime)+'</p><p>操作时间：<br>'+A.js_date_time(u[i].examine_time)+'</p>',
     				}
 					data_tableArr.push(new_data);
 
@@ -239,7 +254,7 @@ window.onload=function(){
 				/*console.log(data_tableArr);
 
 				console.log(A.install_TB);*/
-				A.install_TB('userInfoTable', data_tableArr, columnArr, '<thead><tr><th>序号</th><th>用户昵称</th><th>账号</th><th>个人主页</th><th>操作</th><th>曾操作人</th><th>曾操作时间</th></tr></thead><tbody></tbody>');
+				A.install_TB('userInfoTable', data_tableArr, columnArr, '<thead><tr><th>序号</th><th>用户昵称</th><th>用户id</th><th>个人信息</th><th>操作(点击可排序)</th><th>曾操作人</th><th>相关时间</th></tr></thead><tbody></tbody>');
 
 
     		})
