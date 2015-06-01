@@ -71,6 +71,7 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 		4001:'您没有权限，需要密钥哦',
 		4015:'数据不存在',
 		4030:'您居然没有邮箱！email:',
+		4031: '该用户不存在',
 		
 	},
 	//服务器错误 5XXX

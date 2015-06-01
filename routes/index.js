@@ -438,7 +438,7 @@ exports.mup = function (req, res) {
 exports.recycleMessage = function(req, res){
     var name = req.session.username,
         type = req.session.type;
-    var doc ={
+    var doc = {
         id          : '0',
         value       : '0'
         //id      : '',
@@ -659,7 +659,7 @@ exports.lookmsg = function(req, res){
                 }
             };
 
-            var searchSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime from lf_users,lf_message where lf_users.user_id=lf_message.user_id '+sql[doc['stype']]+' order by lf_message.order_count desc,lf_message.ctime desc limit 100000';
+            var searchSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time from lf_users,lf_message where lf_users.user_id=lf_message.user_id '+sql[doc['stype']]+' order by lf_message.order_count desc,lf_message.ctime desc limit 100000';
 
             db.query(searchSQL, function (result) {
                 //console.log(fun.nowUnix());
@@ -1070,8 +1070,8 @@ exports.up1user = function(req, res){
 
 /*
 @  个人主页
-@  参数 type（userid）value（int）
-@  http://localhost:3000/userzone?type=userid&value=1120
+@  参数 type（message）value（int）
+@  http://localhost:3000/userzone?type=message&column=userid&value=1120
 */
 
 exports.userzone = function(req, res){
@@ -1094,32 +1094,76 @@ exports.userzone = function(req, res){
 
 
         var querySQL = {
-            userid   : 'select * from lf_users',
-            nickname : 'select * from lf_users',
-            //totalSQL : 'select count(*) from lf_users',
+
+            message   : 'select * from lf_message where lf_message.user_id='+req.query.value+' order by lf_message.ctime desc'+' limit '+(page['currentp']-1)*page['size']+', '+page['size'],
+            messageCount : 'select count(*) from lf_message where user_id='+req.query.value,
+            //nickname : 'select * from lf_users',
+            comment : 'select * from lf_message_comment where lf_message_comment.user_id='+req.query.value+' order by lf_message_comment.ctime desc'+' limit '+(page['currentp']-1)*page['size']+', '+page['size'],
+            commentCount : 'select count(*) from lf_message_comment where user_id='+req.query.value,
+            userinfo : 'select * from lf_users where lf_users.user_id='+req.query.value+' ',
         }
 
+        if (querySQL[req.query.type]) {
+            doc['type']=req.query.type;
+            console.log('userzone----req.query.type :'+req.query.type);
+            console.log("querySQL[doc['type']] :"+querySQL[doc['type']]);
+        };
 
-
+        
+        //以ID查询 （目前此接口不支持 模糊查询）
         if (fun.isDigit(req.query.value)) {
-            doc['column'] = 'userid';
-            querySQL['userid'] =  'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time from lf_users,lf_message where lf_users.user_id=lf_message.user_id and lf_users.user_id='+req.query.value; 
-            // 单条信息
-            //querySQL['totalSQL'] = 'select count(*) from lf_users where user_id='+req.query.value; 
+
+            /*if (querySQL[req.query.type]&&req.query.type=='message') {
+                doc['type']='message';
+                //querySQL['message'] =  'select * from lf_message where lf_message.user_id='+req.query.value+' order by lf_message.ctime desc'+' limit '+(page['currentp']-1)*page['size']+', '+page['size']; 
+            };
+
+            if (querySQL[req.query.type]&&req.query.type=='comment') {
+                doc['type'] = 'comment';
+                //querySQL['comment'] = 'select * from lf_message_comment where lf_message_comment.user_id='+req.query.value+' order by lf_message_comment.ctime desc'+' limit '+(page['currentp']-1)*page['size']+', '+page['size']; 
+            };
+
+            querySQL['userinfo'] = 'select * from lf_users where lf_users.user_id='+req.query.value+' ';*/
 
             //分页－－查询总条数
-            db.query(querySQL[doc['column']], function(userZoneData){
-                rowsCount = userZoneData.length;
-                console.log('信息条数：'+rowsCount);
+            db.query(querySQL[doc['type']+'Count'], function(rowsCount){
+
+                rowsCount = rowsCount[0]['count(*)'];
+                console.log('用户动态总条数：'+rowsCount);
                 page['allnews'] = rowsCount;
-                page['pageCount'] = Math.ceil(rowsCount/page['size']);//ceil向上取整 round四舍五入  floor向下取整
-                //page['numberOf']    = page['pageCount']>5?5:page['pageCount'];
-                var data = {
-                    len : rowsCount,
-                    page : page,
-                    list : userZoneData,
-                };
-                fun.jsonTips(req, res, 2000, config.Code2X[2000], userZoneData);
+                page['pageCount'] = Math.ceil(rowsCount/page['size']);
+
+                //用户信息
+                db.query(querySQL['userinfo'], function(userInfo){
+
+                    if (userInfo.length) {
+
+                        //console.log('用户信息 :'+userInfo[0]);
+                        //console.log('page: '+ page);
+
+                        // 输出 动态 查询结果
+                        db.query(querySQL[doc['type']], function (messageList) {
+
+                            var data = {
+                                length : messageList.length,
+                                page : page,
+                                list : messageList,
+                                user : userInfo[0],
+                            };
+
+                            fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
+                        })
+
+                    }else{
+
+                        fun.jsonTips(req, res, 4031, config.Code4X[4031], null);
+
+                    }
+
+                    
+
+                })
+                
             })
 
         }else{

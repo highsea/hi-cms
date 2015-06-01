@@ -2,6 +2,7 @@
 
 <% if (result!='') { %>  
 
+<link rel="stylesheet" type="text/css" href="stylesheets/datatables.min.css">
 
 <div class="container-fluid">
 
@@ -23,7 +24,7 @@
 									 <a href="#">贴纸管理</a>
 								</li>
 								<li class="current">
-									 <a href="/soso">消息查询</a>
+									 <a href="/soso">信息查询</a>
 								</li>
 								
 							</ul>
@@ -72,13 +73,13 @@
 			<div class="tabbable" id="tabs-938867">
 				<ul class="nav nav-tabs">
 					<li class="active">
-						 <a href="#panel-685375" data-toggle="tab">消息ID查询</a>
+						 <a href="#panel-685375" data-toggle="tab">单条消息查询(by id)</a>
 					</li>
 					<li>
-						 <a href="#panel-367058" data-toggle="tab">文本模糊查询</a>
+						 <a href="#panel-367058" data-toggle="tab">文本模糊查询(by anything)</a>
 					</li>
 					<li>
-						 <a href="#panel-367059" data-toggle="tab">用户历史消息</a>
+						 <a href="#panel-367059" data-toggle="tab">用户动态及评论查询(by id)</a>
 					</li>
 				</ul>
 				<div class="tab-content">
@@ -110,7 +111,7 @@
 									<div data-feedtype="<%=msgData[i].feedtype%>" class="thumbnail">
 										<h4><img class="avatar" src="http://m.xiaojiaoyar.com/Uploads/Picture/<%=msgData[i].avatar%>" alt=""><%=msgData[i].nickname%> </h4>
 										<small class="time">发表于：<span><%=msgData[i].ctime%></span> </small>  | 
-										<small> 用户id：<i><%=msgData[i].user_id%> </i></small> | 
+										<small> 用户id：<a href="/soso?userid=<%=msgData[i].user_id%>&tab=userzone"><%=msgData[i].user_id%> </a></small> | 
 										<small> 消息id：<a href="/soso?msgid=<%=msgData[i].msg_id%>"><%=msgData[i].msg_id%></a></small>
 										<p>浏览数：<span><%=msgData[i].read_count%></span> 评论数：<span><%=msgData[i].comment_count%></span> 赞：<span><%=msgData[i].up_count%></span></p>
 										<p><%=msgData[i].message%></p>
@@ -124,9 +125,10 @@
 										<div class="caption comment">
 											<p>评论：不显示</p>
 										</div>
-										<!-- <div class="caption order">
-											<a class="btn btn-success goodmsg">推荐 4</a> &nbsp; <a class="btn btn-danger recycleMessage ">动态放回收站 </a>
-										</div> -->
+										<div class="caption order">
+											<!-- <a class="btn btn-success goodmsg">推荐 4</a> --> &nbsp; 
+											<a data-msgid="<%=msgData[i].msg_id%>" data-status="<%=msgData[i].status%>" class="btn btn-danger setMessage ">动态放回收站 </a>
+										</div>
 										<div class="h5url">
 											<p><a href="<%=outURL%>" target="_blank">h5Url</a></p><textarea rows="5"><%=outURL%></textarea>
 										</div>
@@ -144,10 +146,10 @@
 					<div class="tab-pane" id="panel-367058">
 						<div class="row-fluid message_text">
 							<div class="span3">
-								<input type="text" value="" placeholder="请输入消息文本（模糊匹配）">
+								<input class="mohucha_V" type="text" value="" placeholder="请输入消息文本（模糊匹配）">
 							</div>
 							<div class="span3">
-								<a class="btn">查询</a>
+								<a class="btn btn-success mohucha">模糊查询</a>
 							</div>
 
 							<hr>
@@ -157,6 +159,12 @@
 						    <a href="/lookmsg?stype=text&value=q" target="_blank">q </a>
 
 						</div>
+
+						<small> <b>点击《搜索》后，牛逼的表格操作说明：</b> 1.点击任意表头栏目可排序；2.支持全文检索</small> <br>
+						<hr>
+						<div class="mohucha-fa">
+							
+						</div>
 						
 					</div>
 					
@@ -165,7 +173,7 @@
 							<div class="span6">
 								<div>
 								按用户id查询类型:
-									<select class="mark_delete">
+									<select class="search_type">
 										<option selected value="message">查动态</option>
 										<option value="comment">查评论</option>
 									</select>
@@ -177,10 +185,12 @@
 							<div class="span3">
 								<a class="btn btn-success userzone_S"> 查 询 </a>
 							</div>
-
-							<hr>
-
-
+							
+						</div>
+						<small> <b>点击《搜索》后，牛逼的表格操作说明：</b> 1.点击任意表头栏目可排序；2.支持全文检索</small> <br>
+						<hr>
+						<div class="userResult-fa">
+							
 						</div>
 						
 					</div>
@@ -206,6 +216,11 @@
 
 <% include footer.html %>
 
+<!-- 0.0 funck seajs -->
+<!-- <script charset="utf-8" id="seajsnode"src="/javascripts/jquery/datatable/1.10.4/jquery.dataTables.js"></script>
+ -->
+
+
 <script type="text/javascript">
 window.onload=function(){
 
@@ -218,14 +233,21 @@ window.onload=function(){
         //"zepto":  "jquery/zepto/1.1.6/zepto",
         "all": "share/all/2.0.0/all",
         'verify':'share/verify/1.0.0/verify',
+        'datatables' : 'jquery/datatable/1.10.4/jquery.dataTables.js',
+
         //'e_zetpo':'share/extend/1.0.0/extendzepto',
 	  }
 	})
 	
-    seajs.use(['boots-jquery', 'all', 'verify'], function($,A,V){
+    seajs.use(['boots-jquery', 'all', 'verify', 'datatables'], function($,A,V,D){
     	var $ = jQuery;
+  		var D = seajs.require('datatables');
+
 
     	//$('.message_img')
+    	var userzone_V = $('.userzone_V'),
+    		search_type = $('.search_type'),
+    		mohucha_V = $('.mohucha_V');
 
     	var photo = $('.thumbnail').find('.message_img').children('p'),
             time = $('.thumbnail').find('.time').find('span'),
@@ -257,19 +279,259 @@ window.onload=function(){
         if (A.getUrlVar('tab')=='userzone') {
 
         	//$('#tabs-938867').
-        	$('#tabs-938867').children('ul.nav-tabs').children('li').eq(2).addClass('active').siblings('li').removeClass('active')
-        	$('#tabs-938867').children('div.tab-content').children('div').eq(2).addClass('active').siblings('div').removeClass('active')
+        	$('#tabs-938867').children('ul.nav-tabs').children('li').eq(2).addClass('active').siblings('li').removeClass('active');
+        	$('#tabs-938867').children('div.tab-content').children('div').eq(2).addClass('active').siblings('div').removeClass('active');
         	var userid = A.getUrlVar('userid');
-        	$('.userzone_V').val(userid);
+        	console.log(A.getUrlVar('tab')+':'+userid);
+        	userzone_V.val(userid);
 
-
+        	//展示 动态 或评论
+			showaction();
         	
-        }else{
-        	console.log(A.getUrlVar('tab'));
         }
+
+        $('#tabs-938867').on('click', '.userzone_S', function(){
+        	//console.log(userzone_V.val());
+        	//展示 动态 或评论
+			showaction();
+        }).
+        on('click', '.mohucha', function(event) {
+        	event.preventDefault();
+        	//模糊查询
+
+        	if (mohucha_V.val()!='') {
+        		A.ajax('/lookmsg', {
+        			stype : 'text',
+        			value : mohucha_V.val(),
+        		}, '#tabs-938867', function(dataList){
+
+        			//模糊查询 结果 渲染
+        			$('.mohucha-fa').html('<table id="mohuResult"></table>');
+        			// show message A(all) function
+
+        			var u = dataList.data.user;
+
+					var m = dataList.data.list,
+						mlength = m.length,
+						data_tableArr = [];
+					for (var i = 0; i < mlength; i++) {
+
+						var status = m[i].status;
+						var caozuoDom = '<a data-msgid="'+m[i].msg_id+'" data-status="'+status+'" class="btn setMessage btn-danger">删除动态</a>';
+
+						if (status==1) {
+							caozuoDom = '<a data-msgid="'+m[i].msg_id+'" data-status="'+status+'" class="btn setMessage btn-danger">删除动态</a>';
+						};
+						if (status==0||status==2) {
+							caozuoDom = '<a data-msgid="'+m[i].msg_id+'" data-status="'+status+'" class="btn setMessage btn-warning">恢复动态</a>';
+						};
+
+						var picStr = '',
+							picArr = JSON.parse(m[i].photo);
+
+						if (picArr.length) {
+							for (var k = 0; k < picArr.length; k++) {
+								picStr += '<a href="'+A.textTips['host']+picArr[k]+'" target="_blank"><img class="pic90h" src="'+A.textTips['host']+picArr[k]+'"></a>'
+							};
+						};
+
+						var new_data = {
+							xuhao 		: i+1,
+							yonghu 		: '<a href="/soso?userid='+m[i].user_id+'&tab=userzone">'+m[i].user_id+'</a>',
+							msgid 		: '<a href="/soso?msgid='+m[i].msg_id+'">'+m[i].msg_id+'</a>',
+							xinxi 		: '<p>阅读：'+m[i].read_count+'</p><p>推荐：'+m[i].order_count+'</p><p>评论：'+m[i].comment_count+'</p><p>赞：'+m[i].up_count+'</p>',
+							xiaoxi 		: m[i].message,
+							picture 	: picStr,
+							feedtype 	: m[i].feedtype,
+							shijian 	: A.js_date_time(m[i].ctime),
+							caozuo 		: caozuoDom,
+							caozuoren   : m[i].examine_admin,
+							caozuotime  : A.js_date_time(m[i].examine_time),
+						}
+						data_tableArr.push(new_data);
+
+
+					};
+
+
+					var columnArr = [
+					    { data : 'xuhao'},
+					    { data : 'yonghu'},
+					    { data : 'msgid'},
+					    { data : 'xinxi'},
+					    { data : 'xiaoxi'},
+					    { data : 'picture'},
+					    { data : 'feedtype'},
+					    { data : 'shijian'},
+					    { data : 'caozuo'},
+					    { data : 'caozuoren'},
+					    { data : 'caozuotime'},
+					];
+
+					A.install_TB('mohuResult', data_tableArr, columnArr, '<thead><tr><th>序号</th><th>用户id</th><th>消息id</th><th>信息</th><th>消息内容</th><th>图片</th><th>类型</th><th>时间</th><th>操作</th><th>操作人</th><th>操作时间</th></tr></thead><tbody></tbody>');
+
+	        		/*A.sosoMessage(dataList, function(data_tableArr, columnArr){
+	        			//渲染表格
+	        			A.install_TB('userResult', data_tableArr, columnArr, '<thead><tr><th>序号</th><th>消息id</th><th>信息</th><th>消息内容</th><th>图片</th><th>类型</th><th>时间</th><th>操作</th><th>操作人</th><th>操作时间</th></tr></thead><tbody></tbody>');
+
+	        		})*/
+
+        		})
+
+
+        	}else{
+        		mohucha_V.css({
+        			borderColor: '#f00',
+        		});
+        	}
+
+
+        });
+		$('body').on('click', '.setMessage', function(){
+
+			var status = $(this).data('status');
+			var msgid = $(this).data('msgid');
+			var thisDom = $(this);
+			//删除动态
+			if (status=='1') {
+
+				console.log('status:'+status+';msgid:'+msgid);
+
+				A.ajax('recycleMessage', {
+					id : msgid,
+					value : 2,
+				}, '#tabs-938867', function(dataList){
+
+					//console.log(dataList);
+					if (dataList.code=='2000') {
+						
+						thisDom.attr({
+							class: 'btn btn-warning setMessage',
+						}).html('还原状态');
+						thisDom.data('status','2');
+					};
+
+				})
+
+			}else{
+				//恢复动态
+
+				A.ajax('/recycleMessage', {
+					id : msgid,
+					value : 1,
+				}, '#tabs-938867', function(dataList){
+
+					//console.log(dataList);
+					if (dataList.code=='2000') {
+						
+						thisDom.attr({
+							class: 'btn btn-danger setMessage',
+						}).html('删除状态');
+						thisDom.data('status','1');
+					};
+				})
+			}			
+		})
+
+		
+
+		//展示 动态 或评论
+		function showaction(){
+
+    		$('.userResult-fa').html('<ul class="userinfo"></ul><table class="table" id="userResult"></table>');
+
+			if (search_type.val()=='message') {
+
+				//message
+	        	A.ajax('/userzone', {
+	        		type : 'message',
+	        		value : userzone_V.val(),
+	        		column : userid,
+	        		size : 10000,
+	        	} ,'#tabs-938867' ,function(dataList){
+	        		//console.log(dataList);
+	        		// show message A(all) function
+	        		A.sosoMessage(dataList, function(data_tableArr, columnArr){
+	        			//渲染表格
+	        			A.install_TB('userResult', data_tableArr, columnArr, '<thead><tr><th>序号</th><th>消息id</th><th>信息</th><th>消息内容</th><th>图片</th><th>类型</th><th>时间</th><th>操作</th><th>操作人</th><th>操作时间</th></tr></thead><tbody></tbody>');
+
+	        		})
+	        	})
+
+			};
+			if (search_type.val()=='comment') {
+			// comment
+				A.ajax('/userzone', {
+	        		type : 'comment',
+	        		value : userzone_V.val(),
+	        		column : userid,
+	        		size : 10000,
+	        	} ,'#tabs-938867' ,function(dataList){
+	        		var u = dataList.data.user;
+	        		//载入 用户信息
+	        		A.userinfo(u);
+
+	        		var m = dataList.data.list,
+	        			mlength = m.length,
+	        			data_tableArr = [];
+	        		for (var i = 0; i < mlength; i++) {
+
+	        			var status = m[i].status;
+	    				var caozuoDom = '<a data-status="'+status+'" class="btn setComment btn-danger">删除评论</a>';
+
+	    				if (status==1) {
+	    					caozuoDom = '<a data-status="'+status+'" class="btn setComment btn-danger">删除评论</a>';
+	    				};
+	    				if (status==0||status==2) {
+	    					caozuoDom = '<a data-status="'+status+'" class="btn setComment btn-warning">恢复评论</a>';
+	    				};
+
+
+
+	    				var new_data = {
+	    					xuhao 		: i+1,
+	    					commentid 	: m[i].id,
+	    					msgid 		: '<a href="/soso?msgid='+m[i].msg_id+'">'+m[i].msg_id+'</a>',
+	    					user_id_by 	: m[i].user_id_b,//回复给
+	    					xiaoxi 		: '<i data-read="'+m[i].is_read+'">'+m[i].message+'</i>',
+	    					shijian 	: A.js_date_time(m[i].ctime),
+	    					caozuo 		: caozuoDom,
+	    					caozuoren   : m[i].examine_admin,
+	    					caozuotime  : A.js_date_time(m[i].examine_time),
+	    				}
+						data_tableArr.push(new_data);
+
+	        		}
+
+	        		var columnArr = [
+					    { data : 'xuhao'},
+					    { data : 'commentid'},
+					    { data : 'msgid'},
+					    { data : 'user_id_by'},
+					    { data : 'xiaoxi'},
+					    { data : 'shijian'},
+					    { data : 'caozuo'},
+					    { data : 'caozuoren'},
+					    { data : 'caozuotime'},
+					];
+
+					/*console.log(data_tableArr);
+
+					console.log(A.install_TB);*/
+					A.install_TB('userResult', data_tableArr, columnArr, '<thead><tr><th>序号</th><th>评论id</th><th>消息id</th><th>回复给</th><th>内容</th><th>时间</th><th>操作</th><th>操作人</th><th>操作时间</th></tr></thead><tbody></tbody>');
+
+	        	})
+
+			};
+
+    	}
 
 
 	})
+
+
+
+
 }
 
 

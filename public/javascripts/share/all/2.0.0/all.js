@@ -250,9 +250,10 @@ define(function(require, exports, module) {
 
 			str += '<li class="span5 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'" data-eadmin="'+eadmin+'" data-etime="'+etime+'">'+
 			                '<div data-feedtype="'+feedtype+'" class="thumbnail">'+
-			                  '<h4><small>[第<em>'+page['currentp']+'</em>页：'+(i+1)+'/'+dlength+']</small><img class="avatar" src="'+all.textTips['host']+avatar+'" alt="" />'+nickname+'<br><small class="goods_info"><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
+			                  '<h4><small>[第<em>'+page['currentp']+'</em>页：'+(i+1)+'/'+dlength+']</small>'+
+			                  '<img class="avatar" src="'+all.textTips['host']+avatar+'" alt="" /><a href="/soso?userid='+user_id+'&tab=userzone">'+nickname+'</a><br><small class="goods_info"><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
 			                  '<small>发表于：'+all.js_date_time(ctime)+' </small> '+
-			                  ' | <small> 用户id：<i>'+user_id+' </i></small> | <small> 消息id：<a href="/soso?msgid='+msg_id+'">'+msg_id+'</a></small>'+
+			                  ' | <small> 用户id：<a href="/soso?userid='+user_id+'&tab=userzone">'+user_id+' </a></small> | <small> 消息id：<a href="/soso?msgid='+msg_id+'">'+msg_id+'</a></small>'+
 			                  '<p>浏览数：<span>'+read_count+'</span> 评论数：<span>'+comment_count+'</span> 赞：<span>'+up_count+'</span></p>'+
 			                  '<p>'+message+'</p>'+
 			                  '<ul class="message_img">'+photoStr+'</ul>'+
@@ -274,6 +275,78 @@ define(function(require, exports, module) {
 		$(dom).children('ul').html(str);
 		$(dom).siblings('.setpage').show().children('.pageinfo').html('一共<i>'+page['allnews']+'</i> 条结果，当前第<em>'+page['currentp']+'</em>页，分<b>'+page['pageCount']+'</b>页');
 		callback();
+	}
+
+
+	all.sosoMessage = function(dataList, callback){
+
+
+		var u = dataList.data.user;
+	        		//载入 用户信息
+		all.userinfo(u)
+
+		var m = dataList.data.list,
+			mlength = m.length,
+			data_tableArr = [];
+		for (var i = 0; i < mlength; i++) {
+
+			var status = m[i].status;
+			var caozuoDom = '<a data-msgid="'+m[i].msg_id+'" data-status="'+status+'" class="btn setMessage btn-danger">删除动态</a>';
+
+			if (status==1) {
+				caozuoDom = '<a data-msgid="'+m[i].msg_id+'" data-status="'+status+'" class="btn setMessage btn-danger">删除动态</a>';
+			};
+			if (status==0||status==2) {
+				caozuoDom = '<a data-msgid="'+m[i].msg_id+'" data-status="'+status+'" class="btn setMessage btn-warning">恢复动态</a>';
+			};
+
+			var picStr = '',
+				picArr = JSON.parse(m[i].photo);
+
+			if (picArr.length) {
+				for (var k = 0; k < picArr.length; k++) {
+					picStr += '<a href="'+all.textTips['host']+picArr[k]+'" target="_blank"><img class="pic90h" src="'+all.textTips['host']+picArr[k]+'"></a>'
+				};
+			};
+
+			var new_data = {
+				xuhao 		: i+1,
+				msgid 		: '<a href="/soso?msgid='+m[i].msg_id+'">'+m[i].msg_id+'</a>',
+				xinxi 		: '<p>阅读：'+m[i].read_count+'</p><p>推荐：'+m[i].order_count+'</p><p>评论：'+m[i].comment_count+'</p><p>赞：'+m[i].up_count+'</p>',
+				xiaoxi 		: m[i].message,
+				picture 	: picStr,
+				feedtype 	: m[i].feedtype,
+				shijian 	: all.js_date_time(m[i].ctime),
+				caozuo 		: caozuoDom,
+				caozuoren   : m[i].examine_admin,
+				caozuotime  : all.js_date_time(m[i].examine_time),
+			}
+			data_tableArr.push(new_data);
+
+
+		};
+
+
+		var columnArr = [
+		    { data : 'xuhao'},
+		    { data : 'msgid'},
+		    { data : 'xinxi'},
+		    { data : 'xiaoxi'},
+		    { data : 'picture'},
+		    { data : 'feedtype'},
+		    { data : 'shijian'},
+		    { data : 'caozuo'},
+		    { data : 'caozuoren'},
+		    { data : 'caozuotime'},
+		];
+
+		callback(data_tableArr, columnArr)
+	}
+
+	//展示 查询用户的信息
+
+	all.userinfo = function (u){
+		$('.userinfo').html('<li class="sex_'+u.sex+' status_'+u.status+'"  data-userid="'+u.user_id+'"><b>用户信息：</b><a href="/soso?userid='+u.user_id+'&tab=userzone"><img class="avatar" src="'+all.textTips['host']+u.avatar+'">'+u.nickname+'['+u.sign+'('+u.province+u.city+')]'+'</a></li><li>注册时间：'+all.js_date_time(u.ctime)+'; 最后登录：'+all.js_date_time(u.last_time)+'</li>');
 	}
 
 

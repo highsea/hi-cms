@@ -24,7 +24,7 @@
 									 <a href="#">贴纸管理</a>
 								</li>
 								<li>
-									 <a href="/soso">消息查询</a>
+									 <a href="/soso">信息查询</a>
 								</li>
 								
 							</ul>
@@ -140,7 +140,8 @@
 <% include footer.html %>
 
 
-
+<!-- 0.0 funck seajs -->
+<script charset="utf-8" id="seajsnode"src="/javascripts/jquery/datatable/1.10.4/jquery.dataTables.js"></script>
 
 
 
@@ -228,9 +229,9 @@ window.onload=function(){
 
     				var new_data = {
     					xuhao 		: i+1,
-    					nickname 	: '<a data-sex="'+u[i].sex+'" data-level="'+u[i].level+'">'+u[i].nickname+'</a><p><img src="'+A.textTips['host']+u[i].avatar+'" alt="" class="avatar" /></p><p>手机号：'+u[i].mobile+'</p>',
-    					zhanghao 	: u[i].user_id,
-    					userhome 	: '<p>主页：<a href="/userzone/'+u[i].user_id+'" target="_blank">'+u[i].user_id+'</a></p><p>签名：'+u[i].sign+'</p><p>等级：'+u[i].level+'</p><p>性别：'+A.sex[u[i].sex]+'</p><p>地区：'+u[i].province+u[i].city+'</p><p>积分：'+u[i].score+'</p>',
+    					nickname 	: '<a target="_blank" href="/soso?userid='+u[i].user_id+'&tab=userzone" data-sex="'+u[i].sex+'" data-level="'+u[i].level+'">'+u[i].nickname+'</a><p><img src="'+A.textTips['host']+u[i].avatar+'" alt="" class="avatar" /></p><p>手机号：'+u[i].mobile+'</p>',
+    					zhanghao 	: '<a href="/soso?userid='+u[i].user_id+'&tab=userzone" target="_blank">'+u[i].user_id+'</a>',
+    					userhome 	: '<p>主页：<a href="/soso?userid='+u[i].user_id+'&tab=userzone" target="_blank">'+u[i].user_id+'</a></p><p>签名：'+u[i].sign+'</p><p>等级：'+u[i].level+'</p><p>性别：'+A.sex[u[i].sex]+'</p><p>地区：'+u[i].province+u[i].city+'</p><p>积分：'+u[i].score+'</p>',
     					caozuo 		:  caozuoDom,
     					caozuoren   : u[i].examine_admin,
     					caozuotime  : '<p>最后登录时间：<br>'+A.js_date_time(u[i].last_time)+'</p><p>账号创建时间：<br>'+A.js_date_time(u[i].ctime)+'</p><p>操作时间：<br>'+A.js_date_time(u[i].examine_time)+'</p>',

@@ -124,6 +124,7 @@ app.get('/login', routes.login);//
 app.get('/logout', routes.logout);//
 app.post('/home', routes.homepost);//post
 app.get('/home', routes.homeget);//
+
 app.get('/message', routes.message);
 app.get('/mcomment', routes.mcomment);
 app.get('/mup', routes.mup);
