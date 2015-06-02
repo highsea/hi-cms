@@ -1,0 +1,90 @@
+<% include header.html %>
+
+	<% if (result!='') { %>  
+
+<link rel="stylesheet" type="text/css" href="stylesheets/datatables.min.css">
+
+<div class="container-fluid">
+
+    <div class="row-fluid">
+		<div class="span12">
+			<% include nav.html %>
+			
+		</div>
+	</div>
+
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="span3">
+				类型
+				<select class="span8 time">
+					<option value="d3">1</option>
+			        <option selected="" value="w1">2</option>
+			        <option value="w2">3</option>
+			        <option value="m1">4</option>
+			        <option value="m2">俩个月</option>
+			        <option value="m6">半年内</option>
+
+			    </select>
+			</div>
+			<div class="span6"></div>
+			<div class="span3">
+				<a class="btn btn-success">新增贴纸</a>
+				
+			</div>
+
+		</div>
+	</div>
+
+</div>
+<% } else{%>
+<section>
+<div class="well">
+	<p>登录失败……</p>
+	<a class='btn btn-primary' href="/">重新登陆</a>
+</div>
+</section>
+<%}%>
+
+
+
+<footer class="container-fluid">
+    <section class="row-fluid">
+
+    </section>
+</footer>
+
+<% include footer.html %>
+
+
+<script>
+
+window.onload=function(){
+
+	seajs.config({
+	base: '/javascripts',
+	alias: {
+		//'boots-jquery':'assets/boots-jquery',
+		//'jquery': 'jquery/jquery/1.10.1/jquery',
+		//'bootstrap':'bootstrap/bootstrap/2.3.2/bootstrap',
+        //"zepto":  "jquery/zepto/1.1.6/zepto",
+        //'datatables' : 'jquery/datatable/1.10.4/jquery.dataTables.js',
+        "all": "share/all/2.0.0/all",
+        'verify':'share/verify/1.0.0/verify',
+        //'e_zetpo':'share/extend/1.0.0/extendzepto',
+	  }
+	})
+	
+    seajs.use([ 'all', 'verify'], function(A,V){
+    	
+
+
+
+    })
+
+
+}
+</script>
+
+
+

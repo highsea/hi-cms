@@ -8,63 +8,8 @@
 
     <div class="row-fluid">
 		<div class="span12">
-			<div class="navbar">
-				<div class="navbar-inner">
-					<div class="container-fluid">
-						 <a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a> <a href="/" class="brand">小脚丫</a>
-						<div class="nav-collapse collapse navbar-responsive-collapse">
-							<ul class="nav">
-								<li>
-									 <a href="/home">内容管理</a>
-								</li>
-								<li class="current">
-									 <a href="/admin">账号管理</a>
-								</li>
-								<li>
-									 <a href="#">贴纸管理</a>
-								</li>
-								<li>
-									 <a href="/soso">信息查询</a>
-								</li>
-								
-							</ul>
-							<ul class="nav pull-right">
-								<li>
-									 <a href="/logout">登出</a>
-								</li>
-								<li class="divider-vertical">
-								</li>
-								<li class="dropdown">
-									 <a data-toggle="dropdown" class="dropdown-toggle" href="#" title="欢迎您 <%=username%> "><img style="height: 20px" height="20px" src="<%=info.avatar%>"><strong class="caret"></strong></a>
-									<ul class="dropdown-menu">
-										<li>
-											<a href="/home"><%=username%> 的设置</a>
-										</li>
-										<li>
-											 <a href="#">其他</a>
-										</li>
-										
-										<li class="divider">
-										</li>
-										<li>
-
-										<% if(info.level==8){%>
-										<a>管理员选项</a>
-										<% } else{%>
-										<a>用户您好 <%=info.level%></a>
-										<% } %>
-											
-										</li>
-									</ul>
-								</li>
-
-							</ul>
-						</div>
-						
-					</div>
-				</div>
-				
-			</div>
+			<% include nav.html %>
+			
 		</div>
 	</div>
 
@@ -99,7 +44,7 @@
 						<!-- <div class="row-fluid lookuserPage none">
 							
 						</div> -->
-						<small> <b>点击《搜索》后，牛逼的表格操作说明：</b> 1.点击任意表头栏目可排序；2.支持全文检索</small> 
+						<small> <b>点击《搜索》后，牛逼的表格操作说明：</b> 1.点击任意表头栏目可排序；2.支持全文检索; <b style="color:#f60">3.怎么查询管理员？留空搜索出结果后点击个人信息可以排序，等级为8的就是</b></small> 
 						<hr>
 						<div class="row-fluid">
 							
@@ -110,9 +55,25 @@
 						</div>
 					</div>
 					<div class="tab-pane" id="panel-374630">
-						<p>
-							权限目前 只有 超级管理员与 普通账户
-						</p>
+						<div class="row-fluid">
+							<div class="span6">
+								<p>	1.权限目前 只有 超级管理员与 普通账户 </p>
+								<p>	2.注册用户逻辑与客户端不同，请到客户端注册</p>
+								<p> 3.新增管理员？输入用户id点击《新增》后即可将其提升为管理员权限</p>
+								<hr>
+							</div>
+							
+						</div>
+						<div class="row-fluid">
+							<div class="span12 creatUser_info none">
+								<input type="text" value="" placeholder="请输入需要提升权限的用户id">
+								<a class="btn btn-success creatUser">新增管理员</a>
+								<a class="btn btn-warning deleteUser">解除管理员</a>
+
+							</div>
+						</div>
+						
+						
 					</div>
 				</div>
 			</div>
@@ -140,11 +101,6 @@
 <% include footer.html %>
 
 
-<!-- 0.0 funck seajs -->
-<script charset="utf-8" id="seajsnode"src="/javascripts/jquery/datatable/1.10.4/jquery.dataTables.js"></script>
-
-
-
 <script>
 
 window.onload=function(){
@@ -152,36 +108,23 @@ window.onload=function(){
 	seajs.config({
 	base: '/javascripts',
 	alias: {
-		'boots-jquery':'assets/boots-jquery',
-		'jquery': 'jquery/jquery/1.10.1/jquery',
-		'bootstrap':'bootstrap/bootstrap/2.3.2/bootstrap',
+		//'boots-jquery':'assets/boots-jquery',
+		//'jquery': 'jquery/jquery/1.10.1/jquery',
+		//'bootstrap':'bootstrap/bootstrap/2.3.2/bootstrap',
         //"zepto":  "jquery/zepto/1.1.6/zepto",
-        'datatables' : 'jquery/datatable/1.10.4/jquery.dataTables.js',
+        //'datatables' : 'jquery/datatable/1.10.4/jquery.dataTables.js',
         "all": "share/all/2.0.0/all",
         'verify':'share/verify/1.0.0/verify',
         //'e_zetpo':'share/extend/1.0.0/extendzepto',
 	  }
 	})
 	
-    seajs.use(['jquery','bootstrap', 'all', 'verify', 'datatables'], function($,B,A,V,D){
-    	var $ = jQuery;
-    	//console.log($);
-    	//console.log(D);
-
-    	var B = seajs.require('bootstrap');
-  		var D = seajs.require('datatables');
-
-  		/*console.log(B);
-  		console.log(D);*/
-
-
-
+    seajs.use([ 'all', 'verify'], function(A,V){
+    	
 
     	var lookuserPage = $('.lookuserPage');
     	$('#tabs-533320').on('click', '.showUser,.userPageNum', function(e){
     		e.preventDefault();
-
-
 
 			$('.userInfoTable-fa').html('<table class="table" id="userInfoTable"></table>');
 
@@ -198,26 +141,7 @@ window.onload=function(){
     			    data_tableArr = [];
 
     			for (var i = 0; i < ulength; i++) {
-    				/*var user_id = u[i].user_id,
-    					nickname = u[i].nickname,//
-    					level = u[i].level,//
-    					mobile = u[i].mobile,//
-    					sex = u[i].sex,//
-    					sign = u[i].sign,//
-    					province = u[i].province,//
-    					city = u[i].city,//
-    					avatar =u[i].avatar,//
-    					status = u[i].status,//
-    					last_time = u[i].last_time,//
-    					last_ip = u[i].last_ip,
-    					grade = u[i].grade,
-    					score = u[i].score,
-    					reg_ip = u[i].reg_ip,
-    					flag = u[i].flag,
-    					platform = u[i].platform,
-    					ctime = u[i].ctime,//
-    					mtime = u[i].mtime,
-    					token = u[i].token;*/
+
     				var status = u[i].status;
     				var caozuoDom = '<a data-status="'+status+'" class="btn setUser btn-danger">关小黑屋</a>';
     				if (status==1) {
@@ -301,6 +225,42 @@ window.onload=function(){
 				};
 			})
 
+		}).
+		on('click', '.creatUser', function(event) {
+			event.preventDefault();
+			//creatUser 提升管理员权限
+			var uid = $(this).siblings('input');
+			if (confirm("您确定要将 "+uid.val()+" 提升为管理员吗？")) {
+
+				A.ajax('/up1user', {
+					userid : uid.val(),
+					column : 'level',
+					value : 8,
+				}, '#tabs-533320', function(dataList){
+					if (dataList.data.protocol41) {
+						console.log("更新成功")
+					};
+				})
+
+			};
+		}).
+		on('click', '.deleteUser', function(event) {
+			event.preventDefault();
+			//
+			var uid = $(this).siblings('input')
+			if (confirm("您确定要将 "+uid.val()+" 解除管理员吗？")) {
+
+				A.ajax('/up1user', {
+					userid : uid.val(),
+					column : 'level',
+					value : 1,
+				}, '#tabs-533320', function(dataList){
+					if (dataList.data.protocol41) {
+						console.log("解除成功")
+					};
+				})
+
+			};
 		});
     	
 

@@ -7,63 +7,7 @@
 
 	<div class="row-fluid">
 		<div class="span12">
-			<div class="navbar">
-				<div class="navbar-inner">
-					<div class="container-fluid">
-						 <a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a> <a href="/" class="brand">小脚丫</a>
-						<div class="nav-collapse collapse navbar-responsive-collapse">
-							<ul class="nav">
-								<li class="current">
-									 <a href="/home">内容管理</a>
-								</li>
-								<li>
-									 <a href="/admin">账号管理</a>
-								</li>
-								<li>
-									 <a href="#">贴纸管理</a>
-								</li>
-								<li>
-									 <a href="/soso">信息查询</a>
-								</li>
-								
-							</ul>
-							<ul class="nav pull-right">
-								<li>
-									 <a href="/logout">登出</a>
-								</li>
-								<li class="divider-vertical">
-								</li>
-								<li class="dropdown">
-									 <a data-toggle="dropdown" class="dropdown-toggle" href="#" title="欢迎您 <%=username%> "><img style="height: 20px" height="20px" src="<%=info.avatar%>"><strong class="caret"></strong></a>
-									<ul class="dropdown-menu">
-										<li>
-											<a href="/home"><%=username%> 的设置</a>
-										</li>
-										<li>
-											 <a href="#">其他</a>
-										</li>
-										
-										<li class="divider">
-										</li>
-										<li>
-
-										<% if(info.level==8){%>
-										<a>管理员选项</a>
-										<% } else{%>
-										<a>用户您好 <%=info.level%></a>
-										<% } %>
-											
-										</li>
-									</ul>
-								</li>
-
-							</ul>
-						</div>
-						
-					</div>
-				</div>
-				
-			</div>
+			<% include nav.html %>
 		</div>
 	</div>
 
@@ -381,7 +325,7 @@ window.onload=function(){
 	seajs.config({
 	base: '/javascripts',
 	alias: {
-		'boots-jquery':'assets/boots-jquery',
+		//'boots-jquery':'assets/boots-jquery',
 		//'jquery': 'jquery/jquery/1.10.1/jquery',
 		//'bootstrap':'bootstrap/bootstrap/2.3.2/bootstrap',
         //"zepto":  "jquery/zepto/1.1.6/zepto",
@@ -391,8 +335,8 @@ window.onload=function(){
 	  }
 	})
 	
-    seajs.use(['boots-jquery', 'all', 'verify'], function($,A,V){
-    	var $ = jQuery;
+    seajs.use(['all', 'verify'], function(A,V){
+    	//var $ = jQuery;
 
     	//console.log(V);
 		
@@ -495,7 +439,7 @@ window.onload=function(){
 
     			$('.modal-body').children('p').html(str);
 			})
-
+			//设置推荐分类
 			$('body').on('click', '.checkfeed', function(){
 
 				var typevalue = $(this).data('type'),
@@ -513,7 +457,7 @@ window.onload=function(){
 						console.log(dataList);
 						if (dataList.data.protocol41) {
 							
-							thisDom.html('推荐'+name+'('+typevalue+')');
+							thisDom.html(name+'(已置顶)');
 						};
 						//console.log(id);
 					})
@@ -526,59 +470,6 @@ window.onload=function(){
 					$('#myModal').modal('hide');
 
 			})
-
-			
-
-			//$('.modal-body').children('p').html('<p>'+A.textTips['confirm']+'<p/><p>'+A.textTips['confirm_msg_good']+'</p><p>请输入推荐的数值：<input class="confirmVal" type="text" value="" placeholder="0" /></p>');
-
-			/*$('.confirm').on('click', function(){
-
-				var confirmValue = $('.confirmVal').val();
-				if (V.isDigit(confirmValue)) {
-
-					$('#myModal').modal('hide');
-
-					A.ajax('/goodMessage', {
-						id : parentDom.data('msgid'),
-						value : confirmValue,
-					},'#tabs-25490', function(dataList){
-						console.log(dataList);
-						if (dataList.code=='2000') {
-							
-							thisDom.html('推荐 '+confirmValue);
-						};
-						//console.log(id);
-					})
-
-
-				}else{
-					alert('请输入数字');
-				}
-			})*/
-
-
-
-
-
-			/*if(confirm(A.textTips['confirm_msg_re'])) {
-
-				var parentDom = $(this).closest('.thumbnail').parent('li'),
-					thisDom = $(this);
-				A.ajax('/goodMessage', {
-					id : parentDom.data('msgid'),
-					value : 3,
-				},'#tabs-25490', function(dataList){
-					console.log(dataList);
-					if (dataList.code=='2000') {
-						
-						thisDom.html('推荐 '+'3');
-					};
-					//console.log(id);
-				})
-
-			}*/
-
-
 
 		});
 
@@ -609,8 +500,6 @@ window.onload=function(){
 
 		    			msgDeleteList.find('.up').html('赞：不显示');
 		    			msgDeleteList.find('.comment').html('评论：不显示');
-
-
 
 
 		    			msgDeleteList.find('.order').html('<a class="btn btn-warning defaultMessage">还原状态 </a> <a class="btn btn-inverse">完全删除 </a>')

@@ -239,7 +239,7 @@ exports.message = function (req, res) {
         // console.log('day3fomat:'+day3fomat+';day3agoUnix:'+sql['d3']);
         var totalSQL   = 'select count(*) from lf_message where lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']];
 
-        var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time from lf_users,lf_message where lf_users.user_id=lf_message.user_id and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by lf_message.order_count desc,'+sql[doc['order']]+' desc limit '+(page['currentp']-1)*page['size']+', '+page['size'];
+        var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time,lf_feed_type.name from lf_users,lf_message,lf_feed_type where lf_users.user_id=lf_message.user_id and lf_message.feedtype=lf_feed_type.type and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by lf_message.order_count desc,'+sql[doc['order']]+' desc limit '+(page['currentp']-1)*page['size']+', '+page['size'];
         //select * from lf_message where ctime>=1431739693 and message=''  order by ctime desc limit 100000
 
         //分页－－查询总条数
@@ -471,7 +471,7 @@ exports.recycleMessage = function(req, res){
 
 
 /*
-@ 消息推荐 order_count  Message API
+@ 消息推荐 order_count feedtype Message API
 @ 相关参数 id（msg_id） value （int 越大越靠前）| 自动记录推荐的管理员id以及推荐时间
 @ jsonp
 @ 需要验证 1.登录 2.管理员  http://localhost:3000/goodMessage?id=193&value=1
@@ -491,11 +491,22 @@ exports.goodMessage = function(req, res){
             doc['id'] = req.query.id;
             if (req.query.value) {
                 doc['value'] = req.query.value;
-                var updateSQL = "update lf_message set order_count = '"+doc['value']+"',examine_admin='"+name+"',examine_time='"+ fun.nowUnix() +"' WHERE lf_message.msg_id = '"+doc['id']+"'";
-                db.query(updateSQL, function (result) {
-                    //console.log(fun.nowUnix());
-                    fun.jsonTips(req, res, 2000, 'msg_id:'+doc['id']+',value:'+doc['value'], result);
+                var checkOther = "select order_count from lf_message order by order_count desc";
+
+                db.query(checkOther, function(order){
+
+                    var thisNumOrder = order[0].order_count+1;
+
+                    var updateSQL = "update lf_message set order_count='"+thisNumOrder+"',feedtype='"+doc['value']+"',examine_admin='"+name+"',examine_time='"+ fun.nowUnix() +"' WHERE lf_message.msg_id = '"+doc['id']+"'";
+                    //fun.jsonTips(req, res, 2000, config.Code2X[2000], order[0]);
+                    db.query(updateSQL, function (result) {
+                        //console.log(fun.nowUnix());
+                        fun.jsonTips(req, res, 2000, 'msg_id:'+doc['id']+',value:'+doc['value'], result);
+                    })
+
                 })
+
+                
             }else{
                 fun.jsonTips(req, res, 1023, config.Code1X[1023], null);
             }
@@ -1001,7 +1012,8 @@ exports.lookuser = function(req, res){
 @  用户信息更新 update
 @  参数 userid／column／value （都必须） 
 @  jsonp
-@  http://localhost:3000/up1user?userid=123&column=status
+@  http://localhost:3000/up1user?userid=123&column=status   更改用户状态
+@  http://localhost:3000/up1user?userid=1047&column=level&value=1  更改用户权限
 */
 //API  接口实现方法：
 //请求 ?user_id=123&status=1
@@ -1031,7 +1043,8 @@ exports.up1user = function(req, res){
             var sql = {
                 //user_id     : req.query.userid, 
                 status      : ' status="'+req.query.value+'" ',
-                level       : '1',
+                level       : ' level="" ',
+
                 //mobile      : ''
 
             }
@@ -1181,7 +1194,7 @@ PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;*/
 /*
 *  获取推荐 分类
-*
+*  http://localhost:3000/showfeedtype
 */
 exports.showfeedtype = function(req, res){
     //验证 管理员&&是否登录
@@ -1197,7 +1210,7 @@ exports.showfeedtype = function(req, res){
     
 }
 /* 更新 推荐分类
-*
+* localhost:3000/upfeedtype?value=2&name=美食&id=2
 *
 */
 exports.upfeedtype = function(req, res){
@@ -1254,7 +1267,7 @@ exports.createfeedtype = function(req, res){
 
 /* 删除推荐分类
 *
-*
+* localhost:3000/deletefeedtype?id=5
 */
 exports.deletefeedtype = function(req, res){
     //验证 管理员&&是否登录
@@ -1281,6 +1294,58 @@ exports.deletefeedtype = function(req, res){
 }
 
 
+
+/*
+@  贴纸 页面
+@
+*/
+exports.paster = function(req, res){
+
+    var name = req.session.username;
+
+    if (name) {
+
+        res.render('paster', {
+            title: config.productInfo.paster,
+            username    : name,
+            result      : req.session.result,
+            info        : req.session.userinfo,
+        });
+        
+    }else{
+        res.redirect('/');
+    }
+
+}
+
+exports.lookpaster = function(req, res){
+        //验证 管理员&&是否登录
+    fun.verifyAdmin(req, res, function(){
+
+        var doc = {
+
+        }
+
+
+        if (fun.isDigit(req.query.id)) {
+
+            var sql = "select * from lf_paster_info  ";
+
+            db.query(sql, function(dataList){
+
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], dataList);
+
+            })
+
+        }else{
+
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+    })
+
+
+}
 
 /*"CREATE TABLE `user_telphone` (  
   `keyid` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',  
@@ -1320,11 +1385,16 @@ exports.weixin = function(req, res, next){
         type    : 'access_token',
         ctime   : req.session.ctime ? req.session.ctime : fun.nowUnix() ,
         nowtime : fun.nowUnix(),
+        //sha1    : 'sha1',
     }
 
     if (req.query.appid) {
         doc['appid'] = req.query.appid;
     };
+
+    /*if (req.query.ticket&&req.query.url) {
+        doc['sha1'] = fun.sign(req.query.ticket, req.query.url);
+    };*/
 
     if (req.query.secret) {
         doc['secret'] = req.query.secret;
@@ -1410,6 +1480,29 @@ exports.weixin = function(req, res, next){
 
     
 
+}
+
+exports.sha1 = function(req,res){
+
+    if (req.query.ticket&&req.query.url) {
+
+        var doc = {
+            ticket : 'ticket',
+            url : 'url',
+        }
+        var data = fun.sign(req.query.ticket, req.query.url);
+        fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
+
+    }else{
+        fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+    }
+    
+}
+
+exports.wxactive = function(req, res){
+    res.render('wx-active', {
+        title : '微信活动',
+    })
 }
 
 

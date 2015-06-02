@@ -137,8 +137,12 @@ app.get('/userinfo', routes.userinfo);
 app.get('/up1user', routes.up1user);
 app.get('/lookuser', routes.lookuser);
 app.get('/userzone', routes.userzone);
+app.get('/paster', routes.paster);
 
 app.get('/weixin', routes.weixin);
+app.get('/sha1', routes.sha1);
+app.get('/wxactive', routes.wxactive);
+
 app.get('/showfeedtype', routes.showfeedtype);
 app.get('/upfeedtype', routes.upfeedtype);
 app.get('/createfeedtype', routes.createfeedtype);

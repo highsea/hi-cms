@@ -66,6 +66,15 @@ define(function(require, exports, module) {
 	    return datetime;
 	}
 
+	//all.nav_click = function(dom,select){
+		/*$('.nav_click').on('click', 'li', function(){
+			$(this).addClass('current');
+			$(this).siblings('li').removeClass('current');
+		})*/
+		$('.nav_click').children('li').children('[href="'+location.pathname+'"]').closest('li').addClass('current');
+
+	//}
+
 	all.textTips = {
 		'mima0':'密码由字母,数字,下划线组成,长度为6-20',
 		'mima1':'密码ok~',
@@ -231,6 +240,7 @@ define(function(require, exports, module) {
 				order_count = m[i].order_count,
 				status 		= m[i].status,
 				feedtype 	= m[i].feedtype,
+				name 		= m[i].name,
 				eadmin 		= m[i].examine_admin,
 				etime 		= m[i].examine_time,
 				ctime 		= m[i].ctime;
@@ -241,14 +251,14 @@ define(function(require, exports, module) {
 
 			if (photo.length>1) {
 				for (var k = 0; k < photo.length; k++) {
-					photoStr += '<li><img src="'+all.textTips['host']+photo[k]+'" alt="" /></li>';
+					photoStr += '<li style="float:left"><img src="'+all.textTips['host']+photo[k]+'" alt="" /></li>';
 				};
 
 			}else{
 				photoStr += '<li><img src="'+all.textTips['host']+photo[0]+'" alt="" /></li>'
 			}
 
-			str += '<li class="span5 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'" data-eadmin="'+eadmin+'" data-etime="'+etime+'">'+
+			str += '<li class="span11 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'" data-eadmin="'+eadmin+'" data-etime="'+etime+'">'+
 			                '<div data-feedtype="'+feedtype+'" class="thumbnail">'+
 			                  '<h4><small>[第<em>'+page['currentp']+'</em>页：'+(i+1)+'/'+dlength+']</small>'+
 			                  '<img class="avatar" src="'+all.textTips['host']+avatar+'" alt="" /><a href="/soso?userid='+user_id+'&tab=userzone">'+nickname+'</a><br><small class="goods_info"><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
@@ -265,7 +275,7 @@ define(function(require, exports, module) {
 			                    '<p>评论：正在载入……</p>'+
 			                  '</div>'+
 			                  '<div class="caption order">'+
-								'<a class="btn btn-success goodmsg">推荐 '+order_count+'</a> '+
+								'<a class="btn btn-success goodmsg" data-ordercount="'+order_count+'" data-feedtype="'+feedtype+'">'+name+'</a> '+
 								'&nbsp; <a class="btn btn-danger recycleMessage ">动态放回收站 </a>'+
 			                  '</div>'+
 			                '</div>'+
