@@ -45,7 +45,7 @@ app.use(cookieParser());
 app.use(session({
     secret: 'xiaojiaoyar',
     name: 'testapp',   //这里的name值得是cookie的name，默认cookie的name是：connect.sid
-    cookie: {maxAge: 1800000 },  //设置maxAge是80000ms，即80s后session和相应的cookie失效过期
+    cookie: {maxAge: 18000000 },  //设置maxAge是80000ms，即80s后session和相应的cookie失效过期
     resave: false,
     saveUninitialized: true,
 }));
@@ -138,6 +138,11 @@ app.get('/up1user', routes.up1user);
 app.get('/lookuser', routes.lookuser);
 app.get('/userzone', routes.userzone);
 
+app.get('/weixin', routes.weixin);
+app.get('/showfeedtype', routes.showfeedtype);
+app.get('/upfeedtype', routes.upfeedtype);
+app.get('/createfeedtype', routes.createfeedtype);
+app.get('/deletefeedtype', routes.deletefeedtype);
 
 
 

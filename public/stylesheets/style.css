@@ -164,7 +164,8 @@ body .current{background: #5bb75b;}
 .navbar .current a{color: #fff!important}
 .goods_info{color: #BB0D0D}
 .pic90h{max-width: 90px;height: 40px;overflow: hidden;}
-
+.icon_e{display: inline-block;width: 12px;height: 12px;background: transparent;border: 1px solid #000;border-radius: 12px;}
+.black{background: #000}
 
 
 

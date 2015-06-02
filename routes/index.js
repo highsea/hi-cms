@@ -1040,11 +1040,7 @@ exports.up1user = function(req, res){
                 doc['column'] = 'level';
                 sql['level'] = ' level ="'+req.query.value+'" ';
             };
-            /*if (req.query.column=='status'&&fun.isDigit(req.query.value)) {
-                doc['column'] = 'status';
-                sql['status'] = ' status="'+req.query.value+'" ';
-            };*/
-
+            
             
             var updateUser = 'update lf_users set '+ sql[doc['column']] + 'where lf_users.user_id="'+req.query.userid+'"'
             db.query(updateUser, function(data){
@@ -1174,7 +1170,250 @@ exports.userzone = function(req, res){
     })
 } 
 
+
+//新增 表
+
+/*CREATE TABLE `lf_feed_type` (
+`id` INT(8) NOT NULL AUTO_INCREMENT COMMENT 'id',
+`name` varchar(30) DEFAULT 'nothing' COMMENT '类别名称',
+`type` tinyint(4) DEFAULT '0' COMMENT '分类值',
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;*/
+/*
+*  获取推荐 分类
+*
+*/
+exports.showfeedtype = function(req, res){
+    //验证 管理员&&是否登录
+    fun.verifyAdmin(req, res, function(){
+
+        db.query(config.mysqlText['showfeedtype'], function(dataList){
+
+            fun.jsonTips(req, res, 2000, config.Code2X[2000], dataList);
+
+        })
+
+    })
+    
+}
+/* 更新 推荐分类
+*
+*
+*/
+exports.upfeedtype = function(req, res){
+    //验证 管理员&&是否登录
+    fun.verifyAdmin(req, res, function(){
+
+        if (fun.isDigit(req.query.value)&&fun.isDigit(req.query.id)&&req.query.name) {
+
+            var sql = "update lf_feed_type set name = '"+req.query.name+"', type = '"+req.query.value+"' where id = '"+req.query.id+"'";
+
+            db.query(sql, function(dataList){
+
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], dataList);
+
+            })
+
+        }else{
+
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+    })
+    
+}
+
+
+/* 新建推荐分类
+*
+*
+*/
+exports.createfeedtype = function(req, res){
+    //验证 管理员&&是否登录
+    fun.verifyAdmin(req, res, function(){
+
+
+        if (fun.isDigit(req.query.value)&&req.query.name) {
+
+            var sql = "insert into lf_feed_type (name, type) values ('"+req.query.name+"', '"+req.query.value+"')";
+
+            db.query(sql, function(dataList){
+
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], dataList);
+
+            })
+
+        }else{
+
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+    })
+    
+}
+
+/* 删除推荐分类
+*
+*
+*/
+exports.deletefeedtype = function(req, res){
+    //验证 管理员&&是否登录
+    fun.verifyAdmin(req, res, function(){
+
+
+        if (fun.isDigit(req.query.id)) {
+
+            var sql = "DELETE FROM lf_feed_type WHERE id = '"+req.query.id+"' ";
+
+            db.query(sql, function(dataList){
+
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], dataList);
+
+            })
+
+        }else{
+
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+    })
+    
+}
+
+
+
+/*"CREATE TABLE `user_telphone` (  
+  `keyid` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',  
+  `user_recordid` int(11) NOT NULL,  
+  `telphone_num` varchar(20) DEFAULT NULL,  
+  `create_by` varchar(32) DEFAULT NULL,  
+  `create_date` datetime DEFAULT NULL,  
+  `lastupdate_by` varchar(32) DEFAULT NULL,  
+  `lastupdate_date` datetime DEFAULT NULL,  
+  `memo` varchar(200) DEFAULT NULL,  
+  `enable_flag` char(1) DEFAULT 'T',  
+  PRIMARY KEY (`keyid`),  
+  KEY `user_recordid` (`user_recordid`),  
+  CONSTRAINT `user_telphone_fk1` FOREIGN KEY (`user_recordid`) REFERENCES `user_info` (`recordid`) ON DELETE NO ACTION ON UPDATE NO ACTION  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;  "*/
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+/*
+@  微信生成  access_token
+@  7200s 重新获取
+@  type(见type对象)
+@  http://localhost:3000/weixin?type=ticket&callback=abc
+*/
+exports.weixin = function(req, res, next){
+
+
+    var cheerio = require('cheerio');
+    var superagent = require('superagent');
+
+
+    var doc = {
+        appid   : config.productInfo['appid'],
+        secret  : config.productInfo['secret'],
+        type    : 'access_token',
+        ctime   : req.session.ctime ? req.session.ctime : fun.nowUnix() ,
+        nowtime : fun.nowUnix(),
+    }
+
+    if (req.query.appid) {
+        doc['appid'] = req.query.appid;
+    };
+
+    if (req.query.secret) {
+        doc['secret'] = req.query.secret;
+    };
+    //res.send(doc);
+    // type 参数类型
+    var type = {
+        appid           : doc['appid'],
+        access_token    : 'access',
+        ticket          : 'ticket',
+    }
+
+    if (type[req.query.type]) {
+
+        doc['type'] = req.query.type;
+
+        var mtime = doc['nowtime'] - doc['ctime'];
+        //console.log("doc['nowtime']:"+doc['nowtime']);
+        //console.log("doc['ctime']:"+doc['ctime']);
+
+        console.log('mtime:'+mtime);
+        //当大于 2分钟则重新获取 
+        var judgeTime = mtime>7199 ? 0 : 1;
+        //console.log('judgeTime:'+judgeTime);
+
+        if (req.session.access_token&&req.session.ticket&&judgeTime) {
+
+            type['access_token'] = req.session.access_token;
+            type['ticket'] = req.session.ticket;
+
+            fun.jsonTips(req, res, 2000, doc['appid'], type[doc['type']]);
+
+
+        }else{
+
+            superagent.get('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='+doc['appid']+'&secret='+doc['secret'])
+            .end(function (err, sres) {
+            // 常规的错误处理
+                if (err) {
+                    return next(err);
+                }
+                // sres.text 里面存储着网页的 html 内容，将它传给 cheerio.load 之后
+                // 就可以得到一个实现了 jquery 接口的变量，我们习惯性地将它命名为 `$`
+                // 剩下就都是 jquery 的内容了
+                // var $ = cheerio.load(sres.text);
+                // var items = [];
+                // $('#topic_list .topic_title').each(function (idx, element) {
+                //   var $element = $(element);
+                //   items.push({
+                //     title: $element.attr('title'),
+                //     href: $element.attr('href')
+                //   });
+                // });
+
+                // res.send(items);
+                req.session.access_token = JSON.parse(sres.text);
+                type['access_token'] = req.session.access_token;
+
+
+                superagent.get('https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token='+type['access_token']['access_token']+'&type=jsapi')
+                .end(function(error, result){
+                    if (error) {
+                        return next(error)
+                    };
+
+
+                    req.session.ticket = JSON.parse(result.text);
+                    type['ticket'] = req.session.ticket;
+                    req.session.ctime = fun.nowUnix();
+
+                    fun.jsonTips(req, res, 2000, doc['appid'], type[doc['type']]);
+                })
+            });
+
+        }
+
+    }else{
+
+        fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+
+    }
+
+
+    
+
+}
+
+
+
 
 /*
 @  用户注册页面
@@ -1702,4 +1941,7 @@ exports.getpic = function(req, response){
         }
     });
 }
+
+
+
 

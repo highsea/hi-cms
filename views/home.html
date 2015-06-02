@@ -83,6 +83,9 @@
 						 <a href="#panel-2" data-toggle="tab" class="good" data-sta='hot'>热门推荐</a>
 					</li>
 					<li>
+						 <a href="#panel-5" data-toggle="tab" class="goodtype" data-sta='set'>推荐分类设置</a>
+					</li>
+					<li>
 						 <a href="#panel-3" data-toggle="tab" class="sta" data-sta='del'>动态回收站</a>
 					</li>
 					<li>
@@ -322,6 +325,14 @@
 				        </div>
 
 					</div>
+					<div class="tab-pane" id="panel-5">
+						<div class="row-fluid">
+
+							<p>分类名称： <input type="text" value="" placeholder="请输入名称" class="feedtype_name">；分类数值：<input type="text" value="" placeholder="请输入数字" class="feedtype_value"> <a class="btn createfeedtype">这样新增</a></p>
+
+							<ul class="showfeedtype">载入中……</ul>
+						</div>
+					</div>
 				</div>
 			</div>
 			
@@ -332,7 +343,7 @@
 			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
 			    <h3 id="myModalLabel">标题栏</h3>
 			  </div>
-			  <div class="modal-body">
+			  <div class="modal-body" data-type="">
 			    <p>显示信息</p>
 			  </div>
 			  <div class="modal-footer">
@@ -466,9 +477,61 @@ window.onload=function(){
 			$('#myModal').modal('show');
 			// bootstrap V2版本 不支持 Modal 回调！！！！
 			$('#myModalLabel').text('热门推荐');
-			$('.modal-body').children('p').html('<p>'+A.textTips['confirm']+'<p/><p>'+A.textTips['confirm_msg_good']+'</p><p>请输入推荐的数值：<input class="confirmVal" type="text" value="" placeholder="0" /></p>');
+
+			// get  feedtype info
+
+			A.ajax('/showfeedtype', {}, '#tabs-25490', function(dataList){
+
+				var m = dataList.data,
+    				mlength = m.length,
+    				str= '';
+
+    			for (var i = 0; i < mlength; i++) {
+    				var id = m[i].id,
+    					name = m[i].name,
+    					type = m[i].type;
+    				str+='<p data-id="'+id+'"> <a class="checkfeed" data-type="'+type+'"><i class="icon_e"></i> '+name+'</a> </p>';
+    			};
+
+    			$('.modal-body').children('p').html(str);
+			})
+
+			$('body').on('click', '.checkfeed', function(){
+
+				var typevalue = $(this).data('type'),
+					name = $(this).text();
+				$(this).children('i').toggleClass('black');
+				$(this).closest('p').siblings('p').find('i').removeClass('black');
+				$(this).closest('.modal-body').data('type', typevalue);
+
+				if ($('.modal-body').data('type')) {
+
+					A.ajax('/goodMessage', {
+						id : parentDom.data('msgid'),
+						value : typevalue,
+					},'#tabs-25490', function(dataList){
+						console.log(dataList);
+						if (dataList.data.protocol41) {
+							
+							thisDom.html('推荐'+name+'('+typevalue+')');
+						};
+						//console.log(id);
+					})
+
+				};
+			})
 
 			$('.confirm').on('click', function(){
+
+					$('#myModal').modal('hide');
+
+			})
+
+			
+
+			//$('.modal-body').children('p').html('<p>'+A.textTips['confirm']+'<p/><p>'+A.textTips['confirm_msg_good']+'</p><p>请输入推荐的数值：<input class="confirmVal" type="text" value="" placeholder="0" /></p>');
+
+			/*$('.confirm').on('click', function(){
 
 				var confirmValue = $('.confirmVal').val();
 				if (V.isDigit(confirmValue)) {
@@ -491,7 +554,7 @@ window.onload=function(){
 				}else{
 					alert('请输入数字');
 				}
-			})
+			})*/
 
 
 
@@ -664,6 +727,84 @@ window.onload=function(){
     		event.preventDefault();
     		//开始查询 动态 待优化
     		messageAjax ('#tabs-25490',$('.defaultPage').siblings('input').val());
+    	}).
+    	on('click', '.createfeedtype', function(event) {
+    		event.preventDefault();
+    		//新增 feedtype
+    		var feedtype_value = $('.feedtype_value'),
+    			feedtype_name = $('.feedtype_name');
+
+    		if (feedtype_value.val()!=''&&feedtype_name.val()!='') {
+
+    			A.ajax('/createfeedtype', {
+    				value : feedtype_value.val(),
+    				name : feedtype_name.val(),
+    			}, '#tabs-25490', function(dataList){
+    				if (dataList.data.protocol41) {
+    					alert('增加成功，刷新查看');
+    				};
+    			})
+
+    		}else{
+    			alert('检查输入！');
+    		}
+    	}).
+    	on('click', '.goodtype', function(event) {
+    		event.preventDefault();
+    		//获取 feedtype
+    		A.ajax('/showfeedtype', {
+
+    		}, '#tabs-25490', function(dataList){
+
+    			var m = dataList.data,
+    				mlength = m.length,
+    				str= '';
+
+    			for (var i = 0; i < mlength; i++) {
+    				var id = m[i].id,
+    					name = m[i].name,
+    					type = m[i].type;
+    				str+='<li data-id="'+id+'"> 名称：<input type="text" value="'+name+'" />；分类数值：<input type="text" value="'+type+'" /> <a class="btn btn-warning upfeedtype">修改</a> <a class="btn btn-danger deletefeed">删除</a> </li>';
+    			};
+
+    			$('.showfeedtype').html(str)
+
+    		})
+    	}).
+    	on('click', '.upfeedtype', function(event) {
+    		event.preventDefault();
+    		//修改 feedtype
+    		var thisid = $(this).closest('li').data('id'),
+    		    value = $(this).closest('li').children('input').eq(1),
+    		    name = $(this).closest('li').children('input').eq(0);
+
+
+    		A.ajax('/upfeedtype', {
+    			id : thisid,
+    			value:value.val(),
+    			name : name.val(),
+    		}, '#tabs-25490', function(dataList){
+    			//console.log(dataList);
+    			if (dataList.data.changedRows=='1') {
+    				console.log('修改成功');
+    			};
+    		})
+    	}).
+    	on('click', '.deletefeed', function(event) {
+    		event.preventDefault();
+    		// protocol41 删除feedtype
+
+    		var thisDom = $(this);
+    		A.ajax('/deletefeedtype', {
+    			id : thisDom.closest('li').data('id'),
+    		}, '#tabs-25490', function(dataList){
+
+    			if (dataList.data.protocol41) {
+    				alert('删除成功，刷新查看');
+    				thisDom.closest('li').remove();
+    			};
+
+    		})
     	});
 
     	
