@@ -32,8 +32,8 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 			text:'你直接打开了这个页面，尽管你没犯什么错误 0.0！',
 		},
 		by : "Powered by HighSea90 © 2015-2025 highsea90.com",
-		appid : 'wxa0f2a9d336e7a28b',
-		secret : '6f47c50b43b825c6fa85f4474ffe349a',
+		appid : 'wxb9ed4cc31a9e0743',
+		secret : 'ac5d01394bc89aa963836c2f88719eba',
 	},
 	//信息提示 1XXX
 	Code1X = {
