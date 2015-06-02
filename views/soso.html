@@ -376,7 +376,52 @@ window.onload=function(){
 					};
 				})
 			}			
-		})
+		}).
+		on('click', '.setComment', function(event) {
+			event.preventDefault();
+			//删除 评论（更改 状态）
+			var status = $(this).data('status');
+			var msgid = $(this).data('msgid');
+			var thisDom = $(this);
+			//删除
+			if (status=='1') {
+
+				A.ajax('setComment', {
+					id : msgid,
+					value : 2,
+				}, '#tabs-938867', function(dataList){
+
+					//console.log(dataList);
+					if (dataList.code=='2000') {
+						
+						thisDom.attr({
+							class: 'btn btn-warning setComment',
+						}).html('还原评论');
+						thisDom.data('status','2');
+					};
+
+				})
+
+			}else{
+				//恢复评论
+
+				A.ajax('/setComment', {
+					id : msgid,
+					value : 1,
+				}, '#tabs-938867', function(dataList){
+
+					//console.log(dataList);
+					if (dataList.code=='2000') {
+						
+						thisDom.attr({
+							class: 'btn btn-danger setComment',
+						}).html('删除评论');
+						thisDom.data('status','1');
+					};
+				})
+			}
+
+		});
 
 		
 
@@ -422,13 +467,13 @@ window.onload=function(){
 	        		for (var i = 0; i < mlength; i++) {
 
 	        			var status = m[i].status;
-	    				var caozuoDom = '<a data-status="'+status+'" class="btn setComment btn-danger">删除评论</a>';
+	    				var caozuoDom = '<a data-msgid="'+m[i].msg_id+'" data-status="'+status+'" class="btn setComment btn-danger">删除评论</a>';
 
 	    				if (status==1) {
-	    					caozuoDom = '<a data-status="'+status+'" class="btn setComment btn-danger">删除评论</a>';
+	    					caozuoDom = '<a data-msgid="'+m[i].msg_id+'" data-status="'+status+'" class="btn setComment btn-danger">删除评论</a>';
 	    				};
 	    				if (status==0||status==2) {
-	    					caozuoDom = '<a data-status="'+status+'" class="btn setComment btn-warning">恢复评论</a>';
+	    					caozuoDom = '<a data-msgid="'+m[i].msg_id+'" data-status="'+status+'" class="btn setComment btn-warning">恢复评论</a>';
 	    				};
 
 
