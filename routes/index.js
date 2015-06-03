@@ -122,6 +122,24 @@ exports.login = function(req, res){
 };
 
 /*
+@  passwordMD5 加密测试
+@  http://localhost:3000/passwordMD5?pass=123456
+*/
+exports.passwordMD5 = function(req, res){
+    if (req.query.pass) {
+        var key = 'yA0WangO(∩_∩)O~';
+        var result = fun.passwordMD5(req.query.pass, key);
+
+        fun.jsonTips(req, res, 2000, config.Code2X[2000], result);
+
+    }else{
+
+        fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+    }
+}
+
+
+/*
 @ 直接输入 主页
 @ 从 session 判断是否登录
 @ 以页面跳转方式，无 jsonp 接口

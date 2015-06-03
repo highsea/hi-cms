@@ -9,7 +9,8 @@
 var database = require('./../db/mysql_db.js'),
     config = require('./../db/config');
 
-
+var jsSHA = require('jssha');
+var utility = require('utility');
 
 /*
 @  总用户数量
@@ -178,8 +179,8 @@ var sign = function (jsapi_ticket, url) {
     url: url
   };
   var string = raw(ret);
-      jsSHA = require('jssha');
-      shaObj = new jsSHA(string, 'TEXT');
+      
+  var shaObj = new jsSHA(string, 'TEXT');
   ret.signature = shaObj.getHash('SHA-1', 'HEX');
 
   return ret;
@@ -188,9 +189,34 @@ var sign = function (jsapi_ticket, url) {
 
 
 
+/**
+ * 系统非常规MD5加密方法
+ * @param  string $str 要加密的字符串
+ * @return string 
+ */
+
+
+function passwordMD5(str, key){
+    // shaObj 对象存有多种SHA加密值： SHA-512  SHA-1  SHA-224, SHA-256, SHA-384 
+    var shaObj = new jsSHA(str, 'TEXT');
+    console.log("shaObj.getHash('SHA-1', 'HEX') : "+shaObj.getHash('SHA-1', 'HEX'));
+    return '' === str ? '' : utility.md5(shaObj.getHash('SHA-1', 'HEX') + key);
+}
+
+/**
+ * 系统非常规MD5加密方法
+ * @param  string $str 要加密的字符串
+ * @return string 
+ */
+/*if ( ! function_exists('think_ucenter_md5')){
+    function think_ucenter_md5($str, $key = 'yA0WangO(∩_∩)O~'){
+        return '' === $str ? '' : md5(sha1($str) . $key);
+    }
+}*/
+
 
 exports.sign                = sign;
-
+exports.passwordMD5         = passwordMD5;
 //exports.add_update_verify 	= add_update_verify;
 //exports.login_verify  		= login_verify;
 exports.jsonTips 			= jsonTips;

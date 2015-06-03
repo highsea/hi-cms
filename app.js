@@ -176,6 +176,8 @@ app.get ('/upload', routes.upload);
 
 app.get('/getpic', routes.getpic);
 
+app.get('/passwordMD5', routes.passwordMD5);
+
 
 
 
