@@ -168,4 +168,8 @@ body .current{background: #5bb75b;}
 .black{background: #000}
 
 
+.caption{float: none;clear: both}
+.goodMessageType li{float: right;background: #f60; height: 20px;margin:0 1em}
+.goodMessageType a{color: #fff;padding: 0 0.5em;cursor: pointer;}
+
 

@@ -91,7 +91,8 @@ define(function(require, exports, module) {
 		'confirm': '身份验证通过',
 		'confirm_msg_re' : "身份验证通过，确定该操作吗？",
 		'confirm_msg_good':"推荐数值越大越考前，确定该操作吗？",
-		'host' : 'http://m.xiaojiaoyar.com/Uploads/Picture/'
+		'host' : 'http://m.xiaojiaoyar.com/Uploads/Picture/',
+		'webhost': 'http://m.xiaojiaoyar.com/',
 	}
 
 	all.authority = {

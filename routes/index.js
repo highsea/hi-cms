@@ -14,7 +14,7 @@ var db = require('./../db/mysql_db.js'),
     utility = require('utility');
 
 var appsetFile = ['./db/appset-', '.json'].join('');// new Date()-0,
-var JsonObj = JSON.parse(fs.readFileSync(appsetFile));
+//var JsonObj = JSON.parse(fs.readFileSync(appsetFile));
 
 var transporter = nodemailer.createTransport({
     service: '163',
@@ -41,7 +41,7 @@ var picPATH = config.productInfo.picupload;
 
 exports.index = function(req, res){
     //分页
-    var search  ={};
+    /*var search  ={};
     var page    ={limit:5,num:1,size:20};
 
     //查看哪页
@@ -73,13 +73,13 @@ exports.index = function(req, res){
         page['allnews'] = rows;
         page['pageCount'] = Math.ceil(rows/page['size']);//ceil向上取整 round四舍五入  floor向下取整
         page['numberOf']    = page['pageCount']>5?5:page['pageCount'];
-    })
+    })*/
 
     //var sql = 'select * from lf_message where status=1 and msg_id>=(select msg_id from lf_message limit 1000000, 1) order by ctime desc limit '+page['size'];
-    var sql = 'select * from lf_message where status="1" order by ctime desc limit '+(page['num']-1)*page['size']+', '+page['size'];//20,20//40
+    //var sql = 'select * from lf_message where status="1" order by ctime desc limit '+(page['num']-1)*page['size']+', '+page['size'];//20,20//40
     //console.log(sql);
 
-    db.query(sql, function(rows) {
+    //db.query(sql, function(rows) {
 
         if(req.session.isVisit) {
             req.session.isVisit++;
@@ -92,13 +92,13 @@ exports.index = function(req, res){
         res.render('index', {
             title   : config.productInfo.name ,
             result  : 0,//未登录
-            living  : config.dbtext['wz'],//在线人数
+            //living  : config.dbtext['wz'],//在线人数
             visit   : req.session.isVisit,// 你访问了多少次
-            rows    : rows,// message
-            usernum : userNum,//注册总人数
-            page    : page,
+            //rows    : rows,// message
+            //usernum : userNum,//注册总人数
+            //page    : page,
         });
-    })
+    //})
 
 };
 
@@ -127,7 +127,7 @@ exports.login = function(req, res){
 */
 exports.passwordMD5 = function(req, res){
     if (req.query.pass) {
-        var key = 'yA0WangO(∩_∩)O~';
+        var key = config.productInfo.key;
         var result = fun.passwordMD5(req.query.pass, key);
 
         fun.jsonTips(req, res, 2000, config.Code2X[2000], result);
@@ -148,32 +148,46 @@ exports.homeget = function(req, res) {
     //判断是否登录
     var name = req.session.username;
     var sql = {
-        thisUser    : 'select * from lf_users where user_id="'+name+'"',
+        thisUser_id    : 'select * from lf_users where user_id="'+name+'"',
+        thisUser_nickname    : 'select * from lf_users where nickname="'+name+'"',
+
     };
 
     if (name) {
+        // 用昵称登录 new
+        db.query(sql['thisUser_nickname'], function(userList){
 
-        db.query(sql.thisUser, function(userList){
+            if (userList.length) {
 
-            //console.log(userList[0]);
-            req.session.userinfo = userList[0];
+                //console.log(userList);
+                req.session.userinfo = userList[0];  
 
-            res.render('home', {
-                title       : name+config.productInfo.home,
-                username    : name,
-                result      : req.session.result,
-                info        : req.session.userinfo,
-            });
-            /*console.log(moment().format());
-            var nowTime = moment().format('L');
-            var threedayago = moment().subtract(3, 'days').calendar();
-            var weekago = moment().subtract(7, 'days').calendar();
-            var twoweekago = moment().subtract(14, 'days').calendar();
+                res.render('home', {
+                    title       : name+config.productInfo.home,
+                    username    : name,
+                    result      : req.session.result,
+                    info        : req.session.userinfo,
+                }); 
 
-            console.log('现在：'+nowTime+';3天前：'+threedayago+';7天前：'+weekago+';14天前：'+twoweekago);*/
-            
-            
+            }else{
+                //用 id登录 older
+                db.query(sql['thisUser_id'], function(uList){
+                    req.session.userinfo = uList[0];  
+
+                    res.render('home', {
+                        title       : name+config.productInfo.home,
+                        username    : name,
+                        result      : req.session.result,
+                        info        : req.session.userinfo,
+                    }); 
+
+                })
+            }
+
         })
+
+
+        
         
     }else{
         res.redirect('/');
@@ -257,7 +271,7 @@ exports.message = function (req, res) {
         // console.log('day3fomat:'+day3fomat+';day3agoUnix:'+sql['d3']);
         var totalSQL   = 'select count(*) from lf_message where lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']];
 
-        var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time,lf_feed_type.name from lf_users,lf_message,lf_feed_type where lf_users.user_id=lf_message.user_id and lf_message.feedtype=lf_feed_type.type and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by lf_message.order_count desc,'+sql[doc['order']]+' desc limit '+(page['currentp']-1)*page['size']+', '+page['size'];
+        var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time,lf_feed_type.name from lf_users,lf_message,lf_feed_type where lf_users.user_id=lf_message.user_id and lf_message.feedtype=lf_feed_type.type and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by '+sql[doc['order']]+' desc limit '+(page['currentp']-1)*page['size']+', '+page['size'];
         //select * from lf_message where ctime>=1431739693 and message=''  order by ctime desc limit 100000
 
         //分页－－查询总条数
@@ -598,7 +612,7 @@ exports.setComment = function(req, res){
 */
 exports.homepost = function(req, res){
     var query = {name: req.body.user, password: req.body.password};
-    var sql  = 'select * from lf_users where user_id="'+query.name+'" and passwd="'+query.password+'"';
+
     if(query.name==''||query.password==''){
         var text = config.Code4X[1002];
         fun.friendlyError(req, res, text);
@@ -610,6 +624,8 @@ exports.homepost = function(req, res){
         //alter table `lf_users` drop column type;  
         //修改 type 为 level
         //alter table lf_users CHANGE type level int;
+        var sql  = 'select * from lf_users where user_id="'+query.name+'" and passwd="'+query.password+'"';
+
         db.query(sql, function(rows){   
             if (rows.length=='1') {
                 console.log(rows);
@@ -786,82 +802,6 @@ exports.soso = function(req, res){
 }
 
 
-/*
-@   贴纸管理页面
-@
-@
-*/
-
-//增加5:  
-//alter table lf_paster_info add examine_time int(13) NOT NULL DEFAULT '0' after ctime;
-//alter table lf_paster_info add examine_admin varchar(15) NOT NULL DEFAULT 'unknow' after ctime;
-//
-//alter table lf_paster_info add status int(11) NOT NULL DEFAULT '1' after id;
-
-
-exports.pasterinfo = function(req, res){
-    var name = req.session.username;
-
-    if (name) {
-
-
-        var doc = {
-            //time: 'w1', 
-            typeid: '1', 
-            order: 'time', 
-            sta: 'all'
-        };
-        var page = {currentp:1,size:20};
-
-        //查看哪页
-        if(fun.isDigit(req.query.p)){
-            page['currentp']= req.query.p < 1 ? 1 : req.query.p;
-        }
-        //每页多少条
-        if (fun.isDigit(req.query.size)) {
-            page['size']= req.query.size<1 ? 1 : req.query.size;
-        };
-
-
-
-        var sql = {
-            //status show
-            all         : '',
-            filter      : 'filter',
-            ready       : 'lf_paster_info.status="1" and',
-            del         : 'lf_paster_info.status="0" and',
-            //order 
-            time        : 'lf_paster_info.ctime',
-            sort        : 'lf_paster_info.sort',
-
-        }
-
-        if (sql[req.query.sta]) {
-            doc['sta'] = req.query.sta;
-        };
-        if (sql[req.query.order]) {
-            doc['order'] = req.query.order;
-        };
-        if (sql[req.query.sta]&&req.query.sta=='filter') {
-            if (req.query.id) {
-
-            }else{
-
-
-            }
-
-        };
-
-        var pasterSQL = 'select * form lf_paster_info where '+sql[doc['sta']];
-        //SELECT * FROM `lf_paster_info` ORDER BY `lf_paster_info`.`type_id` ASC
-
-
-    }else{
-        res.redirect('/');
-    }
-
-} 
-
 
 /*
 @  用户信息获取 lf_user
@@ -1024,6 +964,104 @@ exports.lookuser = function(req, res){
 
     })
 } 
+
+
+/*
+@  创建马甲账号(坑爹：马甲手机号设置自减，userid设置自增) 密码 加密存储
+@
+@  http://localhost:3000/createmini?nickname=gaohai&password=123456
+*/
+
+
+exports.createmini = function(req, res){
+
+    fun.verifyAdmin(req, res, function(){
+
+        if (req.query.nickname&&req.query.password) {
+
+            var key = config.productInfo.key;
+            var resultMD5 = fun.passwordMD5(req.query.password, key);
+
+            var sql = {
+                
+                findMobile : 'select mobile from lf_users order by mobile asc',
+                findUserid : 'select user_id from lf_users order by user_id desc',
+                findNick : 'select * from lf_users where nickname="'+req.query.nickname+'"',
+            };
+
+            db.query(sql['findNick'], function(nickData){
+                if (nickData.length) {
+
+                    console.log(nickData);
+                    fun.jsonTips(req, res, 2012, config.Code2X[2012], nickData);
+
+
+                }else{
+
+                    db.query(sql['findMobile'], function(result){
+                        //找到 马甲帐号 的最小手机号 减去 1 
+                        //console.log(result[0].mobile);
+                        var mobileNum = result[0].mobile-1;
+                        // 居然没有递增！！！！ 找到 user_id 最大的 加1
+                        db.query(sql['findUserid'], function(userResult){
+                            var userNum = userResult[0].user_id+1;
+
+                            sql['insert']="insert into lf_users (user_id, nickname, passwd, mobile, ctime, level, examine_time, examine_admin) values ('"+userNum+"', '"+req.query.nickname+"', '"+resultMD5+"', '0"+mobileNum+"', '"+fun.nowUnix()+"', '1', '"+fun.nowUnix()+"', '"+req.session.username+"')",
+
+                            db.query(sql['insert'], function(dataList){
+                                fun.jsonTips(req, res, 2000, config.Code2X[2000], dataList);
+                            })
+                        })
+                    })
+                }
+            })
+
+            
+
+        }else{
+
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+    })
+}
+
+/*
+@  另一种登录方式，首页（加密算法） post
+@
+@
+*/
+
+exports.postmd5 = function(req, res){
+    var query = {name: req.body.nickname.trim(), password: req.body.password.trim()};
+    if(query.name==''||query.password==''){
+        var text = config.Code4X[1002];
+        fun.friendlyError(req, res, text);
+    }else{
+        //先查询 是否有此 用户名
+        //扩展： 手机号、邮箱、用户名 任意登录 多次回调
+        var key = config.productInfo.key;
+        var resultMD5 = fun.passwordMD5(query.password, key);
+        var sql  = 'select * from lf_users where nickname="'+query.name+'" and passwd="'+resultMD5+'"';
+
+        db.query(sql, function(rows){ 
+
+            if (rows.length) {
+                //console.log(rows.length);
+                req.session.username = query.name;
+                req.session.result = 1;
+                req.session.type = rows[0].level;
+                //可以避免 刷新页面时提示 是否重复提交（登录数据）
+                res.redirect('/home');
+            }else{
+                console.log(rows);
+                var text = config.Code4X[4002];
+                fun.friendlyError(req, res, text);
+            } 
+
+        })
+    }
+}
 
 
 /*              
@@ -1336,34 +1374,121 @@ exports.paster = function(req, res){
 
 }
 
-exports.lookpaster = function(req, res){
-        //验证 管理员&&是否登录
-    fun.verifyAdmin(req, res, function(){
+
+/*
+@  获取贴纸
+@
+@  http://localhost:3000/pasterinfo?sta=ready&order=time&p=1&size=10000
+@  http://localhost:3000/pasterinfo?sta=type&order=time&p=1&size=10000&value=1
+*/
+
+//增加5:  
+//alter table lf_paster_info add examine_time int(13) NOT NULL DEFAULT '0' after ctime;
+//alter table lf_paster_info add examine_admin varchar(15) NOT NULL DEFAULT 'unknow' after ctime;
+//
+//alter table lf_paster_info add status int(11) NOT NULL DEFAULT '1' after id;
+
+
+exports.pasterinfo = function(req, res){
+    var name = req.session.username;
+
+    if (name) {
 
         var doc = {
+            //time: 'w1', 
+            //typeid: '1', 
+            order: 'time', 
+            sta: 'all',
+            value :'1',//默认的分类 type值
+        };
+        var page = {currentp:1,size:20};
+
+        //查看哪页
+        if(fun.isDigit(req.query.p)){
+            page['currentp']= req.query.p < 1 ? 1 : req.query.p;
+        }
+        //每页多少条
+        if (fun.isDigit(req.query.size)) {
+            page['size']= req.query.size<1 ? 1 : req.query.size;
+        };
+        if (fun.isDigit(req.query.value)) {
+            doc['value'] = req.query.value;
+        };
+        var sql = {
+            //status show
+            all         : '',
+            type        : ' where lf_paster_info.type_id="'+doc['value']+'" ',
+            ready       : ' where lf_paster_info.status="1" ',
+            del         : ' where lf_paster_info.status="0" ',
+
+            //order 
+            time        : ' order by lf_paster_info.ctime ',
+            sort        : ' order by lf_paster_info.order_sort ',
+            //
+            totalSQL    : ' '
 
         }
 
+        if (sql[req.query.sta]) {
+            doc['sta'] = req.query.sta;
+        };
+        if (sql[req.query.order]) {
+            doc['order'] = req.query.order;
+        };  
+        
+        var pasterSQL = 'select * from lf_paster_info '+sql[doc['sta']]+sql[doc['order']]+' desc limit '+(page['currentp']-1)*page['size']+', '+page['size'];
 
-        if (fun.isDigit(req.query.id)) {
+        sql['totalSQL'] = 'select count(*) from lf_paster_info '+sql[doc['sta']];
 
-            var sql = "select * from lf_paster_info  ";
+        //分页－－查询总条数
+        db.query(sql['totalSQL'], function(rowsCount){
 
-            db.query(sql, function(dataList){
+            rowsCount = rowsCount[0]['count(*)'];
+            console.log('消息总条数：'+rowsCount);
+            page['allnews'] = rowsCount;
+            page['pageCount'] = Math.ceil(rowsCount/page['size']);//ceil向上取整 round四舍五入  floor向下取整
+            //page['numberOf']    = page['pageCount']>5?5:page['pageCount'];
+            
+            // 输出 查询结果
+            db.query(pasterSQL, function (pasterList) {
 
-                fun.jsonTips(req, res, 2000, config.Code2X[2000], dataList);
-
+                var data = {
+                    len : pasterList.length,
+                    page : page,
+                    list : pasterList,
+                };
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
             })
 
-        }else{
+        })
 
-            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
-        }
+    }else{
+        res.redirect('/');
+    }
+
+} 
+
+
+/* 获取贴纸分类
+*
+* localhost:3000/deletefeedtype?id=5
+*/
+exports.pastertype = function(req, res){
+    //验证 管理员&&是否登录
+    fun.verifyAdmin(req, res, function(){
+
+        var sql = 'select * from lf_paster_type';
+        db.query(sql, function(data){
+            fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
+        })
 
     })
-
-
+    
 }
+
+
+
+
 
 /*"CREATE TABLE `user_telphone` (  
   `keyid` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',  
@@ -1490,13 +1615,8 @@ exports.weixin = function(req, res, next){
         }
 
     }else{
-
         fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
-
     }
-
-
-    
 
 }
 
@@ -1514,6 +1634,24 @@ exports.sha1 = function(req,res){
     }else{
         fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
     }
+    
+}
+
+exports.wxinit = function(req, res){
+
+    //验证 管理员&&是否登录
+    fun.verifyAdmin(req, res, function(){
+
+        res.render('wxinit', {
+            title : config.productInfo.wxinit,
+            wxinfo : JSON.parse(fs.readFileSync(appsetFile)),
+            username    : req.session.username,
+            result      : req.session.result,
+            info        : req.session.userinfo,
+        })
+        
+
+    })
     
 }
 

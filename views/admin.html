@@ -23,6 +23,9 @@
 					<li>
 						 <a href="#panel-374630" data-toggle="tab">权限管理</a>
 					</li>
+					<li>
+						 <a href="#panel-374631" data-toggle="tab">马甲账号</a>
+					</li>
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="panel-727360">
@@ -69,11 +72,26 @@
 								<input type="text" value="" placeholder="请输入需要提升权限的用户id">
 								<a class="btn btn-success creatUser">新增管理员</a>
 								<a class="btn btn-warning deleteUser">解除管理员</a>
-
 							</div>
 						</div>
 						
-						
+					</div>
+					<div class="tab-pane" id="panel-374631">
+						<div class="row-fluid">
+							<div class="span12">
+								<p>	1.输入马甲的［昵称］ </p>
+								<p>	2.设置马甲的［密码］</p>
+								<p> 3.登陆时用［昵称＋密码］验证</p>
+								<hr>
+							</div>
+							<div class="span12">
+								<p>	昵称： <input class="nickname_mj" type="text" placeholder="请输入昵称"> </p>
+								<p>	密码： <input class="password_mj" type="text" placeholder="请输入密码"> </p>
+								<p>	 <a class="btn btn-success createMJ"> 创 建 </a> </p>
+
+								
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -122,7 +140,9 @@ window.onload=function(){
     seajs.use([ 'all', 'verify'], function(A,V){
     	
 
-    	var lookuserPage = $('.lookuserPage');
+    	var lookuserPage = $('.lookuserPage'),
+    		nickname_mj = $('.nickname_mj'),
+    		password_mj = $('.password_mj');
     	$('#tabs-533320').on('click', '.showUser,.userPageNum', function(e){
     		e.preventDefault();
 
@@ -238,7 +258,7 @@ window.onload=function(){
 					value : 8,
 				}, '#tabs-533320', function(dataList){
 					if (dataList.data.protocol41) {
-						console.log("更新成功")
+						A.alertHtml('#panel-374630', 'info', dataList.code, dataList.message);
 					};
 				})
 
@@ -256,11 +276,28 @@ window.onload=function(){
 					value : 1,
 				}, '#tabs-533320', function(dataList){
 					if (dataList.data.protocol41) {
-						console.log("解除成功")
+						A.alertHtml('#panel-374630', 'info', dataList.code, dataList.message);
 					};
 				})
 
 			};
+		}).
+		on('click', '.createMJ', function(event) {
+			event.preventDefault();
+			// 创建马甲账号
+			if (nickname_mj.val()&&password_mj.val()) {
+
+				A.ajax('/createmini', {
+					nickname : nickname_mj.val(),
+					password : password_mj.val(),
+				}, '#tabs-533320', function(dataList){
+					if (dataList.data.protocol41) {
+						A.alertHtml('#panel-374631', 'info', dataList.code, dataList.message);
+					};
+				})
+			}else{
+				alert('检查输入！')
+			}
 		});
     	
 

@@ -123,6 +123,8 @@ app.get('/users', user.list);
 app.get('/login', routes.login);//
 app.get('/logout', routes.logout);//
 app.post('/home', routes.homepost);//post
+app.post('/postmd5', routes.postmd5);//post
+
 app.get('/home', routes.homeget);//
 
 app.get('/message', routes.message);
@@ -138,8 +140,11 @@ app.get('/up1user', routes.up1user);
 app.get('/lookuser', routes.lookuser);
 app.get('/userzone', routes.userzone);
 app.get('/paster', routes.paster);
+app.get('/pasterinfo', routes.pasterinfo);
+app.get('/pastertype', routes.pastertype);
 
 app.get('/weixin', routes.weixin);
+app.get('/wxinit', routes.wxinit);
 app.get('/sha1', routes.sha1);
 app.get('/wxactive', routes.wxactive);
 
@@ -147,6 +152,7 @@ app.get('/showfeedtype', routes.showfeedtype);
 app.get('/upfeedtype', routes.upfeedtype);
 app.get('/createfeedtype', routes.createfeedtype);
 app.get('/deletefeedtype', routes.deletefeedtype);
+app.get('/createmini', routes.createmini);
 
 
 

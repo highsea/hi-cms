@@ -198,8 +198,11 @@ var sign = function (jsapi_ticket, url) {
 
 function passwordMD5(str, key){
     // shaObj 对象存有多种SHA加密值： SHA-512  SHA-1  SHA-224, SHA-256, SHA-384 
-    var shaObj = new jsSHA(str, 'TEXT');
-    console.log("shaObj.getHash('SHA-1', 'HEX') : "+shaObj.getHash('SHA-1', 'HEX'));
+    var strMd5 = utility.md5(str);
+    //console.log('strMd5:'+strMd5);
+    var shaObj = new jsSHA(strMd5, 'TEXT');
+    //console.log("SHA-1 : "+shaObj.getHash('SHA-1', 'HEX'));
+
     return '' === str ? '' : utility.md5(shaObj.getHash('SHA-1', 'HEX') + key);
 }
 
