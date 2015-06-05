@@ -16,6 +16,7 @@ var db = require('./../db/mysql_db.js'),
 var appsetFile = ['./db/appset-', '.json'].join('');// new Date()-0,
 //var JsonObj = JSON.parse(fs.readFileSync(appsetFile));
 
+
 var transporter = nodemailer.createTransport({
     service: '163',
     auth: {
@@ -1517,28 +1518,47 @@ exports.pastertype = function(req, res){
 */
 exports.weixin = function(req, res, next){
 
-
+    //var ticketPath = './db/ticket.json';
     var cheerio = require('cheerio');
     var superagent = require('superagent');
 
+    var ticket = fs.statSync(appsetFile);
+    var ticketObj = JSON.parse(fs.readFileSync(appsetFile), 'utf8', function(err, data){});
+    // file time-----
+    /*{ dev: 16777218,
+  mode: 33188,
+  nlink: 1,
+  uid: 501,
+  gid: 80,
+  rdev: 0,
+  blksize: 4096,
+  ino: 45123301,
+  size: 2,
+  blocks: 8,
+  atime: Fri Jun 05 2015 13:26:24 GMT+0800 (CST),//visite tima
+  mtime: Fri Jun 05 2015 13:26:22 GMT+0800 (CST), // modifiy time
+  ctime: Fri Jun 05 2015 11:57:15 GMT+0800 (CST) }// create time  */
 
     var doc = {
-        appid   : config.productInfo['appid'],
-        secret  : config.productInfo['secret'],
+        appid   : ticketObj.weixin.appid,
+        secret  : ticketObj.weixin.secret,
         type    : 'access_token',
-        ctime   : req.session.ctime ? req.session.ctime : fun.nowUnix() ,
+        mtime   : fun.toUnix(ticket.mtime) ,
         nowtime : fun.nowUnix(),
         //sha1    : 'sha1',
     }
+    console.log('初始化的 doc：');
 
+    console.log(doc);
+
+    // 可选 appid
     if (req.query.appid) {
         doc['appid'] = req.query.appid;
     };
-
     /*if (req.query.ticket&&req.query.url) {
         doc['sha1'] = fun.sign(req.query.ticket, req.query.url);
     };*/
-
+    //可选 secret
     if (req.query.secret) {
         doc['secret'] = req.query.secret;
     };
@@ -1554,22 +1574,23 @@ exports.weixin = function(req, res, next){
 
         doc['type'] = req.query.type;
 
-        var mtime = doc['nowtime'] - doc['ctime'];
-        //console.log("doc['nowtime']:"+doc['nowtime']);
-        //console.log("doc['ctime']:"+doc['ctime']);
+        var mtime = doc['nowtime'] - doc['mtime'];
 
         console.log('mtime:'+mtime);
-        //当大于 2分钟则重新获取 
+        //当大于 2hour 则重新获取 
         var judgeTime = mtime>7199 ? 0 : 1;
         console.log('judgeTime:'+judgeTime);
 
-        if (req.session.access_token&&req.session.ticket&&judgeTime) {
+        //console.log('读取 access_token:'+ticketObj.access_token);
 
-            type['access_token'] = req.session.access_token;
-            type['ticket'] = req.session.ticket;
+        if (judgeTime&&ticketObj.access_token!=''&&ticketObj.ticket!='') {
+
+            type['access_token'] = ticketObj.access_token;
+            type['ticket'] = ticketObj.ticket;
+
+            //console.log('缓存');
 
             fun.jsonTips(req, res, 2304, doc['appid'], type[doc['type']]);
-
 
         }else{
 
@@ -1592,23 +1613,50 @@ exports.weixin = function(req, res, next){
                 //   });
                 // });
 
+            //{"weixin":{"appid":"wx2512a12dde3a0ba5","secret":"681a5e7552885edc78ea096eb0541c82"},"access_token":"","ticket":""}
+
                 // res.send(items);
-                req.session.access_token = JSON.parse(sres.text);
-                type['access_token'] = req.session.access_token;
+                // 设置  爬取的 access_token  等待写入
+                type['access_token'] = JSON.parse(sres.text).access_token;
+                console.log(type['access_token']);
 
-
-                superagent.get('https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token='+type['access_token']['access_token']+'&type=jsapi')
+                superagent.get('https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token='+type['access_token']+'&type=jsapi')
                 .end(function(error, result){
                     if (error) {
                         return next(error)
                     };
+                    /*//读取文件
+                    fs.readFile('message.txt', 'utf8', function (err, data) {
+                        if (err) throw err;
+                        console.log(data);
+                    });*/
+                    //写入 获取的 ticket
+                    type['ticket'] = JSON.parse(result.text).ticket;
+                    //console.log("type['ticket']:"+result.text);
+                    //console.log('JSON.parse(result.text).ticket:'+JSON.parse(result.text).ticket);
 
+                    //---------------------
+                    var textStringify = JSON.stringify({
+                            weixin:{
+                                appid   : ticketObj.weixin.appid,
+                                secret  : ticketObj.weixin.secret
+                            },
+                            access_token: type['access_token'],
+                            ticket      : type['ticket']
+                        });
+                    //console.log(textStringify);
+                    //写入文件 
+                    fs.writeFile(appsetFile, textStringify, function(err){
 
-                    req.session.ticket = JSON.parse(result.text);
-                    type['ticket'] = req.session.ticket;
-                    req.session.ctime = fun.nowUnix();
+                        if(err) {
+                            console.log('写入错误:'+JSON.stringify(err));
+                            fun.jsonTips(req, res, 5021, config.Code5X[5021], err);
+                        }else{
+                            console.log('写入成功:'+textStringify);
+                            fun.jsonTips(req, res, 2000, doc['appid'], type[doc['type']]);
+                        }
+                    });
 
-                    fun.jsonTips(req, res, 2000, doc['appid'], type[doc['type']]);
                 })
             });
 

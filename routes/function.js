@@ -103,6 +103,10 @@ function nowUnix(){
     return Math.round(new Date().getTime()/1000);
 }
 
+function toUnix(t){
+    return Math.round(new Date(t).getTime()/1000);
+}
+
 function dayAgo(n){
     //var nowUnix = ;
     return nowUnix()-3600*24*n
@@ -231,7 +235,7 @@ function uploadHtml(req, res, resultPic, username){
 
 
 
-
+exports.toUnix              = toUnix;
 exports.sign                = sign;
 exports.passwordMD5         = passwordMD5;
 //exports.add_update_verify 	= add_update_verify;
