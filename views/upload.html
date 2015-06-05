@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title><%=title%></title>
+</head>
+<body>
+<% if (resultpic!='1'){ %>
+	<img src="/getpic?username=<%=username%>&picname=<%=resultpic%>">
+	
+<% }else { %>
+	<form method="post" action="upload" class="pic_upload_form" enctype="multipart/form-data">
+		<input type="file" name="files" multiple="multiple" />
+		<input type="submit" class="btn btn-primary pic_upload" value="上传" />
+	</form>
+<% } %>
+</body>
+</html>

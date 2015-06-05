@@ -28,14 +28,15 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 		subject : '的项目',
 		collect : '的收藏',
 		wxinit : '微信设置',
+		picupload:'./public/upload/temp/',
 		friendlyError : {
 			title:'你犯了一个错误',
 			text:'你直接打开了这个页面，尽管你没犯什么错误 0.0！',
 		},
 		key : 'SRV_AUTH_KEY',
 		by : "Powered by HighSea90 © 2015-2025 highsea90.com",
-		appid : 'wxb9ed4cc31a9e0743',
-		secret : 'ac5d01394bc89aa963836c2f88719eba',
+		appid : 'wx2512a12dde3a0ba5',
+		secret : '681a5e7552885edc78ea096eb0541c82',
 	},
 	//信息提示 1XXX
 	Code1X = {

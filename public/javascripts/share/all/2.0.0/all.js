@@ -285,8 +285,99 @@ define(function(require, exports, module) {
 		}
 		$(dom).children('ul').html(str);
 		$(dom).siblings('.setpage').show().children('.pageinfo').html('一共<i>'+page['allnews']+'</i> 条结果，当前第<em>'+page['currentp']+'</em>页，分<b>'+page['pageCount']+'</b>页');
+
+
+
 		callback();
 	}
+
+
+/*
+@  用表格展示首页
+@
+@
+*/
+
+	all.showMessageTable = function (dataList, dom, callback) {
+		
+
+		var m = dataList.data.list;
+		var page = {
+			currentp : dataList.data.page.currentp,
+			size : dataList.data.page.size,
+			allnews : dataList.data.page.allnews,
+			pageCount : dataList.data.page.pageCount,
+		}
+		//console.log(m)
+		var dlength = dataList.data.length;
+		var str = '';
+			
+		for (var i = 0; i < dlength; i++) {
+			
+			var user_id 	= m[i].user_id,
+				sex 		= m[i].sex,
+				avatar 		= m[i].avatar,
+				nickname 	= m[i].nickname,
+				msg_id 		= m[i].msg_id,
+				message 	= m[i].message,
+				photo 		= JSON.parse(m[i].photo),
+				location 	= m[i].location,
+				up_count 	= m[i].up_count,
+				comment_count=m[i].comment_count,
+				read_count 	= m[i].read_count,
+				order_count = m[i].order_count,
+				status 		= m[i].status,
+				feedtype 	= m[i].feedtype,
+				name 		= m[i].name,
+				eadmin 		= m[i].examine_admin,
+				etime 		= m[i].examine_time,
+				ctime 		= m[i].ctime;
+
+			var photoStr = '';
+
+			//console.log(photo);
+
+			if (photo.length>1) {
+				for (var k = 0; k < photo.length; k++) {
+					photoStr += '<li style="float:left"><img src="'+all.textTips['host']+photo[k]+'" alt="" /></li>';
+				};
+
+			}else{
+				photoStr += '<li><img src="'+all.textTips['host']+photo[0]+'" alt="" /></li>'
+			}
+
+			str += '<li class="span11 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'" data-eadmin="'+eadmin+'" data-etime="'+etime+'">'+
+			                '<div data-feedtype="'+feedtype+'" class="thumbnail">'+
+			                  '<h4><small>[第<em>'+page['currentp']+'</em>页：'+(i+1)+'/'+dlength+']</small>'+
+			                  '<img class="avatar" src="'+all.textTips['host']+avatar+'" alt="" /><a href="/soso?userid='+user_id+'&tab=userzone">'+nickname+'</a><br><small class="goods_info"><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
+			                  '<small>发表于：'+all.js_date_time(ctime)+' </small> '+
+			                  ' | <small> 用户id：<a href="/soso?userid='+user_id+'&tab=userzone">'+user_id+' </a></small> | <small> 消息id：<a href="/soso?msgid='+msg_id+'">'+msg_id+'</a></small>'+
+			                  '<p>浏览数：<span>'+read_count+'</span> 评论数：<span>'+comment_count+'</span> 赞：<span>'+up_count+'</span></p>'+
+			                  '<p>'+message+'</p>'+
+			                  '<ul class="message_img">'+photoStr+'</ul>'+
+			                  '<div class="caption up">'+
+			                  	'<p>赞：正在载入……</p>'+
+			                    '<ul></ul>'+
+			                  '</div>'+
+			                  '<div class="caption comment">'+
+			                    '<p>评论：正在载入……</p>'+
+			                  '</div>'+
+			                  '<div class="caption order">'+
+								'<a class="btn btn-success goodmsg" data-ordercount="'+order_count+'" data-feedtype="'+feedtype+'">'+name+'</a> '+
+								'&nbsp; <a class="btn btn-danger recycleMessage ">动态放回收站 </a>'+
+			                  '</div>'+
+			                '</div>'+
+			              '</li>';
+
+		}
+		$(dom).children('ul').html(str);
+		$(dom).siblings('.setpage').show().children('.pageinfo').html('一共<i>'+page['allnews']+'</i> 条结果，当前第<em>'+page['currentp']+'</em>页，分<b>'+page['pageCount']+'</b>页');
+		
+
+		
+		callback();
+	}
+
 
 
 	all.sosoMessage = function(dataList, callback){

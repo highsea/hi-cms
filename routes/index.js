@@ -1561,14 +1561,14 @@ exports.weixin = function(req, res, next){
         console.log('mtime:'+mtime);
         //当大于 2分钟则重新获取 
         var judgeTime = mtime>7199 ? 0 : 1;
-        //console.log('judgeTime:'+judgeTime);
+        console.log('judgeTime:'+judgeTime);
 
         if (req.session.access_token&&req.session.ticket&&judgeTime) {
 
             type['access_token'] = req.session.access_token;
             type['ticket'] = req.session.ticket;
 
-            fun.jsonTips(req, res, 2000, doc['appid'], type[doc['type']]);
+            fun.jsonTips(req, res, 2304, doc['appid'], type[doc['type']]);
 
 
         }else{
@@ -2060,14 +2060,15 @@ exports.adduserget = function(req, res){
 exports.upload = function(req, res) {
 
     var q = req.body?req.body:req.query,
-        username = req.query.username,
+        //username = req.query.username,
         picname = q.picname;
         
 
 /*    console.log(q);
     console.log(picname);
     typeof(req.body);*/
-    if (!username) {
+    //必须登录， 若是 不带 username 参数 则是图片上传
+    if (req.session.username&&!req.query.username) {
         //文件上传
         console.log('文件上传');
         console.log(q);
@@ -2111,7 +2112,7 @@ exports.upload = function(req, res) {
 
                 try{
                     fs.renameSync(files.files.path, picPATH+resultPic);
-                    fun.uploadHtml(req, res, resultPic, username);
+                    fun.uploadHtml(req, res, resultPic, req.query.username);
                     //fun.jsonTips(req, res, 2000, config.Code2X[2000], resultPic);
                 }catch(e){
                     fun.jsonTips(req, res, 5021, config.Code2X[5021], e);
@@ -2131,7 +2132,7 @@ exports.upload = function(req, res) {
         console.log('上传页面');
 
 
-        if (req.session.username==username) {
+        if (req.query.username&&req.query.username==req.session.username) {
             fun.uploadHtml(req, res, '1', username);
         
 

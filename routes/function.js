@@ -209,13 +209,27 @@ function passwordMD5(str, key){
 /**
  * 系统非常规MD5加密方法
  * @param  string $str 要加密的字符串
- * @return string 
+ * @return string php源码
  */
 /*if ( ! function_exists('think_ucenter_md5')){
     function think_ucenter_md5($str, $key = 'yA0WangO(∩_∩)O~'){
         return '' === $str ? '' : md5(sha1($str) . $key);
     }
 }*/
+
+/*
+@  文件上传
+@
+*/
+function uploadHtml(req, res, resultPic, username){
+    res.render('upload', {
+        title : config.productInfo.up,
+        resultpic: resultPic,
+        username : username,
+    })
+}
+
+
 
 
 exports.sign                = sign;
@@ -231,5 +245,7 @@ exports.dayAgo              = dayAgo;
 exports.nowUnix             = nowUnix;
 exports.isDigit             = isDigit;
 exports.verifyAdmin         = verifyAdmin;
+exports.uploadHtml          = uploadHtml;
+
 
 
