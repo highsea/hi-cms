@@ -1,0 +1,880 @@
+
+/*
+@  用表格展示首页
+@
+@
+*/
+
+	all.showMessageTable = function (dataList, dom, callback) {
+		//console.log(m)
+		var m = dataList.data.list,
+		    dlength = dataList.data.length,
+			data_tableArr = [];
+
+		for (var i = 0; i < dlength; i++) {
+
+			var user_id 	= m[i].user_id,
+				sex 		= m[i].sex,
+				avatar 		= m[i].avatar,
+				nickname 	= m[i].nickname,
+				msg_id 		= m[i].msg_id,
+				message 	= m[i].message,
+				photo 		= JSON.parse(m[i].photo),
+				location 	= m[i].location,
+				up_count 	= m[i].up_count,
+				comment_count=m[i].comment_count,
+				read_count 	= m[i].read_count,
+				order_count = m[i].order_count,
+				status 		= m[i].status,
+				feedtype 	= m[i].feedtype,
+				name 		= m[i].name,
+				eadmin 		= m[i].examine_admin,
+				etime 		= m[i].examine_time,
+				ctime 		= m[i].ctime;
+			var photoStr = '';
+			if (photo.length>1) {
+				for (var k = 0; k < photo.length; k++) {
+					photoStr += '<li style="float:left"><img src="'+all.textTips['host']+photo[k]+'" alt="" /></li>';
+				};
+			}else{
+				photoStr += '<li><img src="'+all.textTips['host']+photo[0]+'" alt="" /></li>'
+			}
+
+			var new_data = {
+				allhtml : '<li class="span11 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'" data-eadmin="'+eadmin+'" data-etime="'+etime+'">'+
+			                '<div data-feedtype="'+feedtype+'" class="thumbnail">'+
+			                  '<h4>'+
+			                  '<img class="avatar" src="'+all.textTips['host']+avatar+'" alt="" /><a href="/soso?userid='+user_id+'&tab=userzone">'+nickname+'</a><br><small class="goods_info"><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
+			                  '<small>发表于：'+all.js_date_time(ctime)+' </small> '+
+			                  ' | <small> 用户id：<a href="/soso?userid='+user_id+'&tab=userzone">'+user_id+' </a></small> | <small> 消息id：<a href="/soso?msgid='+msg_id+'">'+msg_id+'</a></small>'+
+			                  '<p>浏览数：<span>'+read_count+'</span> 评论数：<span>'+comment_count+'</span> 赞：<span>'+up_count+'</span></p>'+
+			                  '<p>'+message+'</p>'+
+			                  '<ul class="message_img">'+photoStr+'</ul>'+
+			                  '<div class="caption up">'+
+			                  	'<p>赞：正在载入……</p>'+
+			                    '<ul></ul>'+
+			                  '</div>'+
+			                  '<div class="caption comment">'+
+			                    '<p>评论：正在载入……</p>'+
+			                  '</div>'+
+			                  '<div class="caption order">'+
+								'<a class="btn btn-success goodmsg" data-ordercount="'+order_count+'" data-feedtype="'+feedtype+'">'+name+'</a> '+
+								'&nbsp; <a class="btn btn-danger recycleMessage ">动态放回收站 </a>'+
+			                  '</div>'+
+			                '</div>'+
+			              '</li>',
+			}
+			data_tableArr.push(new_data);
+		}
+
+		var columnArr = [
+		    { data : 'allhtml'},
+		];
+		callback(data_tableArr, columnArr)
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+		<% include header.html %>
+
+<link rel="stylesheet" type="text/css" href="stylesheets/datatables.min.css">
+
+<% if (result!='') { %>  
+
+<div class="container-fluid">
+
+	<div class="row-fluid">
+		<div class="span12">
+			<% include nav.html %>
+		</div>
+	</div>
+
+	
+	
+
+
+
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="tabbable" id="tabs-25490">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						 <a href="#panel-1" data-toggle="tab" >全部</a>
+					</li>
+					<li>
+						 <a href="#panel-2" data-toggle="tab" class="good" data-sta='hot'>热门推荐</a>
+					</li>
+					<li>
+						 <a href="#panel-5" data-toggle="tab" class="goodtype" data-sta='set'>推荐分类设置</a>
+					</li>
+					<li>
+						 <a href="#panel-3" data-toggle="tab" class="sta" data-sta='del'>动态回收站</a>
+					</li>
+					<li>
+						 <a href="#panel-4" data-toggle="tab" class="comment_sta" data-sta='commentd'>评论回收站</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="panel-1">
+						<div class="row-fluid">
+							
+							<div class="span3">
+								类型:
+								<select class="span8 mark">
+									<option selected value="all">全部</option>
+									<option value="p1">单图</option>
+									<option value="mp">多图</option>
+							        <option value="tp">图文</option>
+								</select>
+							</div>
+							<div class="span3">
+								发表时间
+								<select class="span8 time">
+									<option value="d3">三天内</option>
+							        <option selected value="w1">一周内</option>
+							        <option value="w2">俩周内</option>
+							        <option value="m1">一个月</option>
+							        <option value="m2">俩个月</option>
+							        <option value="m6">半年内</option>
+
+							    </select>
+							</div>
+							<div class="span3">
+								排序:
+								<select class="span8 order">
+							        <option selected value="time">按时间</option>
+							        <option value="up">按获赞数</option>
+							        <option value="read">按阅读量</option>
+							        <option value="comment">按回复数</option>
+
+							    </select>
+							</div>
+							<div class="span3">
+								<a class="btn btn-success showMessage">查看消息</a>
+							</div>
+							
+						</div>
+
+						<hr>
+						<!--  -->
+
+						<div class="row-fluid setpage none">
+							
+							<p class="pageinfo"></p>
+							<p><input type="text" value="1" ><a class="btn defaultPage">查看</a></p>
+							
+						</div>
+						
+						<hr>
+						<!--  -->
+
+						<div class="row-fluid messageList">
+				            <ul class="thumbnails">
+
+				              
+				              加载中……
+				            </ul>
+				        </div>
+						
+
+
+
+
+					</div>
+					<div class="tab-pane" id="panel-2">
+						<div class="row-fluid">
+							
+							<div class="span3">
+								类型:
+								<select class="span8 mark_good">
+									<option selected value="all">全部</option>
+									<option value="p1">单图</option>
+									<option value="mp">多图</option>
+							        <option value="tp">图文</option>
+								</select>
+							</div>
+							<div class="span3">
+								发表时间
+								<select class="span8 time_good">
+									<option value="d3">三天内</option>
+							        <option selected value="w1">一周内</option>
+							        <option value="w2">俩周内</option>
+							        <option value="m1">一个月</option>
+							        <option value="m2">俩个月</option>
+							        <option value="m6">半年内</option>
+
+							    </select>
+							</div>
+							<div class="span3">
+								排序:
+								<select class="span8 order_good">
+							        <option selected value="time">按时间</option>
+							        <option value="up">按获赞数</option>
+							        <option value="read">按阅读量</option>
+							        <option value="comment">按回复数</option>
+
+							    </select>
+							</div>
+							<div class="span3">
+								<a class="btn btn-success msgHot">看推荐的消息</a>
+							</div>
+						</div>
+
+						<div class="goodMessageType">
+							<ul>
+								<li><a>穿衣打扮</a></li>
+								<li><a>广场</a></li>
+								<li><a>美食</a></li>
+								<li><a>娱乐</a></li>
+								<li><a>未设置</a></li>
+
+							</ul>
+						</div>
+
+
+						<hr>
+						<!--  -->
+
+						<div class="row-fluid setpage none">
+							
+							<p class="pageinfo"></p>
+							<p><input type="text" value="1" ><a class="btn goog_Page">查看</a></p>
+							
+						</div>
+
+						<!--  -->
+						<hr>
+
+						
+
+						<div class="row-fluid msgHotList">
+				            <ul class="thumbnails">
+
+				              
+				              推荐的 loading
+				            </ul>
+				        </div>
+
+
+
+
+	
+
+						<!--  -->
+					</div>
+					<div class="tab-pane" id="panel-3">
+
+						<div class="row-fluid">
+							
+							<div class="span3">
+								类型:
+								<select class="span8 mark_delete">
+									<option selected value="all">全部</option>
+									<option value="p1">单图</option>
+									<option value="mp">多图</option>
+							        <option value="tp">图文</option>
+								</select>
+							</div>
+							<div class="span3">
+								发表时间
+								<select class="span8 time_delete">
+									<option value="d3">三天内</option>
+							        <option selected value="w1">一周内</option>
+							        <option value="w2">俩周内</option>
+							        <option value="m1">一个月</option>
+							        <option value="m2">俩个月</option>
+							        <option value="m6">半年内</option>
+
+							    </select>
+							</div>
+							<div class="span3">
+								排序:
+								<select class="span8 order_delete">
+							        <option selected value="time">按时间</option>
+							        <option value="up">按获赞数</option>
+							        <option value="read">按阅读量</option>
+							        <option value="comment">按回复数</option>
+
+							    </select>
+							</div>
+							<div class="span3">
+								<a class="btn btn-success msgDelete">已删消息</a>
+							</div>
+						</div>
+
+						<hr>
+						<!--  -->
+
+						<div class="row-fluid setpage none">
+							
+							<p class="pageinfo"></p>
+							<p><input type="text" value="1" ><a class="btn delete_Page">查看</a></p>
+							
+						</div>
+						<hr>
+
+						<div class="row-fluid msgDeleteList">
+				            <ul class="thumbnails">
+
+				              
+				              删除的 loading
+				            </ul>
+				        </div>
+
+
+
+					
+					</div>
+					<div class="tab-pane" id="panel-4">
+
+						<div class="row-fluid">
+							
+							
+							<div class="span3">
+								发表时间
+								<select class="span8 time_del_com">
+									<option value="d3">三天内</option>
+							        <option selected value="w1">一周内</option>
+							        <option value="w2">俩周内</option>
+							        <option value="m1">一个月</option>
+							        <option value="m2">俩个月</option>
+							        <option value="m6">半年内</option>
+
+							    </select>
+							</div>
+							
+							<div class="span3">
+								<a class="btn btn-success commentDelShow">已删评论</a>
+							</div>
+						</div>
+						<hr>
+
+						<div class="row-fluid commentDeleteList">
+				            <ul class="thumbnails">
+
+				              
+				              评论回收站 loading
+				            </ul>
+				        </div>
+
+					</div>
+					<div class="tab-pane" id="panel-5">
+						<div class="row-fluid">
+
+							<p>分类名称： <input type="text" value="" placeholder="请输入名称" class="feedtype_name">；分类数值：<input type="text" value="" placeholder="请输入数字" class="feedtype_value"> <a class="btn createfeedtype">这样新增</a></p>
+
+							<ul class="showfeedtype">载入中……</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			 
+			<!-- Modal -->
+			<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			  <div class="modal-header">
+			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+			    <h3 id="myModalLabel">标题栏</h3>
+			  </div>
+			  <div class="modal-body" data-type="">
+			    <p>显示信息</p>
+			  </div>
+			  <div class="modal-footer">
+			    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+			    <button class="btn btn-primary confirm">确定保存</button>
+			  </div>
+			</div>
+
+
+
+		</div>
+	</div>
+</div>
+
+
+
+	
+	
+    
+
+	<% } else{%>
+    <section>
+	<div class="well">
+		<p>登录失败……</p>
+		<a class='btn btn-primary' href="/">重新登陆</a>
+	</div>
+    </section>
+    <%}%>
+
+
+<% include footer.html %>
+<script>
+window.onload=function(){
+
+	seajs.config({
+	base: '/javascripts',
+	alias: {
+		//'boots-jquery':'assets/boots-jquery',
+		//'jquery': 'jquery/jquery/1.10.1/jquery',
+		//'bootstrap':'bootstrap/bootstrap/2.3.2/bootstrap',
+        //"zepto":  "jquery/zepto/1.1.6/zepto",
+        "all": "share/all/2.0.0/all",
+        'verify':'share/verify/1.0.0/verify',
+        //'e_zetpo':'share/extend/1.0.0/extendzepto',
+	  }
+	})
+	
+    seajs.use(['all', 'verify'], function(A,V){
+    	//var $ = jQuery;
+
+    	//console.log(V);
+		
+    	var mark = $('.mark'),
+    		time = $('.time'),
+    		order = $('.order'),
+    		messageList = $('.messageList');
+
+    	// 找到 消息数量 .messageList>ul>li
+		var messageLi = messageList.children('ul').children('li'),
+			mesLength = messageLi.length;
+
+		//评论回收站
+		$('#tabs-25490').on('click', '.comment_sta,.commentDelShow', function(event){
+			event.preventDefault();
+			$('.commentDeleteList').children('ul').html(A.textTips['load']);
+			//渲染 回收站的评论
+			A.ajax('/mcomment', {
+				time : A.elm('time_del_com').val(),
+				msg  : 'del',
+
+			}, '#tabs-25490', function(dataList){
+
+				if (dataList.data.length>0) {
+					var comd = dataList.data.list,
+					    dlength = comd.length,
+					    commentStr = '';
+
+					for (var i = 0; i < dlength; i++) {
+
+						commentStr += '<li class="commentHTML" data-commentid="'+comd[i].id+'" data-userid="'+comd[i].user_id+'" data-useridb="'+comd[i].user_id_b+'" class="commentUser sex_'+A.sex[comd[i].sex]+' read_'+comd[i].is_read+'">  <a title="">'+comd[i].nickname+'<img class="avatar" src="http://m.xiaojiaoyar.com/Uploads/Picture/'+comd[i].avatar+'" ></a>: '+comd[i].message+' <span>发表于'+A.js_date_time(comd[i].ctime)+'</span> <i class="btn btn-warning okComment"> 恢复评论</i>  <i class="btn "> 完全删除</i></li>';
+					};
+
+					//console.log(dataList);
+					$('.commentDeleteList').children('ul').html(commentStr);
+				}else{
+
+					$('.commentDeleteList').children('ul').html(A.textTips['nothing']);
+
+				}
+
+			})
+
+
+		}).
+		on('click', '.good,.msgHot,.goog_Page', function(event) {
+			event.preventDefault();
+			//推荐的消息 展示
+			var msgHotList = $('.msgHotList');
+    		msgHotList.children('ul').html(A.textTips['load']);
+
+    		A.ajax('/message', {
+    			time 	: A.elm('time_good').val(),
+	    		sta 	: 'good',
+	    		order 	: A.elm('order_good').val(),
+	    		mark 	: A.elm('mark_good').val(),
+	    		size 	: '10',
+	    		p 		: $('.goog_Page').siblings('input').val(),
+	    	}, '#tabs-25490', function (dataList) {
+	    		if (dataList.data.length>0) {
+	    			//渲染热门推荐的 动态
+	    			A.showMessage(dataList, '.msgHotList', function(){
+
+	    				msgHotList.find('.up').html('赞：不显示');
+		    			msgHotList.find('.comment').html('评论：不显示');
+		    			//显示删除的操作者，时间
+		    			msgHotList.find('.thumbnail').children('h4').find('i').show();
+
+
+		    		})
+	    		}else{
+	    			msgHotList.children('ul').html(A.textTips['nothing']);
+	    		}
+	    	})
+		}).
+		on('click', '.goodmsg', function(event) {
+			event.preventDefault();
+			//推荐 ，数值越大越靠前， 默认 0:不推荐
+			var parentDom = $(this).closest('.thumbnail').parent('li'),
+				thisDom = $(this);
+
+			$('#myModal').modal('show');
+			// bootstrap V2版本 不支持 Modal 回调！！！！
+			$('#myModalLabel').text('热门推荐');
+
+			// get  feedtype info
+
+			A.ajax('/showfeedtype', {}, '#tabs-25490', function(dataList){
+
+				var m = dataList.data,
+    				mlength = m.length,
+    				str= '';
+
+    			for (var i = 0; i < mlength; i++) {
+    				var id = m[i].id,
+    					name = m[i].name,
+    					type = m[i].type;
+    				str+='<p data-id="'+id+'"> <a class="checkfeed" data-type="'+type+'"><i class="icon_e"></i> '+name+'</a> </p>';
+    			};
+
+    			$('.modal-body').children('p').html(str);
+			})
+			//设置推荐分类
+			$('body').on('click', '.checkfeed', function(){
+
+				var typevalue = $(this).data('type'),
+					name = $(this).text();
+				$(this).children('i').toggleClass('black');
+				$(this).closest('p').siblings('p').find('i').removeClass('black');
+				$(this).closest('.modal-body').data('type', typevalue);
+
+				if ($('.modal-body').data('type')) {
+
+					A.ajax('/goodMessage', {
+						id : parentDom.data('msgid'),
+						value : typevalue,
+					},'#tabs-25490', function(dataList){
+						console.log(dataList);
+						if (dataList.data.protocol41) {
+							
+							thisDom.html(name+'(已置顶)');
+						};
+						//console.log(id);
+					})
+
+				};
+			})
+
+			$('.confirm').on('click', function(){
+
+					$('#myModal').modal('hide');
+
+					location.reload();
+
+			})
+
+		});
+
+    	//已被删除 message delete
+    	$('#tabs-25490').on('click', '.sta,.msgDelete,.delete_Page', function(event) {
+    		event.preventDefault();
+    		var msgDeleteList = $('.msgDeleteList');
+    		msgDeleteList.children('ul').html(A.textTips['load']);
+
+    		/*if ($(this).data('sta')=='del') {
+
+    		};*/
+
+
+    		A.ajax('/message', {
+    			time 	: A.elm('time_delete').val(),
+	    		sta 	: 'del',
+	    		order 	: A.elm('order_delete').val(),
+	    		mark 	: A.elm('mark_delete').val(),
+	    		size 	: '10',
+	    		p 		: $('.delete_Page').siblings('input').val(),
+	    	}, '#tabs-25490', function (dataList) {
+
+	    		if (dataList.data.length>0) {
+
+	    			//渲染回收站的 动态
+	    			A.showMessage(dataList, '.msgDeleteList', function(){
+
+		    			msgDeleteList.find('.up').html('赞：不显示');
+		    			msgDeleteList.find('.comment').html('评论：不显示');
+
+
+		    			msgDeleteList.find('.order').html('<a class="btn btn-warning defaultMessage">还原状态 </a> <a class="btn btn-inverse">完全删除 </a>')
+		    		})
+
+	    		}else{
+
+	    			msgDeleteList.children('ul').html(A.textTips['nothing']);
+
+	    		}
+	    	})
+    		/* Act on the event */
+    	}).
+    	on('click', '.recycleMessage', function(event) {
+    		event.preventDefault();
+    		//消息放入回收站
+			if(confirm(A.textTips['confirm_msg_re'])) {
+
+				var parentDom = $(this).closest('.thumbnail').parent('li'),
+					thisDom = $(this);
+				A.ajax('/recycleMessage', {
+					id : parentDom.data('msgid'),
+					value : 2,
+				},'#tabs-25490', function(dataList){
+					console.log(dataList);
+					if (dataList.code=='2000') {
+						parentDom.attr({
+							class: 'span5 status_2',
+						});
+						thisDom.attr({
+							class: 'btn btn-warning defaultMessage',
+						}).html('还原状态');
+					};
+					//console.log(id);
+				})
+
+			}
+
+    	}).
+    	on('click', '.defaultMessage', function(event) {
+    		event.preventDefault();
+    		//消息还原显示
+    		if(confirm(A.textTips['confirm_msg_re'])) {
+
+				var parentDom = $(this).closest('.thumbnail').parent('li'),
+					thisDom = $(this);
+				A.ajax('/recycleMessage', {
+					id : parentDom.data('msgid'),
+					value : 1,
+				},'#tabs-25490', function(dataList){
+					console.log(dataList);
+					if (dataList.code=='2000') {
+						parentDom.attr({
+							class: 'span5 status_1',
+						});
+						thisDom.attr({
+							class: 'btn btn-danger recycleMessage',
+						}).html('动态放回收站');
+					};
+					//console.log(id);
+				})
+
+			}
+
+    	}).
+    	on('click', '.reComment', function(event) {
+    		event.preventDefault();
+    		//设置 评论状态 setComment 放回收站
+    		if(confirm(A.textTips['confirm_msg_re'])) {
+
+				var parentDom = $(this).closest('.commentHTML'),
+					thisDom = $(this);
+				A.ajax('/setComment', {
+					id : parentDom.data('commentid'),
+					value : 0,
+				},'#tabs-25490', function(dataList){
+					console.log(dataList);
+					if (dataList.code=='2000') {
+						parentDom.addClass('recomment');
+						thisDom.attr({
+							class: 'btn btn-warning okComment',
+						}).html('恢复评论');
+					};
+					//console.log(id);
+				})
+
+			}
+
+    	}).
+    	on('click', '.okComment', function(event) {
+    		event.preventDefault();
+    		//设置 评论状态 恢复评论
+    		if(confirm(A.textTips['confirm_msg_re'])) {
+
+				var parentDom = $(this).closest('.commentHTML'),
+					thisDom = $(this);
+				A.ajax('/setComment', {
+					id : parentDom.data('commentid'),
+					value : 1,
+				},'#tabs-25490', function(dataList){
+					console.log(dataList);
+					if (dataList.code=='2000') {
+						parentDom.removeClass('recomment');
+						thisDom.attr({
+							class: 'btn reComment',
+						}).html('放回收站');
+					};
+					//console.log(id);
+				})
+
+			}
+    	}).
+    	on('click', '.showMessage,.defaultPage', function(event) {
+    		event.preventDefault();
+    		//开始查询 动态 待优化
+    		messageAjax ('#tabs-25490',$('.defaultPage').siblings('input').val());
+    	}).
+    	on('click', '.createfeedtype', function(event) {
+    		event.preventDefault();
+    		//新增 feedtype
+    		var feedtype_value = $('.feedtype_value'),
+    			feedtype_name = $('.feedtype_name');
+
+    		if (feedtype_value.val()!=''&&feedtype_name.val()!='') {
+
+    			A.ajax('/createfeedtype', {
+    				value : feedtype_value.val(),
+    				name : feedtype_name.val(),
+    			}, '#tabs-25490', function(dataList){
+    				if (dataList.data.protocol41) {
+    					alert('增加成功，刷新查看');
+    				};
+    			})
+
+    		}else{
+    			alert('检查输入！');
+    		}
+    	}).
+    	on('click', '.goodtype', function(event) {
+    		event.preventDefault();
+    		//获取 feedtype
+    		A.ajax('/showfeedtype', {
+
+    		}, '#tabs-25490', function(dataList){
+
+    			var m = dataList.data,
+    				mlength = m.length,
+    				str= '';
+
+    			for (var i = 0; i < mlength; i++) {
+    				var id = m[i].id,
+    					name = m[i].name,
+    					type = m[i].type;
+    				str+='<li data-id="'+id+'"> 名称：<input type="text" value="'+name+'" />；分类数值：<input type="text" value="'+type+'" /> <a class="btn btn-warning upfeedtype">修改</a> <a class="btn btn-danger deletefeed">删除</a> </li>';
+    			};
+
+    			$('.showfeedtype').html(str)
+
+    		})
+    	}).
+    	on('click', '.upfeedtype', function(event) {
+    		event.preventDefault();
+    		//修改 feedtype
+    		var thisid = $(this).closest('li').data('id'),
+    		    value = $(this).closest('li').children('input').eq(1),
+    		    name = $(this).closest('li').children('input').eq(0);
+
+
+    		A.ajax('/upfeedtype', {
+    			id : thisid,
+    			value:value.val(),
+    			name : name.val(),
+    		}, '#tabs-25490', function(dataList){
+    			//console.log(dataList);
+    			if (dataList.data.changedRows=='1') {
+    				console.log('修改成功');
+    			};
+    		})
+    	}).
+    	on('click', '.deletefeed', function(event) {
+    		event.preventDefault();
+    		// protocol41 删除feedtype
+
+    		var thisDom = $(this);
+    		A.ajax('/deletefeedtype', {
+    			id : thisDom.closest('li').data('id'),
+    		}, '#tabs-25490', function(dataList){
+
+    			if (dataList.data.protocol41) {
+    				alert('删除成功，刷新查看');
+    				thisDom.closest('li').remove();
+    			};
+
+    		})
+    	});
+
+    	
+
+
+    	//默认获取的动态消息
+    	function messageAjax (elm, n, tableID) {
+
+    		messageList.children('ul').html(A.textTips['load']);
+
+    		//载入消息
+    		A.ajax('/message', {
+	    		time 	: time.val(),
+	    		sta 	: 'show',
+	    		order 	: order.val(),
+	    		mark 	: mark.val(),
+	    		size 	: '10000',
+	    		p 		: n ? n : '1',
+	    	}, elm, function (dataList) {
+
+	    		messageList.children('ul').html('<table id="'+tableID+'"></table>');
+
+	    		if (dataList.data.length=='0'){
+	    			messageList.children('ul').html(A.textTips['nothing'])
+	    		}else{
+
+	    			//渲染 消息
+		    		A.showMessageTable(dataList, '.messageList', function(data_tableArr, columnArr){
+
+						A.install_TB(tableID, data_tableArr, columnArr, '<thead><tr><th> </th></tr></thead><tbody></tbody>');
+
+		    			//载入 赞
+		    			A.ajax('/mup', {
+		    				time 	: time.val(),
+		    			}, elm, function(data){
+		    				//console.log(data);
+		    				var u = data.data.list,
+		    					uLength = data.data.length;
+
+		    				messageList.find('.up').children('p').html('赞：');
+
+		    				for (var i = 0; i < uLength; i++) {
+		    					var msg_id = u[i].msg_id,
+		    					    user_id = u[i].user_id,
+		    					    ctime = u[i].ctime,
+		    					    nickname = u[i].nickname,
+		    					    sex = u[i].sex,
+		    					    avatar = u[i].avatar;
+
+		    					var upStr = ' <a href="#" class="upUser sex_'+sex+'" data-uid="'+user_id+'" title="'+nickname+'('+A.sex[sex]+')发表于'+A.js_date_time(ctime)+'"> <img src="http://m.xiaojiaoyar.com/Uploads/Picture/'+avatar+'" height="25px" alt="" /> </a> ';
+		    					$('li[data-msgid="'+msg_id+'"]').find('.up').children('p').append(upStr);
+		    				};
+
+		    				//载入 回复
+		    				A.ajax('/mcomment', {
+		    					time 	: time.val(),
+		    					msg 	: 'ready',
+		    				}, elm, function(mm){
+		    					//console.log(mm);
+		    					//渲染 评论
+		    					A.showComment(mm, function(){
+
+		    					})
+
+		    				});
+
+		    			})
+		    		});
+
+	    		}
+	    		
+	    	})
+    	}
+    	messageAjax ('#tabs-25490', 1, '');
+
+    	
+    	
+
+    })
+    
+}
+
+
+</script>

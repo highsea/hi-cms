@@ -625,10 +625,18 @@ window.onload=function(){
 
 			}
     	}).
-    	on('click', '.showMessage,.defaultPage', function(event) {
+    	on('click', '.showMessage,.defaultPage,.nextPage', function(event) {
     		event.preventDefault();
-    		//开始查询 动态 待优化
-    		messageAjax ('#tabs-25490',$('.defaultPage').siblings('input').val());
+    		if ($(this).hasClass('nextPage')) {
+    			var nextPageNum = $(this).data('next');
+    			messageAjax ('#tabs-25490', nextPageNum);
+    			$(this).data('next', nextPageNum+1)
+
+    		}else{
+    			//开始查询 动态 待优化
+    			messageAjax ('#tabs-25490',$('.defaultPage').siblings('input').val());
+    		}
+    		
     	}).
     	on('click', '.createfeedtype', function(event) {
     		event.preventDefault();
@@ -707,6 +715,52 @@ window.onload=function(){
     			};
 
     		})
+    	}).
+    	on('click', '.upMessage', function(event) {
+    		event.preventDefault();
+    		//赞－ 管理员可以用 马甲号 随机赞
+
+    	}).
+    	on('click', '.commentMessage', function(event) {
+    		event.preventDefault();
+    		//评论－ 管理员可以用马甲号随机评论
+    		var thisDom = $(this);
+    		A.ajax('/randommj', {}, thisDom.closest('.thumbnail'), function(dataList){
+    			var insertHtml = '<b data-uid="'+dataList.data.user_id+'">随机获得马甲号：'+dataList.data.nickname+'；</b><input type="text" placeholder="请输入评论"><a class="btn btn-scuess insertMessage">确认</a>';
+    			thisDom.siblings('i').html(insertHtml);
+    			//$(insertHtml).insertAfter(thisDom);
+
+    		})
+
+    	}).
+    	on('click', '.insertMessage', function(event) {
+    		event.preventDefault();
+    		//确认提交 随机评论
+    		var thisDom = $(this),
+    		    thisMessage = thisDom.siblings('input'),
+    		    thisUid = thisDom.siblings('b').data('uid'),
+    		    thisMsgID = thisDom.closest('li').data('msgid'),
+    		    thisUidB = thisDom.closest('li').data('userid');
+
+    		if (thisMessage.val()) {
+
+    			A.ajax('/createcomment', {
+	    			uid 	: thisUid,
+	    			uidb 	: thisUidB,
+	    			message : thisMessage.val(),
+	    			msgid 	: thisMsgID,
+	    		}, thisDom.closest('.thumbnail'), function(dataList){
+
+	    			if (dataList.data.protocol41) {
+	    				thisDom.closest('i').html('成功，马甲评论请刷新页面后查看');
+	    			};
+
+	    		})
+
+    		}else{
+    			alert('请检查输入')
+    		}
+    		
     	});
 
     	
@@ -739,7 +793,7 @@ window.onload=function(){
 		    				var u = data.data.list,
 		    					uLength = data.data.length;
 
-		    				messageList.find('.up').children('p').html('赞：');
+		    				messageList.find('.up').children('p').html(A.innerHtml['up']);
 
 		    				for (var i = 0; i < uLength; i++) {
 		    					var msg_id = u[i].msg_id,

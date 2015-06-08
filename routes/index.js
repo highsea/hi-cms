@@ -1487,6 +1487,86 @@ exports.pastertype = function(req, res){
     
 }
 
+/*
+@  获取随机马甲号 user_id
+@
+@
+*/
+exports.randommj = function(req, res){
+    //验证 管理员&&是否登录
+    fun.verifyAdmin(req, res, function(){
+
+        var sql = {
+            count : 'SELECT count(*) FROM `lf_users` WHERE mobile BETWEEN 0 AND 11000 ORDER BY `user_id` ASC',
+            user_id : 'SELECT user_id,nickname FROM `lf_users` WHERE mobile BETWEEN 0 AND 11000 ORDER BY `user_id` ASC',
+        };
+        db.query(sql['count'], function(counts){
+
+            var number = counts[0]['count(*)']+1;
+            console.log('mini user:'+number);
+
+            db.query(sql['user_id'], function(userList){
+                var index = Math.floor(Math.random()*number),
+                    randomID = userList[index];
+                //console.log(randomID);
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], randomID);
+
+            })
+        })
+    })
+}
+
+/*
+@  管理员 随意 发布 message 指定 id
+@
+@  登录 php API http://xiaojiaoyar.com/Api/User/loginEx/account/201505/passwd/e10adc3949ba59abbe56e057f20f883e/platform/17/%20/version/1.0.3/
+*/
+exports.createmessage = function(req, res){
+
+    fun.verifyAdmin(req, res, function(){
+
+        var doc = {
+            message : '',
+            photo : '',
+        }
+
+    })
+
+}
+
+/*
+@  管理员 随意 评论 指定 id
+@
+@  
+*/
+exports.createcomment = function(req, res){
+
+    fun.verifyAdmin(req, res, function(){
+
+        if (req.query.uid&&req.query.uidb&&req.query.message&&req.query.msgid) {
+            var doc = {
+                message     : req.query.message,
+                status      : 1,
+                user_id     : req.query.uid,
+                user_id_b   : req.query.uidb,
+                msg_id      : req.query.msgid,
+                admin       : req.session.username,
+                etime       : fun.nowUnix(),
+                ctime       : fun.nowUnix(),
+            };
+
+            var sql = "insert into lf_message_comment (status, msg_id, user_id, user_id_b, message, ctime, examine_admin, examine_time) values ('"+doc['status']+"', '"+doc['msg_id']+"', '"+doc['user_id']+"', '"+doc['user_id_b']+"', '"+doc['message']+"', '"+doc['ctime']+"', '"+doc['admin']+"', '"+doc['etime']+"')";
+            db.query(sql, function(dataList){
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], dataList);
+            })
+
+        }else{
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+    })
+
+}
 
 
 
@@ -1691,8 +1771,8 @@ exports.wxinit = function(req, res){
     fun.verifyAdmin(req, res, function(){
 
         res.render('wxinit', {
-            title : config.productInfo.wxinit,
-            wxinfo : JSON.parse(fs.readFileSync(appsetFile)),
+            title       : config.productInfo.wxinit,
+            wxinfo      : JSON.parse(fs.readFileSync(appsetFile), 'utf8', function(err, data){}),
             username    : req.session.username,
             result      : req.session.result,
             info        : req.session.userinfo,
@@ -1701,6 +1781,18 @@ exports.wxinit = function(req, res){
 
     })
     
+}
+
+
+exports.setweixin = function(req, res){
+    //验证 管理员&&是否登录
+    fun.verifyAdmin(req, res, function(){
+
+        
+        
+
+    })
+
 }
 
 exports.wxactive = function(req, res){

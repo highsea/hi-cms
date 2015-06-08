@@ -35,8 +35,6 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 		},
 		key : 'SRV_AUTH_KEY',
 		by : "Powered by HighSea90 © 2015-2025 highsea90.com",
-		appid : 'wx2512a12dde3a0ba5',
-		secret : '681a5e7552885edc78ea096eb0541c82',
 	},
 	//信息提示 1XXX
 	Code1X = {

@@ -142,6 +142,8 @@ app.get('/userzone', routes.userzone);
 app.get('/paster', routes.paster);
 app.get('/pasterinfo', routes.pasterinfo);
 app.get('/pastertype', routes.pastertype);
+app.get('/randommj', routes.randommj);
+app.get('/createcomment', routes.createcomment);
 
 app.get('/weixin', routes.weixin);
 app.get('/wxinit', routes.wxinit);

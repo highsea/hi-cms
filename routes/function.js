@@ -222,7 +222,7 @@ function passwordMD5(str, key){
 }*/
 
 /*
-@  文件上传
+@  文件上传 page
 @
 */
 function uploadHtml(req, res, resultPic, username){
@@ -233,8 +233,21 @@ function uploadHtml(req, res, resultPic, username){
     })
 }
 
+/*
+@ 随机输出 n 个随机数
+*/
+function generateMixed(n, rows) {
+    var chars = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+    var res = "";
+    for(var i = 0; i < n ; i ++) {
+        var id = Math.ceil(Math.random()*35);
+        res += rows[id];
+    }
+    return res;
+}
 
 
+exports.generateMixed       = generateMixed; 
 exports.toUnix              = toUnix;
 exports.sign                = sign;
 exports.passwordMD5         = passwordMD5;
