@@ -53,9 +53,9 @@
 								发表时间
 								<select class="span8 time">
 									<option value="d3">三天内</option>
-							        <option selected value="w1">一周内</option>
+							        <option value="w1">一周内</option>
 							        <option value="w2">俩周内</option>
-							        <option value="m1">一个月</option>
+							        <option selected value="m1">一个月</option>
 							        <option value="m2">俩个月</option>
 							        <option value="m6">半年内</option>
 
@@ -77,15 +77,7 @@
 							
 						</div>
 
-						<hr>
-						<!--  -->
-
-						<div class="row-fluid setpage none">
-							
-							<p class="pageinfo"></p>
-							<p><input type="text" value="1" ><a class="btn defaultPage">查看</a></p>
-							
-						</div>
+						
 						
 						<hr>
 						<!--  -->
@@ -97,6 +89,15 @@
 				              加载中……
 				            </ul>
 				        </div>
+				        <hr>
+						<!--  -->
+
+						<div class="row-fluid setpage none">
+							
+							<p class="pageinfo span6"></p>
+							<p class="span6"><input type="text" value="1" ><a class="btn defaultPage">查看</a></p>
+							
+						</div>
 						
 
 
@@ -106,8 +107,8 @@
 					<div class="tab-pane" id="panel-2">
 						<div class="row-fluid">
 							
-							<div class="span3">
-								类型:
+							<div class="span2">
+								类型
 								<select class="span8 mark_good">
 									<option selected value="all">全部</option>
 									<option value="p1">单图</option>
@@ -115,8 +116,8 @@
 							        <option value="tp">图文</option>
 								</select>
 							</div>
-							<div class="span3">
-								发表时间
+							<div class="span2">
+								时间
 								<select class="span8 time_good">
 									<option value="d3">三天内</option>
 							        <option selected value="w1">一周内</option>
@@ -127,8 +128,8 @@
 
 							    </select>
 							</div>
-							<div class="span3">
-								排序:
+							<div class="span2">
+								排序
 								<select class="span8 order_good">
 							        <option selected value="time">按时间</option>
 							        <option value="up">按获赞数</option>
@@ -137,38 +138,20 @@
 
 							    </select>
 							</div>
+							<div class="span2">
+								推荐
+								<select data-sta="select" class="span8 goodMessageType">
+									<option selected value="all">推荐</option>
+								</select>
+							</div>
 							<div class="span3">
 								<a class="btn btn-success msgHot">看推荐的消息</a>
 							</div>
 						</div>
-
-						<div class="goodMessageType">
-							<ul>
-								<li><a>穿衣打扮</a></li>
-								<li><a>广场</a></li>
-								<li><a>美食</a></li>
-								<li><a>娱乐</a></li>
-								<li><a>未设置</a></li>
-
-							</ul>
-						</div>
-
-
-						<hr>
-						<!--  -->
-
-						<div class="row-fluid setpage none">
-							
-							<p class="pageinfo"></p>
-							<p><input type="text" value="1" ><a class="btn goog_Page">查看</a></p>
-							
-						</div>
-
-						<!--  -->
-						<hr>
-
 						
 
+						<!--  -->
+						<hr>
 						<div class="row-fluid msgHotList">
 				            <ul class="thumbnails">
 
@@ -176,11 +159,15 @@
 				              推荐的 loading
 				            </ul>
 				        </div>
+				        <hr>
+						<!--  -->
 
-
-
-
-	
+						<div class="row-fluid setpage none">
+							
+							<p class="pageinfo span6"></p>
+							<p class="span6"><input type="text" value="1" ><a class="btn goog_Page">查看</a></p>
+							
+						</div>
 
 						<!--  -->
 					</div>
@@ -229,8 +216,8 @@
 
 						<div class="row-fluid setpage none">
 							
-							<p class="pageinfo"></p>
-							<p><input type="text" value="1" ><a class="btn delete_Page">查看</a></p>
+							<p class="pageinfo span6"></p>
+							<p class="span6"><input type="text" value="1" ><a class="btn delete_Page">查看</a></p>
 							
 						</div>
 						<hr>
@@ -378,7 +365,8 @@ window.onload=function(){
 
 					for (var i = 0; i < dlength; i++) {
 
-						commentStr += '<li class="commentHTML" data-commentid="'+comd[i].id+'" data-userid="'+comd[i].user_id+'" data-useridb="'+comd[i].user_id_b+'" class="commentUser sex_'+A.sex[comd[i].sex]+' read_'+comd[i].is_read+'">  <a title="">'+comd[i].nickname+'<img class="avatar" src="http://m.xiaojiaoyar.com/Uploads/Picture/'+comd[i].avatar+'" ></a>: '+comd[i].message+' <span>发表于'+A.js_date_time(comd[i].ctime)+'</span> <i class="btn btn-warning okComment"> 恢复评论</i>  <i class="btn "> 完全删除</i></li>';
+						commentStr += '<li class="commentHTML" data-commentid="'+comd[i].id+'" data-userid="'+comd[i].user_id+'" data-useridb="'+comd[i].user_id_b+'" class="commentUser sex_'+A.sex[comd[i].sex]+' read_'+comd[i].is_read+'">  <a title="">'+comd[i].nickname+'<img class="avatar" src="http://m.xiaojiaoyar.com/Uploads/Picture/'+comd[i].avatar+'" ></a>: '+comd[i].message+' <span>发表于'+A.js_date_time(comd[i].ctime)+'</span> <i class="btn btn-warning okComment"> 恢复评论</i> </li>';
+						// <i class="btn "> 完全删除</i>
 					};
 
 					//console.log(dataList);
@@ -399,30 +387,182 @@ window.onload=function(){
 			var msgHotList = $('.msgHotList');
     		msgHotList.children('ul').html(A.textTips['load']);
 
-    		A.ajax('/message', {
-    			time 	: A.elm('time_good').val(),
-	    		sta 	: 'good',
-	    		order 	: A.elm('order_good').val(),
-	    		mark 	: A.elm('mark_good').val(),
-	    		size 	: '10',
-	    		p 		: $('.goog_Page').siblings('input').val(),
-	    	}, '#tabs-25490', function (dataList) {
+    		if (A.elm('goodMessageType').val()=='all') {
+    			var dataArr = {
+	    			time 	: A.elm('time_good').val(),
+		    		sta 	: 'good',
+		    		order 	: A.elm('order_good').val(),
+		    		mark 	: A.elm('mark_good').val(),
+		    		size 	: '10',
+		    		p 		: $('.goog_Page').siblings('input').val(),
+		    		feed 	: 'all'
+		    	}
+    		}else{
+    			var dataArr = {
+	    			time 	: A.elm('time_good').val(),
+		    		sta 	: 'good',
+		    		order 	: A.elm('order_good').val(),
+		    		mark 	: A.elm('mark_good').val(),
+		    		size 	: '10',
+		    		p 		: $('.goog_Page').siblings('input').val(),
+		    		feed 	: 'type',
+		    		value 	: A.elm('goodMessageType').val(),
+		    	}
+
+    		}
+
+    		A.ajax('/message', dataArr, '#tabs-25490', function (dataList) {
 	    		if (dataList.data.length>0) {
-	    			//渲染热门推荐的 动态
+	    			//渲染 热门推荐 的 动态
 	    			A.showMessage(dataList, '.msgHotList', function(){
 
-	    				msgHotList.find('.up').html('赞：不显示');
-		    			msgHotList.find('.comment').html('评论：不显示');
+	    				/*msgHotList.find('.up').html('赞：不显示');
+		    			msgHotList.find('.comment').html('评论：不显示');*/
 		    			//显示删除的操作者，时间
 		    			msgHotList.find('.thumbnail').children('h4').find('i').show();
+
+		    			//载入 赞
+		    			A.ajax('/mup', {
+		    				time 	: time.val(),
+		    			}, '.msgHotList', function(data){
+		    				//console.log(data);
+		    				var u = data.data.list,
+		    					uLength = data.data.length;
+
+		    				msgHotList.find('.up').children('p').html(A.innerHtml['up']);
+
+		    				for (var i = 0; i < uLength; i++) {
+		    					var msg_id = u[i].msg_id,
+		    					    user_id = u[i].user_id,
+		    					    ctime = u[i].ctime,
+		    					    nickname = u[i].nickname,
+		    					    sex = u[i].sex,
+		    					    avatar = u[i].avatar;
+
+		    					var upStr = ' <a href="#" class="upUser sex_'+sex+'" data-uid="'+user_id+'" title="'+nickname+'('+A.sex[sex]+')发表于'+A.js_date_time(ctime)+'"> <img src="http://m.xiaojiaoyar.com/Uploads/Picture/'+avatar+'" height="25px" alt="" /> </a> ';
+		    					$('li[data-msgid="'+msg_id+'"]').find('.up').children('p').append(upStr);
+		    				};
+
+		    				//载入 回复
+		    				A.ajax('/mcomment', {
+		    					time 	: time.val(),
+		    					msg 	: 'ready',
+		    				}, '.msgHotList', function(mm){
+		    					//console.log(mm);
+		    					msgHotList.find('.comment').children('p').html(A.innerHtml['comment']);
+
+		    					//渲染 评论
+		    					A.showComment(mm, function(){
+
+		    					})
+
+		    				});
+
+		    			})
 
 
 		    		})
 	    		}else{
 	    			msgHotList.children('ul').html(A.textTips['nothing']);
 	    		}
+
 	    	})
 		}).
+		on('click', '.goodmsg', function(event) {
+			event.preventDefault();
+			// 
+			var thisDom 		= $(this),
+				feedtypeInput 	= thisDom.closest('.caption').siblings('.feedtypeInput'),
+				thisText 		= thisDom.text(),
+				thisFeedtype 	= thisDom.data('feedtype');
+
+			if (feedtypeInput.find('li').length) {
+
+				feedtypeInput.children('ul').toggleClass('none');
+
+			}else{
+
+				feedtypeInput.html('<ul>载入推荐分类中……</lu>');
+				A.ajax('/showfeedtype', {}, '.feedtypeInput', function(dataList){
+
+					var m = dataList.data,
+	    				mlength = m.length,
+	    				str= '';
+
+	    			for (var i = 0; i < mlength; i++) {
+	    				var id = m[i].id,
+	    					name = m[i].name,
+	    					type = m[i].type,
+	    					classNew='';
+
+	    				if (type==thisFeedtype) {
+	    					classNew = 'black';
+	    				};
+	    				if (type!='0') {
+	    					str+='<li data-id="'+id+'"> <a class="checkfeed" data-type="'+type+'"><i class="icon_e '+classNew+'"></i> '+name+'</a> </li>';
+	    				}
+
+	    			}
+
+					feedtypeInput.html('<ul class="feed_type_wrap"></lu>');
+					feedtypeInput.children('ul').append(str);
+
+				})
+
+			}
+
+		}).
+		on('click', '.cancel_good', function(event) {
+			event.preventDefault();
+			// 取消推荐
+			var thisDom = $(this),
+				msgid = thisDom.closest('li').data('msgid');
+			if (confirm('仅取消置顶，分类不改变，确认吗？(如需要重新置顶，则重新设置分类即可)')) {
+				A.ajax('/ordernull', {
+					msgid : msgid,
+				}, thisDom.closest('li'), function(dataList){
+					if (dataList.data.protocol41) {
+						thisDom.text('已取消');
+						thisDom.siblings('.goodmsg').text(thisDom.siblings('.goodmsg').text().split('(')[0]);
+					};
+				})
+			};
+		});
+
+
+//设置推荐分类
+			$('body').on('click', '.checkfeed', function(){
+
+				var thisCheckBtn = $(this),
+					typevalue = thisCheckBtn.data('type'),
+					name = thisCheckBtn.text();
+				var thisGoodmsg = thisCheckBtn.closest('.caption').siblings('.order').find('.goodmsg'),
+					thisMsgID = thisCheckBtn.closest('.thumbnail').parent('li').data('msgid');
+					
+				thisCheckBtn.children('i').addClass('black');
+				thisCheckBtn.closest('li').siblings('li').find('i').removeClass('black');
+				thisGoodmsg.data('feedtype', typevalue);
+
+				A.ajax('/goodMessage', {
+					id : thisMsgID,
+					value : typevalue,
+				},'#tabs-25490', function(dataList){
+					console.log(dataList);
+					if (dataList.data.protocol41) {
+						
+						thisGoodmsg.html(name+'(已置顶)');
+						if (thisGoodmsg.siblings('.cancel_good').length) {
+							thisGoodmsg.siblings('.cancel_good').text('取消推荐');
+						}else{
+							thisGoodmsg.closest('.order').append(A.innerHtml['cancel_good'])
+						}
+					};
+					//console.log(id);
+				})
+
+			})
+			
+		/*.
 		on('click', '.goodmsg', function(event) {
 			event.preventDefault();
 			//推荐 ，数值越大越靠前， 默认 0:不推荐
@@ -484,7 +624,7 @@ window.onload=function(){
 
 			})
 
-		});
+		});*/
 
     	//已被删除 message delete
     	$('#tabs-25490').on('click', '.sta,.msgDelete,.delete_Page', function(event) {
@@ -515,7 +655,8 @@ window.onload=function(){
 		    			msgDeleteList.find('.comment').html('评论：不显示');
 
 
-		    			msgDeleteList.find('.order').html('<a class="btn btn-warning defaultMessage">还原状态 </a> <a class="btn btn-inverse">完全删除 </a>')
+		    			msgDeleteList.find('.order').html('<a class="btn btn-warning defaultMessage">还原状态 </a> ')
+		    			//<a class="btn btn-inverse">完全删除 </a>
 		    		})
 
 	    		}else{
@@ -659,25 +800,49 @@ window.onload=function(){
     			alert('检查输入！');
     		}
     	}).
-    	on('click', '.goodtype', function(event) {
+    	on('click', '.goodtype,.goodMessageType', function(event) {
     		event.preventDefault();
-    		//获取 feedtype
-    		A.ajax('/showfeedtype', {
+    		//获取 feedtype 获取推荐
 
-    		}, '#tabs-25490', function(dataList){
+    		var thisDom = $(this);
+
+    		if (thisDom.data('sta')=='select') {
+    			thisDom.closest('div').html('推荐 <select class="span8 goodMessageType"><option>载入中……</option></select>')
+    		};
+    		A.ajax('/showfeedtype', {}, '#tabs-25490', function(dataList){
 
     			var m = dataList.data,
     				mlength = m.length,
     				str= '';
 
-    			for (var i = 0; i < mlength; i++) {
-    				var id = m[i].id,
-    					name = m[i].name,
-    					type = m[i].type;
-    				str+='<li data-id="'+id+'"> 名称：<input type="text" value="'+name+'" />；分类数值：<input type="text" value="'+type+'" /> <a class="btn btn-warning upfeedtype">修改</a> <a class="btn btn-danger deletefeed">删除</a> </li>';
-    			};
+    			if (thisDom.data('sta')=='set') {
 
-    			$('.showfeedtype').html(str)
+    				for (var i = 0; i < mlength; i++) {
+	    				var id = m[i].id,
+	    					name = m[i].name,
+	    					type = m[i].type;
+	    				str+='<li data-id="'+id+'"> 名称：<input type="text" value="'+name+'" />；分类数值：<input type="text" value="'+type+'" /> <a class="btn btn-warning upfeedtype">修改</a> <a class="btn btn-danger deletefeed">删除</a> </li>';
+	    			};
+
+	    			$('.showfeedtype').html(str)
+
+    			}else{
+
+    				for (var i = 0; i < mlength; i++) {
+    					var id = m[i].id,
+    						name = m[i].name,
+    						type = m[i].type;
+    					if (type == 0) {
+    						str+=''
+    					}else{
+    						str +='<option data-id="'+id+'" value="'+type+'">'+name+'</option>';
+    					}
+    				};
+    				$('.goodMessageType').html('<option selected value="all">推荐</option>'+str);
+
+    			}
+
+    			
 
     		})
     	}).
@@ -719,6 +884,13 @@ window.onload=function(){
     	on('click', '.upMessage', function(event) {
     		event.preventDefault();
     		//赞－ 管理员可以用 马甲号 随机赞
+    		var thisDom = $(this);
+    		A.ajax('/randommj', {}, thisDom.closest('.thumbnail'), function(dataList){
+
+    			var insertHtml = '<b data-uid="'+dataList.data.user_id+'">随机获得马甲号：'+dataList.data.nickname+'；</b><a class="btn btn-scuess insertUp">确认赞</a>';
+    			//console.log(insertHtml);
+    			thisDom.siblings('i').html(insertHtml);
+    		})
 
     	}).
     	on('click', '.commentMessage', function(event) {
@@ -761,6 +933,23 @@ window.onload=function(){
     			alert('请检查输入')
     		}
     		
+    	}).
+    	on('click', '.insertUp', function(event) {
+    		event.preventDefault();
+    		//确认提交 赞 
+    		var thisDom = $(this),
+    			thisUid = thisDom.siblings('b').data('uid'),
+    			thisMsgID = thisDom.closest('li').data('msgid');
+
+    		A.ajax('/createup', {
+    			uid 	: thisUid,
+    			msgid 	: thisMsgID,
+    		}, thisDom.closest('.thumbnail'), function(dataList){
+
+    			if (dataList.data.protocol41) {
+    				thisDom.closest('i').html('成功，马甲赞，请刷新页面后查看');
+    			};
+    		})
     	});
 
     	

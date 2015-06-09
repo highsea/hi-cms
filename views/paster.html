@@ -82,6 +82,7 @@ window.onload=function(){
     seajs.use([ 'all', 'verify'], function(A,V){
 
     	var pastertypeArr = [],
+    		pasterHtml = '',
     	    pasterInfoTableFa = $('.pasterInfoTable-fa');
     	
     	var pastertype = $('.pastertype'),
@@ -99,9 +100,13 @@ window.onload=function(){
     				typename = s[i].typename;
 					
     			str += '<option value="type" data-id="'+id+'">'+typename+'</option>';
-    			pastertypeArr.push(typename)
+    			optionStr += '<option value="'+id+'">'+typename+'</option>';
+    			pastertypeArr.push(typename);
+    			
     		};
     		pastertype.append(str);
+    		pasterHtml = '<select>'+optionStr+'</select>'
+    		
 
     		//渲染 具体贴纸信息
 
@@ -139,19 +144,22 @@ window.onload=function(){
     				var status = u[i].status,
     					imgUrl = u[i].url.split('Picture')[0],
     					type_id = u[i].type_id-1;
-    				var caozuoDom = '<a data-status="'+status+'" class="btn setPaster btn-danger">放回收站</a>';
+    				var caozuoDom = '<a class="pasterPrev btn">上移</a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-danger">放回收站</a> &nbsp; <a class="btn btn-info setPaster">修改贴纸</a> &nbsp; <a class="btn pasterNext">下移</a>';
     				if (status==1) {
-    					caozuoDom = '<a data-status="'+status+'" class="btn setPaster btn-danger">放回收站</a>';
+    					caozuoDom = '<a class="pasterPrev btn">上移</a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-danger">放回收站</a> &nbsp; <a class="btn btn-info setPaster">修改贴纸</a> &nbsp; <a class="btn pasterNext">下移</a>';
     				};
     				if (status==0||status==2) {
-    					caozuoDom = '<a data-status="'+status+'" class="btn setPaster btn-warning">恢复贴纸</a>';
+    					caozuoDom = '<a class="pasterPrev btn">上移</a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-warning">恢复贴纸</a> &nbsp; <a class="btn btn-info setPaster">修改贴纸</a> &nbsp; <a class="btn pasterNext">下移</a>';
     				};
+
+    				var selectType = '<select class="ajaxType pasterSelect"><option value="'+(type_id+1)+'">'+pastertypeArr[type_id]+'</option></select>';
+    				//$(pasterHtml).children('option:')
 
     				var new_data = {
     					xuhao 		: i+1,
     					pasterID 	: u[i].id,
-    					fenlei  	: pastertypeArr[type_id],
-    					description : u[i].description,
+    					fenlei  	: '<p data-typeid="'+(type_id+1)+'">'+selectType+'</p>',
+    					description : '<input class="pasterdesc" type="text" value="'+u[i].description+'">',
     					pic 		: '<a data-order="'+u[i].order_sort+'" title="点击查看大图" href="'+A.textTips['webhost']+imgUrl+'" target="_blank"><img class="avatar" src="'+A.textTips['webhost']+imgUrl+'" alt="" /></a>',
     					ctime 		: u[i].ctime,//A.js_date_time(u[i].ctime),
     					caozuo 		: caozuoDom,
@@ -179,7 +187,7 @@ window.onload=function(){
 				/*console.log(data_tableArr);
 
 				console.log(A.install_TB);*/
-				A.install_TB('pasterInfoTable', data_tableArr, columnArr, '<thead><tr><th>序号</th><th>贴纸预览</th><th>贴纸id</th><th>分类</th><th>描述</th><th>创建时间</th><th>操作</th><th>曾操作人</th><th>操作时间</th></tr></thead><tbody></tbody>');
+				A.install_TB('pasterInfoTable', data_tableArr, columnArr, '<thead><tr><th width="20">序号</th><th width="30">贴纸预览</th><th width="20">贴纸id</th><th width="60">分类</th><th width="60">描述</th><th width="30">创建时间</th><th width="230">操作</th><th width="30">曾操作人</th><th width="30">操作时间</th></tr></thead><tbody></tbody>');
 
 
 
@@ -191,12 +199,98 @@ window.onload=function(){
 			//创建贴纸
 			alert('未开发');
 		})
-		$('body').on('click', '.setPaster', function(event) {
+		/*$('body').on('click', '.setPaster', function(event) {
 			event.preventDefault();
-			/* Act on the event */
-			alert('未开发');
+			// 修改 贴纸 
+			var thisDom = $(this);
+			    thisSta = thisDom.data('status'),
+			    thisType = thisDom.closest('tr').children('td').eq(3).children('p').data('typeid'),
+			    thisUrl = thisDom.closest('tr').children('td').eq(1).children('a').attr('href').split('.com/')[1],
+			    thisDesc = thisDom.closest('tr').children('td').eq(4).text()
+			    thisID = thisDom.closest('tr').children('td').eq(2).text();
 
-		});
+
+			A.ajax('/uppaster', {
+				typeid  : thisType,
+				url 	: thisUrl,
+				id 		: thisID,
+				desc    : thisDesc,
+				sta 	: 0,
+			}, '.paster_select', function(dataList){
+				if (dataList.data.protocol41) {
+					console.log('del')
+					thisDom.text('恢复贴纸');
+					thisDom.attr('class', 'btn setPaster btn-warning');
+					thisDom.data('status', '0')
+				};
+			})
+
+			
+			//console.log(thisType);
+			
+
+		});*/
+		//贴纸 放到回收站 或 恢复
+		$('body').on('click', '.del_return', function(){
+			var thisDom = $(this);
+			    thisSta = thisDom.data('status'),
+			    thisID = thisDom.closest('tr').children('td').eq(2).text();
+
+			if (thisSta==1) {
+
+				A.ajax('/delpaster', {
+					id : thisID,
+					value : 0,
+				}, '.paster_select', function(dataList){
+					if (dataList.data.protocol41) {
+						console.log('del')
+						thisDom.text('恢复贴纸');
+						thisDom.attr('class', 'btn del_return btn-warning');
+						thisDom.data('status', '0')
+					};
+
+				})
+
+			}else{
+
+				A.ajax('/delpaster', {
+					id : thisID,
+					value : 1,
+				}, '.paster_select', function(dataList){
+					if (dataList.data.protocol41) {
+						console.log('return')
+						thisDom.text('放回收站');
+						thisDom.attr('class', 'btn del_return btn-danger');
+						thisDom.data('status', '1')
+					};
+
+				})
+
+			}
+
+		})/*.
+		on('click', '.ajaxType', function(event) {
+			event.preventDefault();
+			// 当需要修改贴纸分类时 渲染缓存中的 type
+			var plength = pastertypeArr.length,
+				str = '';
+
+			if ($(this).children('option').length>1) {
+
+			}else{
+
+				console.log(pastertypeArr);
+				for (var i = 0; i < plength; i++) {
+					if ($(this).val()==i) {
+						str+='';
+					}else{
+						str += '<option value="'+i+'">'+pastertypeArr[i]+'</option>';
+					}
+				};
+				$(this).append(str);
+			}
+			
+		});*/
 
 
     	/*function renderPaster(){

@@ -199,14 +199,16 @@ exports.homeget = function(req, res) {
 @ message jsonp 接口[赞、评论 数据封装见相应接口 mup  mcomment]
 @ 请求参数 time mark order | p(分页，当前页) size(默认20) 值见 sql 对象
 @ jsonp  code message data
-@ 权限： 必须登录后的用户才接受请求 http://localhost:3000/message?callback=dataList&time=w2&sta=show&order=read&mark=tp&p=2&size=10
+@ 权限： 必须登录后的用户才接受请求 http://localhost:3000/message?callback=dataList&time=m1&sta=show&order=read&mark=tp&p=1&size=10&feed=type&value=5
 */
 exports.message = function (req, res) {
     var doc = {
         time: 'w1', 
         mark: 'tp', 
         order: 'time', 
-        sta: 'showall'
+        sta: 'showall',
+        feed : 'all',
+        value : '0',
     };
     var page = {currentp:1,size:20};
 
@@ -222,6 +224,10 @@ exports.message = function (req, res) {
     var name = req.session.username;
 
     if (name) {
+
+        if (req.query.value) {
+            doc['value'] = req.query.value;
+        };
 
         var sql = {
             thisUser    : 'select * from lf_users where user_id="'+name+'"',
@@ -248,6 +254,9 @@ exports.message = function (req, res) {
             show        : ' and lf_message.status = 1',//显示的
             showall     : '',//都要
             good        : ' and lf_message.order_count!=0',//推荐的 
+            // 显示 分类 feed 
+            all         : ' and lf_message.feedtype!="" ',
+            type        : ' and lf_message.feedtype="'+doc['value']+'" ',
 
         };
 
@@ -265,14 +274,17 @@ exports.message = function (req, res) {
         if (sql[req.query.sta]) {
             doc['sta'] = req.query.sta;//0 1 a
         };
+        if (sql[req.query.feed]) {
+            doc['feed'] = req.query.feed;
+        };
 
         //console.log('req.query.order'+req.query.order+"---doc['order'] :"+doc['order'] );
 
         // var day3fomat = new Date(sql['d3']*1000).toLocaleString();
         // console.log('day3fomat:'+day3fomat+';day3agoUnix:'+sql['d3']);
-        var totalSQL   = 'select count(*) from lf_message where lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']];
+        var totalSQL   = 'select count(*) from lf_message where lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+sql[doc['feed']];
 
-        var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time,lf_feed_type.name from lf_users,lf_message,lf_feed_type where lf_users.user_id=lf_message.user_id and lf_message.feedtype=lf_feed_type.type and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['mark']]+' order by '+sql[doc['order']]+' desc limit '+(page['currentp']-1)*page['size']+', '+page['size'];
+        var messageSQL = 'select lf_users.user_id,lf_users.sex,lf_users.nickname,lf_users.avatar,lf_message.msg_id,lf_message.user_id,lf_message.message,lf_message.photo,lf_message.location,lf_message.up_count,lf_message.comment_count,lf_message.read_count,lf_message.order_count,lf_message.status,lf_message.feedtype,lf_message.ctime,lf_message.examine_admin,lf_message.examine_time,lf_feed_type.name from lf_users,lf_message,lf_feed_type where lf_users.user_id=lf_message.user_id and lf_message.feedtype=lf_feed_type.type and lf_message.ctime>='+sql[doc['time']]+sql[doc['sta']]+sql[doc['feed']]+sql[doc['mark']]+' order by '+sql[doc['order']]+' desc limit '+(page['currentp']-1)*page['size']+', '+page['size'];
         //select * from lf_message where ctime>=1431739693 and message=''  order by ctime desc limit 100000
 
         //分页－－查询总条数
@@ -503,8 +515,33 @@ exports.recycleMessage = function(req, res){
 }
 
 
+
 /*
-@ 消息推荐 order_count feedtype Message API
+@  取消推荐，但是分类不改变
+@
+@  http://localhost:3000/ordernull?msgid=672
+*/
+
+exports.ordernull = function(req, res){
+    //验证 管理员&&是否登录
+    fun.verifyAdmin(req, res, function(){
+
+        if (req.query.msgid) {
+            var sql = 'update lf_message set order_count = "0" where msg_id = "'+req.query.msgid+'"';
+            db.query(sql, function(result){
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], result);
+            })
+
+        }else{
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+    })
+}
+
+
+/*
+@ 消息设置分类并推荐 order_count feedtype Message API
 @ 相关参数 id（msg_id） value （int 越大越靠前）| 自动记录推荐的管理员id以及推荐时间
 @ jsonp
 @ 需要验证 1.登录 2.管理员  http://localhost:3000/goodMessage?id=193&value=1
@@ -1517,27 +1554,118 @@ exports.randommj = function(req, res){
 }
 
 /*
-@  管理员 随意 发布 message 指定 id
+@  管理员 登录后修改 贴纸
 @
-@  登录 php API http://xiaojiaoyar.com/Api/User/loginEx/account/201505/passwd/e10adc3949ba59abbe56e057f20f883e/platform/17/%20/version/1.0.3/
+@   http://localhost:3000/uppaster?typeid=4&url=http://highsea90.com/me.jpg&id=87
 */
-exports.createmessage = function(req, res){
+exports.uppaster = function(req, res){
 
     fun.verifyAdmin(req, res, function(){
 
-        var doc = {
-            message : '',
-            photo : '',
+        if (req.query.id&&req.query.typeid&&req.query.url) {
+
+            var doc ={
+                desc : '未知',
+                order: '0',
+                sta: '1',
+            }
+            if (req.query.desc) {
+                doc['desc'] = req.query.desc;
+            };
+            if (req.query.order) {
+                doc['order'] = req.query.order;
+            };
+            if (req.query.sta) {
+                doc['sta'] = req.query.sta;
+            };
+
+            var sql = 'update lf_paster_info set status="'+doc['sta']+'", type_id="'+req.query.typeid+'", description="'+doc['desc']+'", url="'+req.query.url+'", order_sort="'+doc['order']+'", examine_admin="'+req.session.username+'", examine_time="'+fun.nowUnix()+'" where lf_paster_info.id="'+req.query.id+'"';
+
+            db.query(sql, function(result){
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], result);
+
+            })
+
+        }else{
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+    })
+
+}
+/*
+@  管理员 登录后 贴纸 放回收站 或 恢复
+@
+@   http://localhost:3000/uppaster?typeid=4&url=http://highsea90.com/me.jpg&id=87
+*/
+exports.delpaster = function(req, res){
+
+    fun.verifyAdmin(req, res, function(){
+
+        if (req.query.id&&req.query.value) {
+
+            var sql = 'update lf_paster_info set status="'+req.query.value+'" where lf_paster_info.id="'+req.query.id+'"';
+
+            db.query(sql, function(result){
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], result);
+            })
+
+        }else{
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
         }
 
     })
 
 }
 
+
 /*
-@  管理员 随意 评论 指定 id
+@  管理员 登录后新增 贴纸
 @
-@  
+@   http://localhost:3000/createpaster?typeid=5&url=http://highsea90.com/me.jpg
+*/
+exports.createpaster = function(req, res){
+
+    fun.verifyAdmin(req, res, function(){
+
+        if (req.query.typeid&&req.query.url) {
+
+            var doc ={
+                desc : '未知',
+                order: '0',
+                sta: '1',
+            }
+            if (req.query.desc) {
+                doc['desc'] = req.query.desc;
+            };
+            if (req.query.order) {
+                doc['order'] = req.query.order;
+            };
+            if (req.query.sta) {
+                doc['sta'] = req.query.sta;
+            };
+
+            var sql = 'insert into lf_paster_info (status, type_id, description, url, order_sort, ctime, examine_admin, examine_time) VALUES ("'+doc['sta']+'", "'+req.query.typeid+'", "'+doc['desc']+'", "'+req.query.url+'", "'+doc['order']+'", "'+Date.now()+'", "'+req.session.username+'", "'+fun.nowUnix()+'")';
+
+            db.query(sql, function(result){
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], result);
+
+            })
+
+        }else{
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+    })
+
+}
+
+
+/*
+@  管理员 用马甲号随意 评论 指定 id
+@
+@  http://localhost:3000/createcomment?uid=1120&uidb=1225&message=test&msgid=673
+@  登录 php API http://xiaojiaoyar.com/Api/User/loginEx/account/201505/passwd/e10adc3949ba59abbe56e057f20f883e/platform/17/%20/version/1.0.3/
 */
 exports.createcomment = function(req, res){
 
@@ -1568,7 +1696,34 @@ exports.createcomment = function(req, res){
 
 }
 
+/*
+@  管理员 用马甲号随意 赞 指定 id
+@
+@  http://localhost:3000/createup?uid=1151&msgid=673  
+*/
+exports.createup = function(req, res){
 
+    fun.verifyAdmin(req, res, function(){
+
+        if (req.query.uid&&req.query.msgid) {
+            var doc = {
+                user_id     : req.query.uid,
+                msg_id      : req.query.msgid,
+                ctime       : fun.nowUnix(),
+            };
+
+            var sql = "insert into lf_message_up (msg_id, user_id, ctime) values ('"+doc['msg_id']+"', '"+doc['user_id']+"', '"+doc['ctime']+"')";
+            db.query(sql, function(dataList){
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], dataList);
+            })
+
+        }else{
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+    })
+
+}
 
 
 /*"CREATE TABLE `user_telphone` (  

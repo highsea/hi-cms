@@ -74,6 +74,9 @@ define(function(require, exports, module) {
 		$('.nav_click').children('li').children('[href="'+location.pathname+'"]').closest('li').addClass('current');
 
 	//}
+	/*$('body').on('click', '.hide_com_up', function(){
+		$(this).find('.caption').toggleClass('none');
+	})*/
 
 	all.textTips = {
 		'mima0':'密码由字母,数字,下划线组成,长度为6-20',
@@ -246,7 +249,8 @@ define(function(require, exports, module) {
 				etime 		= m[i].examine_time,
 				ctime 		= m[i].ctime;
 
-			var photoStr = '';
+			var photoStr = '',
+				cancelGood = '';
 
 			//console.log(photo);
 
@@ -258,6 +262,14 @@ define(function(require, exports, module) {
 			}else{
 				photoStr += '<li><img src="'+all.textTips['host']+photo[0]+'" alt="" /></li>'
 			}
+			//如果 推荐了 则取消推荐
+			if (feedtype!='0') {
+				if (order_count==0) {
+					cancelGood = ' &nbsp; <a class="btn cancel_good btn-warning">已取消 </a>';
+				}else{
+					cancelGood = ' &nbsp; <a class="btn cancel_good btn-warning">取消推荐 </a>';
+				}
+			};
 
 			str += '<li class="span11 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'" data-eadmin="'+eadmin+'" data-etime="'+etime+'">'+
 			                '<div data-feedtype="'+feedtype+'" class="thumbnail">'+
@@ -268,6 +280,7 @@ define(function(require, exports, module) {
 			                  '<p>浏览数：<span>'+read_count+'</span> 评论数：<span>'+comment_count+'</span> 赞：<span>'+up_count+'</span></p>'+
 			                  '<p>'+message+'</p>'+
 			                  '<ul class="message_img">'+photoStr+'</ul>'+
+			                  	  
 			                  '<div class="caption up">'+
 			                  	'<p> <a class="btn upMessage">赞：</a> 正在载入……</p>'+
 			                    '<ul></ul>'+
@@ -276,15 +289,18 @@ define(function(require, exports, module) {
 			                    '<p><a class="btn commentMessage">评论：</a> 正在载入……</p>'+
 			                  '</div>'+
 			                  '<div class="caption order">'+
-								'<a class="btn btn-success goodmsg" data-ordercount="'+order_count+'" data-feedtype="'+feedtype+'">'+name+'</a> '+
-								'&nbsp; <a class="btn btn-danger recycleMessage ">动态放回收站 </a>'+
+								'<a class="btn btn-success goodmsg" data-ordercount="'+order_count+'" data-feedtype="'+feedtype+'">'+name+' ▼ </a> '+
+								'&nbsp; <a class="btn btn-danger recycleMessage ">动态放回收站 </a> '+cancelGood+
 			                  '</div>'+
+			                  '<div class="caption feedtypeInput">'+
+			                  '</div>'+
+			                  
 			                '</div>'+
 			              '</li>';
 
 		}
 		$(dom).children('ul').html(str);
-		$(dom).siblings('.setpage').show().children('.pageinfo').html('一共<i>'+page['allnews']+'</i> 条结果，当前第<em>'+page['currentp']+'</em>页 <a data-next="'+(++page['currentp'])+'" class="btn nextPage">下一页</a>，分<b>'+page['pageCount']+'</b>页');
+		$(dom).siblings('.setpage').show().children('.pageinfo').html('一共<i>'+page['allnews']+'</i> 条结果，当前第<em>'+page['currentp']+'</em>页 <a data-next="'+(page['currentp']-1)+'" class="btn nextPage"> < 上一页</a> | <a data-next="'+(++page['currentp'])+'" class="btn nextPage">下一页 > </a>，分<b>'+page['pageCount']+'</b>页');
 
 
 
@@ -294,6 +310,7 @@ define(function(require, exports, module) {
 	all.innerHtml = {
 		'up' : '<a class="btn btn-info upMessage">赞：</a><i></i>',
 		'comment' : '<a class="btn btn-info commentMessage">评论：</a><i></i>',
+		'cancel_good':'<a class="btn cancel_good btn-warning">取消推荐 </a>',
 	}
 
 
