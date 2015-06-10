@@ -227,7 +227,7 @@ function passwordMD5(str, key){
 */
 function uploadHtml(req, res, resultPic, username){
     res.render('upload', {
-        title : config.productInfo.up,
+        title : config.productInfo.upload,
         resultpic: resultPic,
         username : username,
     })
@@ -246,6 +246,23 @@ function generateMixed(n, rows) {
     return res;
 }
 
+/*
+@ 时间格式化
+*/
+
+function yymmdd(){  
+    var d,s;  
+    d = new Date();  
+    s = d.getFullYear() + "-";             //取年份  
+    s = s + (d.getMonth() + 1) + "-";//取月份  
+    s += d.getDate() + " ";         //取日期  
+    s += d.getHours() + ":";       //取小时  
+    s += d.getMinutes() + ":";    //取分  
+    s += d.getSeconds();         //取秒  
+    return(s);    
+}   
+
+
 
 exports.generateMixed       = generateMixed; 
 exports.toUnix              = toUnix;
@@ -263,6 +280,7 @@ exports.nowUnix             = nowUnix;
 exports.isDigit             = isDigit;
 exports.verifyAdmin         = verifyAdmin;
 exports.uploadHtml          = uploadHtml;
+exports.yymmdd              = yymmdd;
 
 
 

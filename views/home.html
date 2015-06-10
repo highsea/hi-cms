@@ -522,7 +522,7 @@ window.onload=function(){
 					msgid : msgid,
 				}, thisDom.closest('li'), function(dataList){
 					if (dataList.data.protocol41) {
-						thisDom.text('已取消');
+						thisDom.text('已取消置顶');
 						thisDom.siblings('.goodmsg').text(thisDom.siblings('.goodmsg').text().split('(')[0]);
 					};
 				})
@@ -551,6 +551,8 @@ window.onload=function(){
 					if (dataList.data.protocol41) {
 						
 						thisGoodmsg.html(name+'(已置顶)');
+						thisCheckBtn.closest('ul').toggleClass('none');
+
 						if (thisGoodmsg.siblings('.cancel_good').length) {
 							thisGoodmsg.siblings('.cancel_good').text('取消推荐');
 						}else{

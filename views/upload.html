@@ -1,18 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title><%=title%></title>
+<title><%= title %></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=10;chrome=1">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="description" content="hi-blog">
+<meta name="author" content="admin@highsea90.com">
+
+<link href="/stylesheets/bootstrap.css" rel="stylesheet">
+<link href="/stylesheets/style.css" rel="stylesheet">
+
 </head>
-<body>
-<% if (resultpic!='1'){ %>
-	<img src="/getpic?username=<%=username%>&picname=<%=resultpic%>">
-	
+
+<body style="margin: 0;padding: 0"><% if (resultpic!='1'){ %>
+	<div style="height: 60px;width:120px;overflow: hidden;border: 1px solid #222;border-radius: 10px;">
+		<a href="/getpic?picname=<%=resultpic%>" target="_blank"><img width="120px" src="/getpic?picname=<%=resultpic%>"></a>
+	</div>
 <% }else { %>
-	<form method="post" action="upload" class="pic_upload_form" enctype="multipart/form-data">
+	
+	<form method="post" action="upload" class="pic_upload_form" enctype="multipart/form-data" onsubmit="return check();">
 		<input type="file" name="files" multiple="multiple" />
-		<input type="submit" class="btn btn-primary pic_upload" value="上传" />
+		<input type="submit" class="btn btn-success" value="上传" />
 	</form>
 <% } %>
 </body>
+
+<script type="text/javascript">
+function check(){
+	var upValue = document.getElementsByName('files')[0].value;
+	if (upValue=='') {
+		alert('请选择文件！');
+		return false;
+	};
+}
+</script>
 </html>

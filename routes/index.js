@@ -260,7 +260,7 @@ exports.message = function (req, res) {
 
         };
 
-        //防止 query的参数不在 sql 对象中（ undefined ）, 如果 undefind 则为默认值
+        //防止 query的参数不在 sql 对象中（ undefined ）, 如果 undefined 则为默认值
         if (sql[req.query.time]) {
             doc['time'] = req.query.time;//3d 1w 2w
         }
@@ -364,7 +364,7 @@ exports.mcomment = function (req, res) {
 
         //console.log('req.query.msg:'+req.query.msg);
         //filter
-        //防止 query的参数不在 sql 对象中（ undefined ）, 如果 undefind 则为默认值
+        //防止 query的参数不在 sql 对象中（ undefined ）, 如果 undefined 则为默认值
         if (sql[req.query.time]) {
             doc['time'] = req.query.time;//3d 1w 2w
         }
@@ -435,7 +435,7 @@ exports.mup = function (req, res) {
             m2          : fun.dayAgo(60),//
             m6          : fun.dayAgo(180),// 6个月
         }
-        //防止 query的参数不在 sql 对象中（ undefined ）, 如果 undefind 则为默认值
+        //防止 query的参数不在 sql 对象中（ undefined ）, 如果 undefined 则为默认值
         if (sql[req.query.time]) {
             doc['time'] = req.query.time;//3d 1w 2w
         }
@@ -1645,7 +1645,7 @@ exports.createpaster = function(req, res){
                 doc['sta'] = req.query.sta;
             };
 
-            var sql = 'insert into lf_paster_info (status, type_id, description, url, order_sort, ctime, examine_admin, examine_time) VALUES ("'+doc['sta']+'", "'+req.query.typeid+'", "'+doc['desc']+'", "'+req.query.url+'", "'+doc['order']+'", "'+Date.now()+'", "'+req.session.username+'", "'+fun.nowUnix()+'")';
+            var sql = 'insert into lf_paster_info (status, type_id, description, url, order_sort, ctime, examine_admin, examine_time) VALUES ("'+doc['sta']+'", "'+req.query.typeid+'", "'+doc['desc']+'", "'+req.query.url+'", "'+doc['order']+'", "'+fun.yymmdd()+'", "'+req.session.username+'", "'+fun.nowUnix()+'")';
 
             db.query(sql, function(result){
                 fun.jsonTips(req, res, 2000, config.Code2X[2000], result);
@@ -2346,8 +2346,6 @@ exports.adduserget = function(req, res){
 
 
 
-
-
 /*
 @ 上传页面 需要登录
 @
@@ -2355,89 +2353,88 @@ exports.adduserget = function(req, res){
 exports.upload = function(req, res) {
 
     var q = req.body?req.body:req.query,
-        //username = req.query.username,
+        username = req.query.username,
         picname = q.picname;
         
-
-/*    console.log(q);
-    console.log(picname);
-    typeof(req.body);*/
-    //必须登录， 若是 不带 username 参数 则是图片上传
-    if (req.session.username&&!req.query.username) {
+    if (!username) {
         //文件上传
         console.log('文件上传');
         console.log(q);
 
-        var form=new formidable.IncomingForm();
+        var form = new formidable.IncomingForm();
         form.encoding = 'utf-8';        //设置编辑
         form.uploadDir = picPATH;     //设置上传目录
         form.keepExtensions = true;     //保留后缀
         form.maxFieldsSize = 2 * 1024 * 1024;   //文件大小
 
-        form.parse(req,function(err,fields,files){
+        form.parse(req, function(err, fields, files){
 
-            console.log(files);
+            if (err) {
+                fun.jsonTips(req, res, 1026, config.Code1X[1026], err);
+            }else{
 
-            if (files.files.name=='') {
-                //没有上传文件
-                fun.friendlyError(req, res, config.Code4X[4031]);
-                //fun.uploadHtml(req, res, resultPic, username);
+                console.log('files:');
+                console.log(files);
 
-            } else{
+                if(files['files']!=undefined){
+                    // http://localhost:3000/upload [post]
 
-                var extName = 'gif';  //后缀名
-                switch (files.files.type) {
-                    case 'image/jpg':
-                        extName = 'jpg';
-                        break;
-                    case 'image/jpeg':
-                        extName = 'jpeg';
-                        break;         
-                    case 'image/png':
-                        extName = 'png';
-                        break;
-                    case 'image/x-png':
-                        extName = 'png';
-                        break; 
-                    case 'image/gif':
-                        extName = 'gif'        
+                    var extName = '';  //后缀名
+                    switch (files.files.type) {
+                        case 'image/jpg':
+                            extName = 'jpg';
+                            break;
+                        case 'image/jpeg':
+                            extName = 'jpeg';
+                            break;         
+                        case 'image/png':
+                            extName = 'png';
+                            break;
+                        case 'image/x-png':
+                            extName = 'png';
+                            break; 
+                        case 'image/gif':
+                            extName = 'gif';        
+                    }
+
+                    if (extName=='') {
+                        //不允许的文件
+                        fun.jsonTips(req, res, 1027, config.Code1X[1027], null);
+                    }else{
+
+                        var resultPic = req.session.username+'_'+fun.nowUnix()+'.'+extName;
+                        try{
+                            fs.renameSync(files.files.path, picPATH+resultPic);
+                            fun.uploadHtml(req, res, resultPic, username);
+                            //fun.jsonTips(req, res, 2000, config.Code2X[2000], resultPic);
+                        }catch(e){
+                            fun.jsonTips(req, res, 5021, config.Code5X[5021], e);
+                        }
+                        //fun.jsonTips(req, res, 2000, config.Code2X[2000], 'test');
+                    }
+
+                }else{
+                    // http://localhost:3000/upload [get]
+                    fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
                 }
-
-                var resultPic = req.session.username+'-'+Date.now()+'.'+extName;
-
-                try{
-                    fs.renameSync(files.files.path, picPATH+resultPic);
-                    fun.uploadHtml(req, res, resultPic, req.query.username);
-                    //fun.jsonTips(req, res, 2000, config.Code2X[2000], resultPic);
-                }catch(e){
-                    fun.jsonTips(req, res, 5021, config.Code2X[5021], e);
-                }
-
-            };
-
-            
-
-            
-            
+            }
         });
 
 
     } else{
-        //get上传页面 req.query
+        // http://localhost:3000/upload?username=right
         console.log('上传页面');
 
-
-        if (req.query.username&&req.query.username==req.session.username) {
+        if (req.session.username==username) {
             fun.uploadHtml(req, res, '1', username);
-        
 
         } else{
-            res.redirect('/home');
-
+            //  http://localhost:3000/upload?username=nothing
+            fun.jsonTips(req, res, 2005, config.Code2X[2005], null);
         };
     };
     
-};    
+};     
 //上传 1.jpg 等文件读取不到name导致系统崩溃    
 // { files: 
 //    { domain: null,
@@ -2468,23 +2465,31 @@ exports.upload = function(req, res) {
 // }
         // 同步操作文件，需要try catch
 
-exports.getpic = function(req, response){
-    var q = req.query,
-        picname = q.picname;
-    var extName = picname.split('.')[1];
-    console.log(extName);
+exports.getpic = function(req, res){
+
+    if (req.query.picname) {
+
+        var picname = req.query.picname;
+        var extName = picname.split('.')[1];
+        console.log(extName);
+        
+        fs.readFile(picPATH+picname,'binary',function(err,file){
+            if(err){
+                res.writeHead(500,{'Content-Type':'text/plain'});
+                res.write(err+'\n');
+                res.end();
+            }else{
+                res.writeHead(200,{'Content-Type':'image/'+extName});
+                res.write(file,'binary');
+                res.end();
+            }
+        });
+
+    }else{
+        fun.friendlyError(req, res, config.Code1X[1020]);
+
+    }
     
-    fs.readFile(picPATH+picname,'binary',function(err,file){
-        if(err){
-            response.writeHead(500,{'Content-Type':'text/plain'});
-            response.write(err+'\n');
-            response.end();
-        }else{
-            response.writeHead(200,{'Content-Type':'image/'+extName});
-            response.write(file,'binary');
-            response.end();
-        }
-    });
 }
 
 

@@ -173,7 +173,6 @@ app.get('/createmini', routes.createmini);
 
 
 app.post('/adduser',routes.adduser);
-app.get('/adduserget',routes.adduserget);
 app.get('/register', routes.register);//
 app.get('/forget', routes.forget);//
 app.get('/email', routes.email);//

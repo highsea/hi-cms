@@ -30,7 +30,7 @@
 			</div>
 			<div class="span3"></div>
 			<div class="span3">
-				<a class="btn btn-warning createPaster">新增贴纸</a>
+				<a class="btn btn-primary createPaster">新增贴纸</a>
 				
 			</div>
 
@@ -58,6 +58,21 @@
     </section>
 </footer>
 
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+    <h3 id="myModalLabel">创建贴纸</h3>
+  </div>
+  <div class="modal-body" data-type="">
+  	
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+    <button class="btn btn-primary modalSave">新建</button>
+  </div>
+</div>
+
 <% include footer.html %>
 
 
@@ -81,18 +96,20 @@ window.onload=function(){
 	
     seajs.use([ 'all', 'verify'], function(A,V){
 
-    	var pastertypeArr = [],
-    		pasterHtml = '',
+    	var pastertypeArr = [],//存分类数组
+    		pasterHtml = '',//存分类 option html
     	    pasterInfoTableFa = $('.pasterInfoTable-fa');
     	
     	var pastertype = $('.pastertype'),
     		paster_select = $('.paster_select');
+
 
     	A.ajax('/pastertype', {
 
     	}, '.paster_select', function(dataList){
     		var s = dataList.data,
     			sLength = s.length,
+    			optionStr = '',
     			str = '';
 
     		for (var i = 0; i < sLength; i++) {
@@ -105,7 +122,7 @@ window.onload=function(){
     			
     		};
     		pastertype.append(str);
-    		pasterHtml = '<select>'+optionStr+'</select>'
+    		pasterHtml = '<select class="pasterSelect">'+optionStr+'</select>';
     		
 
     		//渲染 具体贴纸信息
@@ -117,7 +134,7 @@ window.onload=function(){
     		event.preventDefault();
     		var doc = {
     			sta : pastertype.val(),
-    			order : 'time',
+    			order : 'sort',
     			p : '1',
     			size : '10000',
     			value : '1'
@@ -144,23 +161,32 @@ window.onload=function(){
     				var status = u[i].status,
     					imgUrl = u[i].url.split('Picture')[0],
     					type_id = u[i].type_id-1;
-    				var caozuoDom = '<a class="pasterPrev btn">上移</a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-danger">放回收站</a> &nbsp; <a class="btn btn-info setPaster">修改贴纸</a> &nbsp; <a class="btn pasterNext">下移</a>';
+    				var caozuoDom = '<a class="pasterPrev icon-chevron-up"></a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-danger">放回收站</a> &nbsp; <a class="icon-check setPaster"></a> &nbsp; <a class="icon-chevron-down pasterNext"></a>';
     				if (status==1) {
-    					caozuoDom = '<a class="pasterPrev btn">上移</a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-danger">放回收站</a> &nbsp; <a class="btn btn-info setPaster">修改贴纸</a> &nbsp; <a class="btn pasterNext">下移</a>';
+    					caozuoDom = '<a class="pasterPrev icon-chevron-up"></a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-danger">放回收站</a> &nbsp; <a class="icon-check setPaster"></a> &nbsp; <a class="icon-chevron-down pasterNext"></a>';
     				};
     				if (status==0||status==2) {
-    					caozuoDom = '<a class="pasterPrev btn">上移</a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-warning">恢复贴纸</a> &nbsp; <a class="btn btn-info setPaster">修改贴纸</a> &nbsp; <a class="btn pasterNext">下移</a>';
+    					caozuoDom = '<a class="pasterPrev icon-chevron-up"></a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-warning">恢复贴纸</a> &nbsp; <a class="icon-check setPaster"></a> &nbsp; <a class="icon-chevron-down pasterNext"></a>';
     				};
 
-    				var selectType = '<select class="ajaxType pasterSelect"><option value="'+(type_id+1)+'">'+pastertypeArr[type_id]+'</option></select>';
-    				//$(pasterHtml).children('option:')
+    				//var selectType = '<select class="ajaxType pasterSelect"><option value="'+(type_id+1)+'">'+pastertypeArr[type_id]+'</option></select>';
+    				//$(pasterHtml).find('option[value="'+(type_id+1)+'"]').attr('selected', 'selected');
+    				//console.log($(pasterHtml).find('option[value="'+(type_id+1)+'"]').attr('selected', 'selected'));
+    				var myReg = new RegExp("upload");
+    				var newImgUrl = '';
+    				if (myReg.test(imgUrl)){
+    					newImgUrl = imgUrl;
+    				}else{
+    					newImgUrl = A.textTips['webhost']+imgUrl;
+    				}
+    				
 
     				var new_data = {
     					xuhao 		: i+1,
     					pasterID 	: u[i].id,
-    					fenlei  	: '<p data-typeid="'+(type_id+1)+'">'+selectType+'</p>',
+    					fenlei  	: '<p data-typeid="'+(type_id+1)+'">'+pastertypeArr[type_id]+'</p>',
     					description : '<input class="pasterdesc" type="text" value="'+u[i].description+'">',
-    					pic 		: '<a data-order="'+u[i].order_sort+'" title="点击查看大图" href="'+A.textTips['webhost']+imgUrl+'" target="_blank"><img class="avatar" src="'+A.textTips['webhost']+imgUrl+'" alt="" /></a>',
+    					pic 		: '<a data-order="'+u[i].order_sort+'" title="点击查看大图" href="'+newImgUrl+'" target="_blank"><img class="avatar" src="'+newImgUrl+'" alt="" /></a>',
     					ctime 		: u[i].ctime,//A.js_date_time(u[i].ctime),
     					caozuo 		: caozuoDom,
     					caozuoren   : u[i].examine_admin,
@@ -197,39 +223,63 @@ window.onload=function(){
 		on('click', '.createPaster', function(event) {
 			event.preventDefault();
 			//创建贴纸
-			alert('未开发');
+			var createPasterHtml = '<form class="form-comadd form-horizontal"><div class="control-group"><label class="control-label">描述</label><div class="controls"><input class="description" type="text" placeholder="可为空" /></div></div><div class="control-group"><label class="control-label">分类</label><div class="controls">'+pasterHtml+'</div></div><div class="control-group"><label class="control-label">贴纸</label><div class="controls"><iframe id="upiframe" src="/upload?username=<%=username%>" frameborder="0" height="65" scrolling="no" ></iframe></div></div></form>';
+			$('.modal-body').html('');
+			$('#myModalLabel').html('');
+			$('.modal-footer').html('');
+			$('#myModal').modal('show');
+			$('.modal-body').append(createPasterHtml);
+			$('#myModalLabel').html('创建贴纸');
+			$('.modal-footer').html('<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button><button class="btn btn-primary modalSave">新建</button>');
+
+
 		})
-		/*$('body').on('click', '.setPaster', function(event) {
+		$('body').on('click', '.setPaster', function(event) {
 			event.preventDefault();
 			// 修改 贴纸 
+
+			var thisDom = $(this);
+
+			var moren_typeid = thisDom.closest('tr').children('td').eq(3).children('p').data('typeid'),
+				xiugai_typeid = thisDom.closest('tr').children('td').eq(3).children('select').val();
+
+			var imgUrl_1 = thisDom.closest('tr').children('td').eq(1).children('a').attr('href').split('.com/')[1],
+				imgUrl_2 = thisDom.closest('tr').children('td').eq(1).children('a').attr('href');
 			var thisDom = $(this);
 			    thisSta = thisDom.data('status'),
-			    thisType = thisDom.closest('tr').children('td').eq(3).children('p').data('typeid'),
-			    thisUrl = thisDom.closest('tr').children('td').eq(1).children('a').attr('href').split('.com/')[1],
-			    thisDesc = thisDom.closest('tr').children('td').eq(4).text()
+			    thisType = moren_typeid,//xiugai_typeid==undefined ? moren_typeid : xiugai_typeid,
+			    thisUrl = imgUrl_1==undefined ? imgUrl_2 : imgUrl_1,
+			    thisDesc = thisDom.closest('tr').children('td').eq(4).children('input').val(),
 			    thisID = thisDom.closest('tr').children('td').eq(2).text();
 
 
-			A.ajax('/uppaster', {
+			var createPasterHtml = '<form class="form-comadd form-horizontal"><div class="control-group"><label class="control-label">描述</label><div class="controls"><input value="'+thisDesc+'" class="description" type="text" placeholder="可为空" /></div></div><div class="control-group"><label class="control-label">分类</label><div class="controls">'+pasterHtml+'</div></div><div class="control-group"><label class="control-label">贴纸</label><div class="controls">'+thisUrl+'</div><div class="controls"><iframe id="upiframe" src="/upload?username=<%=username%>" frameborder="0" height="65" scrolling="no" ></iframe></div></div></form>';
+
+			$('.modal-body').html(createPasterHtml);
+			$('#myModalLabel').html('修改图片');
+			$('.modal-footer').html('<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button><button class="btn btn-primary changePic">确认修改</button>');
+			$('#myModal').modal('show');
+			$('.modal-body').find('.pasterSelect').children('option[value="'+thisType+'"]').attr('checked', 'checked');
+
+
+
+
+			/*A.ajax('/uppaster', {
 				typeid  : thisType,
 				url 	: thisUrl,
 				id 		: thisID,
 				desc    : thisDesc,
-				sta 	: 0,
 			}, '.paster_select', function(dataList){
 				if (dataList.data.protocol41) {
-					console.log('del')
-					thisDom.text('恢复贴纸');
-					thisDom.attr('class', 'btn setPaster btn-warning');
-					thisDom.data('status', '0')
+					alert('修改成功，刷新可看最新信息');
 				};
-			})
+			})*/
 
 			
 			//console.log(thisType);
 			
 
-		});*/
+		});
 		//贴纸 放到回收站 或 恢复
 		$('body').on('click', '.del_return', function(){
 			var thisDom = $(this);
@@ -268,7 +318,68 @@ window.onload=function(){
 
 			}
 
-		})/*.
+		}).
+		on('click', '.appendOption', function(event) {
+			event.preventDefault();
+			// 修改 贴纸时 加载 修改分类部分
+			var thisDom = $(this);
+			if (thisDom.siblings('select').length==0) {
+				$(this).closest('td').append(pasterHtml);
+			};
+		}).
+		/*on('click', '.pasterUpload', function(event) {
+			event.preventDefault();
+			//修改 贴纸图片
+			
+
+
+		}).*/
+		on('click', '.modalSave', function(event) {
+			event.preventDefault();
+			//保存模态框数据
+
+			var thisDom = $(this),
+				pasterDesc = thisDom.closest('.modal').find('.description'),
+				pasterType = thisDom.closest('.modal').find('.pasterSelect'),
+			    upi = window.top.document.getElementById("upiframe").contentWindow,
+                newpicurl = upi.document.getElementsByTagName('img')[0]==undefined ? '' : upi.document.getElementsByTagName('img')[0].getAttribute('src');
+            var dataArr = {
+            	typeid  : pasterType.val(),
+				url 	: A.textTips['picTemp']+newpicurl.split('=')[1],
+				desc    : pasterDesc.val(),
+            }
+            if (newpicurl=='') {
+
+            	alert('请上传 贴纸！')
+
+            }else{
+            	console.log(dataArr);
+            	A.ajax('/createpaster', dataArr, '.modal-body', function(dataList){
+            		if (dataList.data.protocol41) {
+						$('#myModal').modal('hide');
+						console.log(dataList);
+						alert('新建成功，刷新可看最新信息')
+            		}else{
+
+            			alert('新建失败请重试！')
+            		}
+            	})
+
+            }
+
+		}).
+		on('click', '.pasterPrev,.pasterNext', function(event) {
+			event.preventDefault();
+			//
+			alert('逻辑待商议');
+		}).
+		on('click', '.changePic', function(event) {
+			event.preventDefault();
+			//修改 图片
+		});
+
+
+		/*.
 		on('click', '.ajaxType', function(event) {
 			event.preventDefault();
 			// 当需要修改贴纸分类时 渲染缓存中的 type

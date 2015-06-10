@@ -96,6 +96,7 @@ define(function(require, exports, module) {
 		'confirm_msg_good':"推荐数值越大越考前，确定该操作吗？",
 		'host' : 'http://m.xiaojiaoyar.com/Uploads/Picture/',
 		'webhost': 'http://m.xiaojiaoyar.com/',
+		'picTemp': '/upload/temp/'
 	}
 
 	all.authority = {
@@ -265,7 +266,7 @@ define(function(require, exports, module) {
 			//如果 推荐了 则取消推荐
 			if (feedtype!='0') {
 				if (order_count==0) {
-					cancelGood = ' &nbsp; <a class="btn cancel_good btn-warning">已取消 </a>';
+					cancelGood = ' &nbsp; <a class="btn cancel_good btn-warning">已取消置顶 </a>';
 				}else{
 					cancelGood = ' &nbsp; <a class="btn cancel_good btn-warning">取消推荐 </a>';
 				}
