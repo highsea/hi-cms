@@ -321,6 +321,52 @@ exports.message = function (req, res) {
 
 
 /*
+@  单条评论查询
+@
+@  http://localhost:3000/onecomment?callback=dataList&msgid=673
+*/
+
+exports.onecomment = function(req, res){
+
+    fun.verifyAdmin(req, res, function(){
+        if (req.query.msgid) {
+            var sql = 'select lf_message_comment.id,lf_message_comment.status,lf_message_comment.msg_id,lf_message_comment.user_id,lf_message_comment.user_id_b,lf_message_comment.message,lf_message_comment.ctime,lf_message_comment.is_read,lf_users.user_id,lf_users.level,lf_users.mobile,lf_users.sex,lf_users.nickname,lf_users.avatar from lf_users,lf_message_comment where lf_users.user_id=lf_message_comment.user_id and lf_message_comment.msg_id = "'+req.query.msgid+'" order by lf_message_comment.ctime desc';
+
+            db.query(sql, function(dataList){
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], dataList);
+            })
+
+        }else{
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+    })
+}
+
+/*
+@  单条评论查询
+@
+@
+*/
+
+exports.oneup = function(req, res){
+
+    fun.verifyAdmin(req, res, function(){
+        if (req.query.msgid) {
+            var sql = 'select lf_message_up.id,lf_message_up.msg_id,lf_message_up.user_id,lf_message_up.ctime,lf_users.user_id,lf_users.level,lf_users.mobile,lf_users.sex,lf_users.nickname,lf_users.avatar from lf_users,lf_message_up where lf_users.user_id=lf_message_up.user_id and lf_message_up.msg_id = "'+req.query.msgid+'" order by lf_message_up.ctime desc';
+
+            db.query(sql, function(dataList){
+                fun.jsonTips(req, res, 2000, config.Code2X[2000], dataList);
+            })
+
+        }else{
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+    })
+}
+
+
+
+/*
 @ mcomment jsonp  评论接口
 @ 相关参数  msg（all filter）id（Num） time ，主要用于前端对 message 的补充
 @ jsonp  code message data
@@ -2491,7 +2537,5 @@ exports.getpic = function(req, res){
     }
     
 }
-
-
 
 

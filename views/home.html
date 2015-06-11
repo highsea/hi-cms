@@ -770,6 +770,7 @@ window.onload=function(){
     	}).
     	on('click', '.showMessage,.defaultPage,.nextPage', function(event) {
     		event.preventDefault();
+    		// 查看 默认消息 动态
     		if ($(this).hasClass('nextPage')) {
     			var nextPageNum = $(this).data('next');
     			messageAjax ('#tabs-25490', nextPageNum);
@@ -780,6 +781,90 @@ window.onload=function(){
     			messageAjax ('#tabs-25490',$('.defaultPage').siblings('input').val());
     		}
     		
+    	}).
+    	on('click', '.upClickShow', function(event) {
+    		event.preventDefault();
+    		//方案二：  点击加载 赞
+    		var thisCaption = $(this).closest('.caption'),
+    			thisMsgID = $(this).closest('.thumbnail').parent('li').data('msgid');
+
+			thisCaption.find('ul').html('加载中……');
+//载入 赞
+			A.ajax('/oneup', {
+				msgid 	: thisMsgID,
+			}, thisCaption, function(data){
+				//console.log(data);
+				var u = data.data,
+					uLength = u.length,
+					upStr = '';
+
+				for (var i = 0; i < uLength; i++) {
+					var msg_id = u[i].msg_id,
+					    id = u[i].id,
+					    user_id = u[i].user_id,
+					    ctime = u[i].ctime,
+					    nickname = u[i].nickname,
+					    sex = u[i].sex,
+					    avatar = u[i].avatar,
+					    status = u[i].status,
+					    mobile = u[i].mobile,
+					    level = u[i].level;
+
+					upStr += '<li data-id="'+id+'" data-mobile="'+mobile+'" data-level="'+level+'" class="status_'+status+'"> <a href="/soso?userid='+user_id+'&tab=userzone" class="upUser sex_'+sex+'" data-uid="'+user_id+'" title="'+nickname+'('+A.sex[sex]+')发表于'+A.js_date_time(ctime)+'"> <img src="http://m.xiaojiaoyar.com/Uploads/Picture/'+avatar+'" height="25px" alt="" /> </a></li>';
+					
+				};
+				thisCaption.find('ul').html(upStr);
+			})
+
+
+    	}).
+    	on('click', '.commentClickShow', function(event) {
+    		event.preventDefault();
+    		//方案二： 点击加载 评论
+    		var thisCaption = $(this).closest('.caption'),
+    			thisMsgID = $(this).closest('.thumbnail').parent('li').data('msgid');
+
+			thisCaption.find('ul').html('加载中……');
+
+		//载入 回复
+			A.ajax('/onecomment', {
+				msgid:thisMsgID,
+			}, thisCaption, function(mm){
+				console.log(mm);
+				var om = mm.data,
+					omLength = om.length,
+					str = '';
+				for (var i = 0; i < omLength; i++) {
+					var id = om[i].id,
+						status = om[i].status,
+						msg_id = om[i].msg_id,
+						user_id = om[i].user_id,
+						user_id_b = om[i].user_id_b,
+						message = om[i].message,
+						ctime = om[i].ctime,
+						is_read = om[i].is_read,
+						level = om[i].level,
+						mobile = om[i].mobile,
+						sex = om[i].sex,
+						nickname = om[i].nickname,
+						avatar = om[i].avatar;
+
+					if (status==1) {
+						var commentCZHtml = '<i class="btn reComment">放回收站</i>'; 
+					}else{
+						var commentCZHtml = '<i class="btn btn-warning okComment">恢复评论</i>';
+					}
+
+					str+= '<li data-commentid="'+id+'" data-userid="'+om[i].user_id+'" data-useridb="'+om[i].user_id_b+'" data-status="'+status+'" class="sex_'+sex+' status_'+status+' level_'+level+' read_'+om[i].is_read+' commentHTML" data-isread="'+is_read+'" data-mobile="'+mobile+'"><a href="/soso?userid='+user_id+'&tab=userzone" target="_blank"><img src="http://m.xiaojiaoyar.com/Uploads/Picture/'+avatar+'" class="avatar" alt="" />'+nickname+'</a>: '+message+'-'+commentCZHtml+'- ('+A.js_date_time(ctime)+')</li>';
+
+				};
+				thisCaption.find('ul').html(str);
+
+				//渲染 评论
+				
+
+			});
+
     	}).
     	on('click', '.createfeedtype', function(event) {
     		event.preventDefault();
@@ -952,7 +1037,7 @@ window.onload=function(){
     				thisDom.closest('i').html('成功，马甲赞，请刷新页面后查看');
     			};
     		})
-    	});
+    	})
 
     	
 
@@ -975,50 +1060,13 @@ window.onload=function(){
 	    		}else{
 
 	    			//渲染 消息
-		    		A.showMessage(dataList, '.messageList', function(){
-		    			//载入 赞
-		    			A.ajax('/mup', {
-		    				time 	: time.val(),
-		    			}, elm, function(data){
-		    				//console.log(data);
-		    				var u = data.data.list,
-		    					uLength = data.data.length;
-
-		    				messageList.find('.up').children('p').html(A.innerHtml['up']);
-
-		    				for (var i = 0; i < uLength; i++) {
-		    					var msg_id = u[i].msg_id,
-		    					    user_id = u[i].user_id,
-		    					    ctime = u[i].ctime,
-		    					    nickname = u[i].nickname,
-		    					    sex = u[i].sex,
-		    					    avatar = u[i].avatar;
-
-		    					var upStr = ' <a href="#" class="upUser sex_'+sex+'" data-uid="'+user_id+'" title="'+nickname+'('+A.sex[sex]+')发表于'+A.js_date_time(ctime)+'"> <img src="http://m.xiaojiaoyar.com/Uploads/Picture/'+avatar+'" height="25px" alt="" /> </a> ';
-		    					$('li[data-msgid="'+msg_id+'"]').find('.up').children('p').append(upStr);
-		    				};
-
-		    				//载入 回复
-		    				A.ajax('/mcomment', {
-		    					time 	: time.val(),
-		    					msg 	: 'ready',
-		    				}, elm, function(mm){
-		    					//console.log(mm);
-		    					//渲染 评论
-		    					A.showComment(mm, function(){
-
-		    					})
-
-		    				});
-
-		    			})
-		    		});
+		    		A.showMessageAjax(dataList, '.messageList');
 
 	    		}
 	    		
 	    	})
     	}
-    	messageAjax ('#tabs-25490');
+    	messageAjax ('#tabs-25490', 1);
 
     	
     	

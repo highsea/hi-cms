@@ -171,12 +171,14 @@ body .current{background: #5bb75b;}
 .caption{float: none;clear: both}
 .goodMessageType li{float: right;background: #f60; height: 20px;margin:0 1em}
 .goodMessageType a{color: #fff;padding: 0 0.5em;cursor: pointer;}
-.feed_type_wrap{width: 20%;border: 1px solid #5bb75b;padding: 0.5em;border-radius: 8px;box-shadow: 1px 2px 2px #7CF5A6;}
+.feed_type_wrap{width: 50%;border: 1px solid #5bb75b;padding: 0.5em;border-radius: 8px;box-shadow: 1px 2px 2px #7CF5A6;}
 .feed_type_wrap a{cursor: pointer;}
 .thumbnails{width: 80%;margin:0 auto!important}
 .pasterSelect,.pasterDesc{width: 60px;}
 .icon-check,.icon-chevron-up,.icon-chevron-down,.icon-edit {cursor: pointer;}
-
+.order > a{display: block;float: right;margin: 0 0.5em}
+.feedtypeInput{margin-left: 20em}
+.up >ul>li{float: left;}
 
 
 

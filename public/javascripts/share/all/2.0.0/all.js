@@ -210,10 +210,105 @@ define(function(require, exports, module) {
     	return options;
     }
 
+/*
+@ 展示 message ajax click 后 加载 赞和评论
+@
+*/
+
+	all.showMessageAjax = function (dataList, dom) {
+		
+
+		var m = dataList.data.list;
+		var page = {
+			currentp : dataList.data.page.currentp,
+			size : dataList.data.page.size,
+			allnews : dataList.data.page.allnews,
+			pageCount : dataList.data.page.pageCount,
+		}
+		//console.log(m)
+		var dlength = dataList.data.length;
+		var str = '';
+			
+		for (var i = 0; i < dlength; i++) {
+			var user_id 	= m[i].user_id,
+				sex 		= m[i].sex,
+				avatar 		= m[i].avatar,
+				nickname 	= m[i].nickname,
+				msg_id 		= m[i].msg_id,
+				message 	= m[i].message,
+				photo 		= JSON.parse(m[i].photo),
+				location 	= m[i].location,
+				up_count 	= m[i].up_count,
+				comment_count=m[i].comment_count,
+				read_count 	= m[i].read_count,
+				order_count = m[i].order_count,
+				status 		= m[i].status,
+				feedtype 	= m[i].feedtype,
+				name 		= m[i].name,
+				eadmin 		= m[i].examine_admin,
+				etime 		= m[i].examine_time,
+				ctime 		= m[i].ctime;
+
+			var photoStr = '',
+				cancelGood = '';
+
+			//console.log(photo);
+
+			if (photo.length>1) {
+				for (var k = 0; k < photo.length; k++) {
+					photoStr += '<li style="float:left"><img src="'+all.textTips['host']+photo[k]+'" alt="" /></li>';
+				};
+
+			}else{
+				photoStr += '<li><img src="'+all.textTips['host']+photo[0]+'" alt="" /></li>'
+			}
+			//如果 推荐了 则取消推荐
+			if (feedtype!='0') {
+				if (order_count==0) {
+					cancelGood = ' &nbsp; <a class="btn cancel_good btn-warning">已取消置顶 </a>';
+				}else{
+					cancelGood = ' &nbsp; <a class="btn cancel_good btn-warning">取消推荐 </a>';
+				}
+			};
+
+			str += '<li class="span11 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'" data-eadmin="'+eadmin+'" data-etime="'+etime+'">'+
+			                '<div data-feedtype="'+feedtype+'" class="thumbnail">'+
+			                  '<h4><small>[第<em>'+page['currentp']+'</em>页：'+(i+1)+'/'+dlength+']</small>'+
+			                  '<img class="avatar" src="'+all.textTips['host']+avatar+'" alt="" /><a href="/soso?userid='+user_id+'&tab=userzone">'+nickname+'</a><br><small class="goods_info"><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
+			                  '<small>发表于：'+all.js_date_time(ctime)+' </small> '+
+			                  ' | <small> 用户id：<a href="/soso?userid='+user_id+'&tab=userzone">'+user_id+' </a></small> | <small> 消息id：<a href="/soso?msgid='+msg_id+'">'+msg_id+'</a></small>'+
+			                  '<p>浏览数：<span>'+read_count+'</span> 评论数：<span>'+comment_count+'</span> 赞：<span>'+up_count+'</span></p>'+
+			                  '<p>'+message+'</p>'+
+			                  '<ul class="message_img">'+photoStr+'</ul>'+
+			                  	  
+			                  '<div class="caption up">'+
+			                  	'<p> <b class="upClickShow">赞，展开▼</b> <a class="btn upMessage">马甲赞</a> <i></i></p>'+
+			                    '<ul></ul>'+
+			                  '</div>'+
+			                  '<div class="caption comment">'+
+			                    '<p> <b class="commentClickShow">评论展开▼</b> <a class="btn commentMessage">马甲评</a> <i></i></p>'+
+			                    '<ul></ul>'+
+			                  '</div>'+
+			                  '<div class="caption order">'+
+								'<a class="btn btn-danger recycleMessage ">动态放回收站 </a> '+cancelGood+
+								'<a class="btn btn-success goodmsg" data-ordercount="'+order_count+'" data-feedtype="'+feedtype+'">'+name+' ▼ </a>'+
+			                  '</div>'+
+			                  '<div class="caption feedtypeInput">'+
+			                  '</div>'+
+			                  
+			                '</div>'+
+			              '</li>';
+
+		}
+		$(dom).children('ul').html(str);
+		$(dom).siblings('.setpage').show().children('.pageinfo').html('一共<i>'+page['allnews']+'</i> 条结果，当前第<em>'+page['currentp']+'</em>页 <a data-next="'+(page['currentp']-1)+'" class="btn nextPage"> < 上一页</a> | <a data-next="'+(++page['currentp'])+'" class="btn nextPage">下一页 > </a>，分<b>'+page['pageCount']+'</b>页');
+	}
+
+
 
 
 /*
-@ 展示 message
+@ 展示 message  回调加载 赞 和 评论
 @
 */
 	all.showMessage = function (dataList, dom, callback) {

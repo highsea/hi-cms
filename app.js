@@ -128,6 +128,8 @@ app.post('/postmd5', routes.postmd5);//post
 app.get('/home', routes.homeget);//
 
 app.get('/message', routes.message);
+app.get('/onecomment', routes.onecomment);
+app.get('/oneup', routes.oneup);
 app.get('/mcomment', routes.mcomment);
 app.get('/mup', routes.mup);
 app.get('/recycleMessage', routes.recycleMessage);
