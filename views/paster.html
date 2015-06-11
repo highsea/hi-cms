@@ -253,13 +253,15 @@ window.onload=function(){
 			    thisID = thisDom.closest('tr').children('td').eq(2).text();
 
 
-			var createPasterHtml = '<form class="form-comadd form-horizontal"><div class="control-group"><label class="control-label">描述</label><div class="controls"><input value="'+thisDesc+'" class="description" type="text" placeholder="可为空" /></div></div><div class="control-group"><label class="control-label">分类</label><div class="controls">'+pasterHtml+'</div></div><div class="control-group"><label class="control-label">贴纸</label><div class="controls">'+thisUrl+'</div><div class="controls"><iframe id="upiframe" src="/upload?username=<%=username%>" frameborder="0" height="65" scrolling="no" ></iframe></div></div></form>';
+			var createPasterHtml = '<form data-id="'+thisID+'" class="form-comadd form-horizontal"><div class="control-group"><label class="control-label">描述</label><div class="controls"><input value="'+thisDesc+'" class="description" type="text" placeholder="可为空" /></div></div><div class="control-group"><label class="control-label">分类</label><div class="controls">'+pasterHtml+'</div></div><div class="control-group"><label class="control-label">贴纸</label><div class="controls changePurl"><span class="label label-important">当前：</span><b>'+thisUrl+'</b></div><div class="controls"><iframe id="upiframe" src="/upload?username=<%=username%>" frameborder="0" height="65" scrolling="no" ></iframe></div></div></form>';
 
 			$('.modal-body').html(createPasterHtml);
 			$('#myModalLabel').html('修改图片');
-			$('.modal-footer').html('<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button><button class="btn btn-primary changePic">确认修改</button>');
+			$('.modal-footer').html('<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button><button class="btn btn-primary changeSomeSave">确认修改</button>');
 			$('#myModal').modal('show');
-			$('.modal-body').find('.pasterSelect').children('option[value="'+thisType+'"]').attr('checked', 'checked');
+			$('.modal-body').find('.pasterSelect').children('option[value="'+thisType+'"]').attr('selected', 'selected');
+
+			
 
 
 
@@ -373,9 +375,31 @@ window.onload=function(){
 			//
 			alert('逻辑待商议');
 		}).
-		on('click', '.changePic', function(event) {
+		on('click', '.changeSomeSave', function(event) {
 			event.preventDefault();
-			//修改 图片
+			//修改 贴纸信息 ：图片＋描述＋分类 
+			var changeType = $('.modal-body').find('.pasterSelect').val(),
+				upi = window.top.document.getElementById("upiframe").contentWindow,
+                changeNewPicUrl = upi.document.getElementsByTagName('img')[0]==undefined ? '' : upi.document.getElementsByTagName('img')[0].getAttribute('src'),
+                changeOldUrl = $('.modal-body').find('.changePurl').children('b').text()
+				changeUrl = changeNewPicUrl=='' ? changeOldUrl : A.textTips['picTemp']+changeNewPicUrl.split('=')[1],
+				changeID = $('.modal-body').children('form').data('id'),
+				changeDesc = $('.modal-body').find('.description');
+
+			var dataArr = {
+				typeid  : changeType,
+				url 	: changeUrl,
+				id 		: changeID,
+				desc    : changeDesc.val(),
+			}
+			console.log(dataArr);
+			if(confirm('确认修改成这样嘛？')){
+				A.ajax('/uppaster', dataArr, '.paster_select', function(dataList){
+					if (dataList.data.protocol41) {
+						alert('修改成功，刷新可看最新信息');
+					};
+				})
+			}
 		});
 
 
