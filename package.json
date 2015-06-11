@@ -27,7 +27,8 @@
     "utility": "^1.4.0",
     "cookie-parser": "*",
     "superagent": "^1.2.0",
-    "cheerio": "^0.19.0"
+    "cheerio": "^0.19.0",
+    "jssha":"*"
   },
   "devDependencies": {
     "grunt": "^0.4.5"
