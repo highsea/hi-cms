@@ -132,6 +132,8 @@ app.get('/mcomment', routes.mcomment);
 app.get('/mup', routes.mup);
 app.get('/recycleMessage', routes.recycleMessage);
 app.get('/goodMessage', routes.goodMessage);
+app.get('/ordernull', routes.ordernull);
+
 app.get('/setComment', routes.setComment);
 app.get('/lookmsg', routes.lookmsg);
 app.get('/soso', routes.soso);
@@ -139,11 +141,22 @@ app.get('/userinfo', routes.userinfo);
 app.get('/up1user', routes.up1user);
 app.get('/lookuser', routes.lookuser);
 app.get('/userzone', routes.userzone);
+//贴纸页面
 app.get('/paster', routes.paster);
+//更新 单个贴纸所有信息
+app.get('/uppaster', routes.uppaster);
+//贴纸 放回收站 恢复
+app.get('/delpaster', routes.delpaster);
+// 创建贴纸
+app.get('/createpaster', routes.createpaster);
+//获取贴纸
 app.get('/pasterinfo', routes.pasterinfo);
+// 获取贴纸分类
 app.get('/pastertype', routes.pastertype);
+
 app.get('/randommj', routes.randommj);
 app.get('/createcomment', routes.createcomment);
+app.get('/createup', routes.createup);
 
 app.get('/weixin', routes.weixin);
 app.get('/wxinit', routes.wxinit);
@@ -160,7 +173,6 @@ app.get('/createmini', routes.createmini);
 
 
 app.post('/adduser',routes.adduser);
-app.get('/adduserget',routes.adduserget);
 app.get('/register', routes.register);//
 app.get('/forget', routes.forget);//
 app.get('/email', routes.email);//

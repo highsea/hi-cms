@@ -61,7 +61,7 @@ hr {
 /* html { overflow-y: scroll; } */
 
 /*  */
-body{background: #fff;overflow-x: hidden}
+body{background: #fff;overflow-x: hidden;margin: 0;padding: 0}
 li,ul,p{list-style: none;padding: 0;margin: 0}
 .clear {clear: both;float: none;}
 
@@ -171,5 +171,12 @@ body .current{background: #5bb75b;}
 .caption{float: none;clear: both}
 .goodMessageType li{float: right;background: #f60; height: 20px;margin:0 1em}
 .goodMessageType a{color: #fff;padding: 0 0.5em;cursor: pointer;}
+.feed_type_wrap{width: 20%;border: 1px solid #5bb75b;padding: 0.5em;border-radius: 8px;box-shadow: 1px 2px 2px #7CF5A6;}
+.feed_type_wrap a{cursor: pointer;}
+.thumbnails{width: 80%;margin:0 auto!important}
+.pasterSelect,.pasterDesc{width: 60px;}
+.icon-check,.icon-chevron-up,.icon-chevron-down,.icon-edit {cursor: pointer;}
+
+
 
 

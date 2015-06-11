@@ -24,6 +24,7 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 		forget : '忘记密码页面',
 		register : '用户注册页面',
 		home : '的主页',
+		upload: '文件上传页面',
 		admin: '管理员页面',
 		subject : '的项目',
 		collect : '的收藏',
@@ -47,7 +48,8 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 		1023:'没有填写value，该接口通过value设置值',
 		1024:'没有填写stype，该接口通过type查询',
 		1025:'参数不正确，请查看 API 文档',
-
+		1026:'不存在传输的数据',
+		1027:'不被允许上传的文件，请联系管理员',
 
 	},
 	//正常接收 2XXX
@@ -60,6 +62,7 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 		2011:'请检查菜单字母简写和中文名',
 		2003:'您需要先登录',
 		2004:'您需要先登录，或者您的权限不够高！',
+		2005:'非法上传，请重新登录',
 
 	},
 	//重定向 3XXX
@@ -82,6 +85,7 @@ var dbLogin = 'mongodb://xjy:xjy123@localhost:27017/xiaojiaoyar',
 	Code5X = {
 		5020:'success',
 		5019:'内部错误：',
+		5021: '写入错误',
 	},
 	//领域左起0-1位是一级分类，左起2-3位是二级分类，4-5是三级分类
 	scopeList = {
