@@ -250,7 +250,14 @@ define(function(require, exports, module) {
 				ctime 		= m[i].ctime;
 
 			var photoStr = '',
-				cancelGood = '';
+				cancelGood = '',
+				resultSrc = all.textTips['host']+avatar,
+    			myReg = new RegExp("http://");
+				
+
+			if (myReg.test(avatar)) {
+				resultSrc = avatar;
+			};
 
 			//console.log(photo);
 
@@ -274,7 +281,7 @@ define(function(require, exports, module) {
 			str += '<li class="span11 status_'+status+'" data-msgid="'+msg_id+'" data-userid="'+user_id+'" data-sex="'+sex+'" data-eadmin="'+eadmin+'" data-etime="'+etime+'">'+
 			                '<div data-feedtype="'+feedtype+'" class="thumbnail">'+
 			                  '<h4><small>[第<em>'+page['currentp']+'</em>页：'+(i+1)+'/'+dlength+']</small>'+
-			                  '<img class="avatar" src="'+all.textTips['host']+avatar+'" alt="" /><a href="/soso?userid='+user_id+'&tab=userzone">'+nickname+'</a><br><small class="goods_info"><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
+			                  '<img class="avatar" src="'+resultSrc+'" alt="" /><a href="/soso?userid='+user_id+'&tab=userzone">'+nickname+'</a><br><small class="goods_info"><i class="none">推荐设置者:'+eadmin+'，设置时间:'+all.js_date_time(etime)+'</i></small> </h4>'+
 			                  '<small>发表于：'+all.js_date_time(ctime)+' </small> '+
 			                  ' | <small> 用户id：<a href="/soso?userid='+user_id+'&tab=userzone">'+user_id+' </a></small> | <small> 消息id：<a href="/soso?msgid='+msg_id+'">'+msg_id+'</a></small>'+
 			                  '<p>浏览数：<span>'+read_count+'</span> 评论数：<span>'+comment_count+'</span> 赞：<span>'+up_count+'</span></p>'+
@@ -523,7 +530,6 @@ define(function(require, exports, module) {
 			type: 'GET',
 			dataType: 'jsonp',
 			data: data,
-			timeout: 3000,
 	        jsonp : "callback",
 	        jsonpCallback : "dataList",
 			success : function (dataList){

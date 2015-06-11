@@ -40,7 +40,7 @@
 					<div class="tab-pane active" id="panel-1">
 						<div class="row-fluid">
 							
-							<div class="span3">
+							<div class="span2">
 								类型:
 								<select class="span8 mark">
 									<option selected value="all">全部</option>
@@ -49,8 +49,8 @@
 							        <option value="tp">图文</option>
 								</select>
 							</div>
-							<div class="span3">
-								发表时间
+							<div class="span2">
+								时间
 								<select class="span8 time">
 									<option value="d3">三天内</option>
 							        <option value="w1">一周内</option>
@@ -61,7 +61,7 @@
 
 							    </select>
 							</div>
-							<div class="span3">
+							<div class="span2">
 								排序:
 								<select class="span8 order">
 							        <option selected value="time">按时间</option>
@@ -70,6 +70,16 @@
 							        <option value="comment">按回复数</option>
 
 							    </select>
+							</div>
+							<div class="span2">
+								每页:
+								<select class="span4 pageCount">
+							        <option selected value="10">10</option>
+							        <option value="20">20</option>
+							        <option value="30">30</option>
+							        <option value="40">40</option>
+							    </select>
+							    条
 							</div>
 							<div class="span3">
 								<a class="btn btn-success showMessage">查看消息</a>
@@ -766,8 +776,15 @@ window.onload=function(){
 						    status = u[i].status,
 						    mobile = u[i].mobile,
 						    level = u[i].level;
+						var resultSrc = A.textTips['host']+avatar,
+			    			myReg = new RegExp("http://");
+							
 
-						upStr += '<li data-id="'+id+'" data-mobile="'+mobile+'" data-level="'+level+'" class="status_'+status+'"> <a href="/soso?userid='+user_id+'&tab=userzone" class="upUser sex_'+sex+'" data-uid="'+user_id+'" title="'+nickname+'('+A.sex[sex]+')发表于'+A.js_date_time(ctime)+'"> <img src="http://m.xiaojiaoyar.com/Uploads/Picture/'+avatar+'" height="25px" alt="" /> </a></li>';
+						if (myReg.test(avatar)) {
+							resultSrc = avatar;
+						};
+
+						upStr += '<li data-id="'+id+'" data-mobile="'+mobile+'" data-level="'+level+'" class="status_'+status+'"> <a href="/soso?userid='+user_id+'&tab=userzone" class="upUser sex_'+sex+'" data-uid="'+user_id+'" title="'+nickname+'('+A.sex[sex]+')发表于'+A.js_date_time(ctime)+'"> <img src="'+resultSrc+'" height="25px" alt="" /> </a></li>';
 						
 					};
 					thisCaption.find('ul').html(upStr);
@@ -819,13 +836,21 @@ window.onload=function(){
 							nickname = om[i].nickname,
 							avatar = om[i].avatar;
 
+						var resultSrc = A.textTips['host']+avatar,
+			    			myReg = new RegExp("http://");
+							
+
+						if (myReg.test(avatar)) {
+							resultSrc = avatar;
+						};
+
 						if (status==1) {
 							var commentCZHtml = '<i class="btn reComment">放回收站</i>'; 
 						}else{
 							var commentCZHtml = '<i class="btn btn-warning okComment">恢复评论</i>';
 						}
 
-						str+= '<li data-commentid="'+id+'" data-userid="'+om[i].user_id+'" data-useridb="'+om[i].user_id_b+'" data-status="'+status+'" class="sex_'+sex+' status_'+status+' level_'+level+' read_'+om[i].is_read+' commentHTML" data-isread="'+is_read+'" data-mobile="'+mobile+'"><a href="/soso?userid='+user_id+'&tab=userzone" target="_blank"><img src="http://m.xiaojiaoyar.com/Uploads/Picture/'+avatar+'" class="avatar" alt="" />'+nickname+'</a>: '+message+'-'+commentCZHtml+'- ('+A.js_date_time(ctime)+')</li>';
+						str+= '<li data-commentid="'+id+'" data-userid="'+om[i].user_id+'" data-useridb="'+om[i].user_id_b+'" data-status="'+status+'" class="sex_'+sex+' status_'+status+' level_'+level+' read_'+om[i].is_read+' commentHTML" data-isread="'+is_read+'" data-mobile="'+mobile+'"><a href="/soso?userid='+user_id+'&tab=userzone" target="_blank"><img src="'+resultSrc+'" class="avatar" alt="" />'+nickname+'</a>: '+message+'-'+commentCZHtml+'- ('+A.js_date_time(ctime)+')</li>';
 
 					};
 					thisCaption.find('ul').html(str);
@@ -1026,7 +1051,7 @@ window.onload=function(){
 	    		sta 	: 'show',
 	    		order 	: order.val(),
 	    		mark 	: mark.val(),
-	    		size 	: '10',
+	    		size 	: $('.pageCount').val(),
 	    		p 		: n,
 	    	}, elm, function (dataList) {
 
