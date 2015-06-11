@@ -185,7 +185,7 @@ window.onload=function(){
     					xuhao 		: i+1,
     					pasterID 	: u[i].id,
     					fenlei  	: '<p data-typeid="'+(type_id+1)+'">'+pastertypeArr[type_id]+'</p>',
-    					description : '<input class="pasterdesc" type="text" value="'+u[i].description+'">',
+    					description : '<b class="pasterdesc" >'+u[i].description+'</b>',
     					pic 		: '<a data-order="'+u[i].order_sort+'" title="点击查看大图" href="'+newImgUrl+'" target="_blank"><img class="avatar" src="'+newImgUrl+'" alt="" /></a>',
     					ctime 		: u[i].ctime,//A.js_date_time(u[i].ctime),
     					caozuo 		: caozuoDom,
@@ -249,7 +249,7 @@ window.onload=function(){
 			    thisSta = thisDom.data('status'),
 			    thisType = moren_typeid,//xiugai_typeid==undefined ? moren_typeid : xiugai_typeid,
 			    thisUrl = imgUrl_1==undefined ? imgUrl_2 : imgUrl_1,
-			    thisDesc = thisDom.closest('tr').children('td').eq(4).children('input').val(),
+			    thisDesc = thisDom.closest('tr').children('td').eq(4).children('.pasterdesc').text(),
 			    thisID = thisDom.closest('tr').children('td').eq(2).text();
 
 
@@ -361,6 +361,7 @@ window.onload=function(){
 						$('#myModal').modal('hide');
 						console.log(dataList);
 						alert('新建成功，刷新可看最新信息')
+
             		}else{
 
             			alert('新建失败请重试！')
@@ -397,7 +398,11 @@ window.onload=function(){
 				A.ajax('/uppaster', dataArr, '.paster_select', function(dataList){
 					if (dataList.data.protocol41) {
 						alert('修改成功，刷新可看最新信息');
-					};
+					}else{
+						alert('修改失败，请重试');
+					}
+					$('#myModal').modal('hide');
+
 				})
 			}
 		});
