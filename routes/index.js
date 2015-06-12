@@ -1708,6 +1708,91 @@ exports.createpaster = function(req, res){
 
 
 /*
+@  管理员 排序 贴纸
+@
+@   http://localhost:3000/orderpaster?pasterid=90&type=up
+*/
+exports.orderpaster = function(req, res){
+
+    fun.verifyAdmin(req, res, function(){
+
+        var doc = {
+            type : 'up',
+        }
+
+        if (req.query.pasterid) {
+
+            var sql = {
+                count   : 'select order_sort from lf_paster_info where id="'+req.query.pasterid+'"', 
+                up      : 'update ',
+                down    : 'update '
+            };
+
+            if (sql[doc[req.query.type]]) {
+                doc['type'] = req.query.type;
+            };
+
+            db.query(sql['count'], function(result){
+                var downSort = result[0].order_sort-1,
+                    upSort = result[0].order_sort+1;
+                if (downSort<0) {
+                    downSort = 1;
+                };
+                sql['up'] = 'update lf_paster_info set order_sort="'+upSort+'" where id="'+req.query.pasterid+'" ';
+                sql['down'] = 'update lf_paster_info set order_sort="'+downSort+'" where id="'+req.query.pasterid+'" ';
+
+                db.query(sql[doc['type']], function(data){
+                    fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
+                })
+            })
+
+        }else{
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+    })
+
+}
+
+
+/*
+@  管理员 置顶 贴纸
+@
+@   http://localhost:3000/orderpaster?pasterid=90&type=up
+*/
+exports.dingpaster = function(req, res){
+
+    fun.verifyAdmin(req, res, function(){
+
+
+        if (req.query.pasterid) {
+
+            var sql = {
+                count   : 'select order_sort from lf_paster_info order by order_sort desc', 
+                ding    : 'update ',
+            };
+
+            db.query(sql['count'], function(sort){
+                var sortNum = sort[0].order_sort+1;
+
+                sql['ding'] = 'update lf_paster_info set order_sort="'+sortNum+'" where id="'+req.query.pasterid+'" ';
+
+                console.log(sql['ding']);
+
+                db.query(sql['ding'], function(data){
+                    fun.jsonTips(req, res, 2000, config.Code2X[2000], data);
+                })
+            })
+
+        }else{
+            fun.jsonTips(req, res, 1025, config.Code1X[1025], null);
+        }
+
+    })
+
+}
+
+/*
 @  管理员 用马甲号随意 评论 指定 id
 @
 @  http://localhost:3000/createcomment?uid=1120&uidb=1225&message=test&msgid=673

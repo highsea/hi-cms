@@ -155,6 +155,10 @@ app.get('/createpaster', routes.createpaster);
 app.get('/pasterinfo', routes.pasterinfo);
 // 获取贴纸分类
 app.get('/pastertype', routes.pastertype);
+// 贴纸排序 上下移动 
+app.get('/orderpaster', routes.orderpaster);
+// 置顶 贴纸
+app.get('/dingpaster', routes.dingpaster);
 
 app.get('/randommj', routes.randommj);
 app.get('/createcomment', routes.createcomment);

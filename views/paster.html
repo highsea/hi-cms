@@ -161,12 +161,12 @@ window.onload=function(){
     				var status = u[i].status,
     					imgUrl = u[i].url.split('Picture')[0],
     					type_id = u[i].type_id-1;
-    				var caozuoDom = '<a class="pasterPrev icon-chevron-up"></a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-danger">放回收站</a> &nbsp; <a class="icon-check setPaster"></a> &nbsp; <a class="icon-chevron-down pasterNext"></a>';
+    				var caozuoDom = '<a class="pasterPrev icon-chevron-up"></a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-danger">放回收站</a> &nbsp; <a class="icon-check setPaster"></a> &nbsp; <a class="icon-chevron-down pasterNext"></a> &nbsp; <a class="pasterDing icon-hand-up"></a>';
     				if (status==1) {
-    					caozuoDom = '<a class="pasterPrev icon-chevron-up"></a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-danger">放回收站</a> &nbsp; <a class="icon-check setPaster"></a> &nbsp; <a class="icon-chevron-down pasterNext"></a>';
+    					caozuoDom = '<a class="pasterPrev icon-chevron-up"></a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-danger">放回收站</a> &nbsp; <a class="icon-check setPaster"></a> &nbsp; <a class="icon-chevron-down pasterNext"></a> &nbsp; <a class="pasterDing icon-hand-up"></a>';
     				};
     				if (status==0||status==2) {
-    					caozuoDom = '<a class="pasterPrev icon-chevron-up"></a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-warning">恢复贴纸</a> &nbsp; <a class="icon-check setPaster"></a> &nbsp; <a class="icon-chevron-down pasterNext"></a>';
+    					caozuoDom = '<a class="pasterPrev icon-chevron-up"></a> &nbsp; <a data-status="'+status+'" class="btn del_return btn-warning">恢复贴纸</a> &nbsp; <a class="icon-check setPaster"></a> &nbsp; <a class="icon-chevron-down pasterNext"></a> &nbsp; <a class="pasterDing icon-hand-up"></a>';
     				};
 
     				//var selectType = '<select class="ajaxType pasterSelect"><option value="'+(type_id+1)+'">'+pastertypeArr[type_id]+'</option></select>';
@@ -373,8 +373,19 @@ window.onload=function(){
 		}).
 		on('click', '.pasterPrev,.pasterNext', function(event) {
 			event.preventDefault();
-			//
-			alert('逻辑待商议');
+			// 贴纸排序 逻辑 上下移动
+			var dataArr = {
+				type 		: 'up',
+				pasterid 	: $(this).closest('tr').children('td').eq(2).text(),
+			}
+			if($(this).hasClass('.pasterNext')){
+				dataArr['type'] = 'down';
+			}
+			A.ajax('/orderpaster', dataArr, '.paster_select', function(dataList){
+				if (dataList.data.protocol41) {
+					console.log('ok')
+				};
+			})
 		}).
 		on('click', '.changeSomeSave', function(event) {
 			event.preventDefault();
@@ -405,6 +416,16 @@ window.onload=function(){
 
 				})
 			}
+		}).
+		on('click', '.pasterDing', function(event) {
+			event.preventDefault();
+			//直接 置顶贴纸
+
+			A.ajax('/dingpaster',{pasterid:$(this).closest('tr').children('td').eq(2).text()}, '.paster_select', function(d){
+				if (d.data.protocol41) {
+					alert('已成功置顶，刷新查看')
+				};
+			})
 		});
 
 

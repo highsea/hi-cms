@@ -524,32 +524,22 @@ define(function(require, exports, module) {
 @ 重新封装了 AJAX （支持 callback）
 */
 	all.ajax = function(url, data, dom, callback){
-
 		$.ajax({
 			url: url,
 			type: 'GET',
 			dataType: 'jsonp',
 			data: data,
-	        jsonp : "callback",
-	        jsonpCallback : "dataList",
+	        //jsonp : "callback",
+	        //jsonpCallback : "dataList",
 			success : function (dataList){
 				if (dataList.code==2000) {
-					//all.alertHtml(dom, 'success', '', dataList.message);
-
-
 					callback(dataList);
-
-					//console.log(dataList);
-
-				}else if(dataList.code==3001){
-					all.alertHtml('.form', 'danger', '该账号已经被注册了', '');
-					all.inputBg(dom, 'close.gif');
 				}else{
 					all.alertHtml(dom, 'warning', dataList.code, dataList.message);
 				}
 			},
 			error : function(){
-					all.alertHtml(dom, 'danger', '网络错误', '请稍后重试');
+				all.alertHtml(dom, 'danger', '网络错误', '请稍后重试');
 			}
 		})
 	}

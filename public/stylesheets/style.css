@@ -175,10 +175,11 @@ body .current{background: #5bb75b;}
 .feed_type_wrap a{cursor: pointer;}
 .thumbnails{width: 80%;margin:0 auto!important}
 .pasterSelect,.pasterDesc{width: 60px;}
-.icon-check,.icon-chevron-up,.icon-chevron-down,.icon-edit {cursor: pointer;}
+.icon-check,.icon-chevron-up,.icon-chevron-down,.icon-edit,.icon-hand-up {cursor: pointer;}
 .order > a{display: block;float: right;margin: 0 0.5em}
 .feedtypeInput{margin-left: 20em}
 .up >ul>li{float: left;}
+.status_0{opacity: 0.4;background: #ccc}
 
 
 
