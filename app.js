@@ -168,13 +168,12 @@ app.get('/weixin', routes.weixin);
 app.get('/wxinit', routes.wxinit);
 app.get('/sha1', routes.sha1);
 app.get('/wxactive', routes.wxactive);
-
 app.get('/showfeedtype', routes.showfeedtype);
 app.get('/upfeedtype', routes.upfeedtype);
 app.get('/createfeedtype', routes.createfeedtype);
 app.get('/deletefeedtype', routes.deletefeedtype);
 app.get('/createmini', routes.createmini);
-
+app.get('/admin', routes.admin);
 
 
 
@@ -183,13 +182,10 @@ app.get('/register', routes.register);//
 app.get('/forget', routes.forget);//
 app.get('/email', routes.email);//
 
-app.get('/admin', routes.admin);
-
 //登录查找单用户全字段
 app.get('/getuser', routes.getuser);//by id 二次登陆
 app.get('/userbyname', routes.userbyname);// name 二次登陆
 app.get('/sessionuser', routes.sessionuser);// 当前登录用户
-
 app.get('/userCount', routes.userCount);
 app.get('/remove1user', routes.remove1user);
 app.get('/oneuser', routes.oneuser);
@@ -199,9 +195,7 @@ app.get('/oneuser', routes.oneuser);
 app.get('/friendly-error', routes.friendlyError);
 app.post('/upload', routes.upload);
 app.get ('/upload', routes.upload);
-
 app.get('/getpic', routes.getpic);
-
 app.get('/passwordMD5', routes.passwordMD5);
 
 

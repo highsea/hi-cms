@@ -255,7 +255,7 @@ exports.message = function (req, res) {
             showall     : '',//都要
             good        : ' and lf_message.order_count!=0',//推荐的 
             // 显示 分类 feed 
-            all         : ' and lf_message.feedtype!="" ',
+            all         : ' ',
             type        : ' and lf_message.feedtype="'+doc['value']+'" ',
 
         };
@@ -1758,7 +1758,7 @@ exports.orderpaster = function(req, res){
 /*
 @  管理员 置顶 贴纸
 @
-@   http://localhost:3000/orderpaster?pasterid=90&type=up
+@   http://localhost:3000/dingpaster?pasterid=90
 */
 exports.dingpaster = function(req, res){
 
