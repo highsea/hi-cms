@@ -255,7 +255,7 @@ exports.message = function (req, res) {
             showall     : '',//都要
             good        : ' and lf_message.order_count!=0',//推荐的 
             // 显示 分类 feed 
-            all         : ' ',
+            all         : '   ',
             type        : ' and lf_message.feedtype="'+doc['value']+'" ',
 
         };
